@@ -84,20 +84,22 @@ $env:OPENAI_MODEL="qwen2.5-coder:7b"
 openclaude
 ```
 
-## Setup Guides
+## Setup guides
 
-Beginner-friendly guides:
+**Index:** [docs/README.md](docs/README.md) · **Problems:** [docs/troubleshooting.md](docs/troubleshooting.md)
 
-- [Non-Technical Setup](docs/non-technical-setup.md)
-- [Windows Quick Start](docs/quick-start-windows.md)
-- [macOS / Linux Quick Start](docs/quick-start-mac-linux.md)
+Beginner-friendly:
 
-Advanced and source-build guides:
+- [Non-technical setup](docs/non-technical-setup.md)
+- [Windows quick start](docs/quick-start-windows.md)
+- [macOS / Linux quick start](docs/quick-start-mac-linux.md)
 
-- [Advanced Setup](docs/advanced-setup.md) — Bun, profiles, `doctor:*`, env reference
-- [Android (Termux)](ANDROID_INSTALL.md) — build inside proot Ubuntu when you need a phone/tablet setup
+Advanced / source build:
 
-**Optional:** the [`python/`](python/) tree holds small **Python helpers** for provider experiments—not needed for normal CLI install. See [`python/README.md`](python/README.md).
+- [Advanced setup](docs/advanced-setup.md) — Bun, profiles, `doctor:*`, env table
+- [Android (Termux)](ANDROID_INSTALL.md) — build inside proot Ubuntu
+
+**Optional:** [`python/`](python/) — small Python helpers for experiments; not required for normal CLI install ([`python/README.md`](python/README.md)).
 
 ## Supported Providers
 
@@ -196,6 +198,7 @@ node dist/cli.mjs
 
 Helpful commands:
 
+- `bun run typecheck`
 - `bun run dev`
 - `bun test`
 - `bun run test:coverage`
@@ -203,7 +206,9 @@ Helpful commands:
 - `bun run smoke`
 - `bun run doctor:runtime`
 - `bun run verify:privacy`
-- focused `bun test ...` runs for the areas you touch
+- focused `bun test ...` for the areas you touch
+
+**Tags:** pushing a `v*` tag runs [release artifacts](.github/workflows/release-artifacts.yml) (uploads `dist/cli.mjs` as a CI artifact). Maintainer checklist: [docs/maintainers.md](docs/maintainers.md).
 
 ## Testing And Coverage
 
@@ -254,7 +259,7 @@ Coverage output is written to `coverage/lcov.info`, and OpenClaude also generate
 | --- | --- |
 | `src/` | Core CLI and runtime |
 | `scripts/` | Build, checks, maintenance |
-| `docs/` | User setup guides |
+| `docs/` | User guides ([index](docs/README.md), [troubleshooting](docs/troubleshooting.md)) |
 | `python/` | Optional Python utilities ([readme](python/README.md)) |
 | `vscode-extension/openclaude-vscode/` | VS Code extension |
 | `.github/` | CI, issue/PR templates |

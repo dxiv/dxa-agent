@@ -10,7 +10,9 @@ Thanks for contributing. I merge patches that are **small, tested, and easy to r
 - **Larger changes:** open an issue first so scope is agreed.
 - **Security:** [SECURITY.md](SECURITY.md) (private report, not a public issue).
 
-**Docs map for users:** [README.md](README.md) → `docs/quick-start-*.md`, [docs/advanced-setup.md](docs/advanced-setup.md), [ANDROID_INSTALL.md](ANDROID_INSTALL.md). **Optional Python helpers:** [python/README.md](python/README.md).
+**Docs map:** [docs/README.md](docs/README.md) · [Troubleshooting](docs/troubleshooting.md) · [README](README.md) · [Advanced setup](docs/advanced-setup.md) · [Android](ANDROID_INSTALL.md) · [Python helpers (optional)](python/README.md).
+
+**Secrets:** never commit API keys, tokens, or `.env` — redact them in logs and issue text. `.gitignore` already excludes `.env*`.
 
 ## Local Setup
 
@@ -62,6 +64,7 @@ At minimum, run the most relevant checks for your change.
 Common checks:
 
 ```bash
+bun run typecheck
 bun run build
 bun run smoke
 ```
@@ -106,6 +109,14 @@ OpenClaude supports multiple provider paths. If you change provider logic:
 - avoid breaking third-party providers while fixing first-party behavior
 - test the exact provider/model path you changed when possible
 - call out any limitations or follow-up work in the PR description
+
+## Good first issues
+
+Look for issues labeled **`good first issue`** (create the label in GitHub if it does not exist yet). Small doc fixes and focused tests are ideal starters.
+
+## Maintainer notes
+
+Release labels, npm checklist, and suggested GitHub labels: [docs/maintainers.md](docs/maintainers.md).
 
 ## Community
 
