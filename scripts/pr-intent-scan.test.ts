@@ -133,4 +133,15 @@ describe('scanAddedLines', () => {
 
     expect(findings.some(finding => finding.code === 'download-command')).toBe(false)
   })
+
+  test('ignores npm tarball URLs in bun.lock (Dependabot / lockfile churn)', () => {
+    const findings = scanAddedLines([
+      line(
+        '"resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",',
+        { file: 'bun.lock', line: 42 },
+      ),
+    ])
+
+    expect(findings).toHaveLength(0)
+  })
 })
