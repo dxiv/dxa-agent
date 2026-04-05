@@ -264,38 +264,59 @@ Coverage output is written to `coverage/lcov.info`, and DXA Agent also generates
 
 ## Repository structure
 
-How the repo splits: **documentation and meta** live beside the **TypeScript terminal agent** you build into `dist/cli.mjs`. Only the agent paths ship in the published npm package (see `package.json` `"files"`); docs, extension, and `python/` stay in the repo for people and tooling.
+The **terminal agent** lives under `src/` and compiles to **`dist/cli.mjs`**. **Documentation** and **repo tooling** surround it but are not the running product. Diagrams render on **GitHub** (and most Markdown viewers with Mermaid support).
 
-```text
-■■■ DXA Agent/
+**Map — how the clone is organized**
 
-  ■■■ ■■■ ■■■  DOCUMENTATION  — for humans only; not bundled into the CLI
-        ■■■ docs/                      quick starts, checklist, troubleshooting, …
-        ■■■ README.md                  project overview (this file)
-        ■■■ ANDROID_INSTALL.md         Android / Termux build notes
+```mermaid
+flowchart TB
+  subgraph DOC["Documentation — for readers only"]
+    direction TB
+    D1["docs/ — quick starts, checklist, troubleshooting"]
+    D2["README.md — project overview"]
+    D3["ANDROID_INSTALL.md — Termux / Android build"]
+  end
 
-  ■■■ ■■■ ■■■  TERMINAL AGENT (core product)  — `bun run build` → dist/cli.mjs
-        ■■■ src/                       CLI, providers, tools, MCP, TUI, sessions, …
-        ■■■ bin/                       dxa-agent launcher → built CLI
-        ■■■ package.json               npm package @dxiv/dxa-agent
-        ■■■ tsconfig.json              TypeScript project for src/
+  subgraph AGENT["Terminal agent — the shipped CLI product"]
+    direction TB
+    A1["src/ — CLI, providers, tools, MCP, TUI, sessions"]
+    A2["bin/ — dxa-agent launcher → dist/cli.mjs"]
+    A3["package.json — @dxiv/dxa-agent metadata and scripts"]
+    A4["tsconfig.json — TypeScript config for src/"]
+  end
 
-  ■■■ ■■■ ■■■  BUILD & CHECKS  — maintain the agent; not shipped to end users
-        ■■■ scripts/                   build.ts, doctor, scans, coverage UI, …
+  subgraph BUILD["Build and checks — maintainers and CI"]
+    B1["scripts/ — build, doctor, security scans, coverage UI"]
+  end
 
-  ■■■ ■■■ ■■■  EDITOR ADD-ON  — separate from the npm CLI bundle
-        ■■■ vscode-extension/
-        ■■■     dxa-agent-vscode/     extension + terminal theme
+  subgraph IDE["Editor add-on — separate deliverable"]
+    E1["vscode-extension/dxa-agent-vscode/ — extension + theme"]
+  end
 
-  ■■■ ■■■ ■■■  OPTIONAL & REPO META
-        ■■■ python/                  small helpers; optional; not required for CLI
-        ■■■ .github/                 PR checks, Dependabot, templates, v* releases
-        ■■■ .env.example             provider env template for local dev
-        ■■■ CONTRIBUTING.md
-        ■■■ CHANGELOG.md
-        ■■■ LEGAL.md
-        ■■■ LICENSE
-        ■■■ SECURITY.md
+  subgraph META["Optional and repository meta"]
+    direction TB
+    M1["python/ — optional helpers, not required for CLI"]
+    M2[".github/ — workflows, Dependabot, templates, v* releases"]
+    M3[".env.example — provider template for local dev"]
+    M4["CONTRIBUTING, CHANGELOG, LEGAL, LICENSE, SECURITY"]
+  end
+```
+
+**Install vs clone — what differs** (subset comes from `package.json` → `"files"`)
+
+```mermaid
+flowchart LR
+  subgraph CLONE["Git clone (full tree)"]
+    direction TB
+    C1["Agent source, docs, scripts, extension, CI, …"]
+  end
+
+  subgraph NPM["npm package @dxiv/dxa-agent"]
+    direction TB
+    N1["bin/"]
+    N2["dist/cli.mjs — built at publish via prepack"]
+    N3["README.md"]
+  end
 ```
 
 | Area | Path | Purpose |
