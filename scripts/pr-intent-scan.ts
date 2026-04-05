@@ -28,6 +28,18 @@ const SELF_EXCLUDED_FILES = new Set([
   'scripts/pr-intent-scan.test.ts',
 ])
 
+/** Lockfiles list registry tarball URLs (.tgz); those are not “malicious download” hints. */
+function isDependencyLockfile(file: string): boolean {
+  const base = file.includes('/') ? file.slice(file.lastIndexOf('/') + 1) : file
+  return (
+    base === 'bun.lock' ||
+    base === 'bun.lockb' ||
+    base === 'package-lock.json' ||
+    base === 'yarn.lock' ||
+    base === 'pnpm-lock.yaml'
+  )
+}
+
 const SHORTENER_DOMAINS = [
   'bit.ly',
   'tinyurl.com',
@@ -359,11 +371,12 @@ function findCommandFindings(line: DiffLine): Finding[] {
 export function scanAddedLines(lines: DiffLine[]): Finding[] {
   const findings = lines
     .filter(line => !SELF_EXCLUDED_FILES.has(line.file))
+    .filter(line => !isDependencyLockfile(line.file))
     .flatMap(line => [
-    ...findUrlFindings(line),
-    ...findCommandFindings(line),
-    ...findSensitivePathFindings(line),
-  ])
+      ...findUrlFindings(line),
+      ...findCommandFindings(line),
+      ...findSensitivePathFindings(line),
+    ])
   return uniqueFindings(findings)
 }
 

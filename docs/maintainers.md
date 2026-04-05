@@ -4,6 +4,10 @@
 
 [`.github/dependabot.yml`](../.github/dependabot.yml) opens weekly PRs for **GitHub Actions** and **Bun** dependencies. If the Bun ecosystem is unavailable on your org’s GitHub plan, switch that block to `package-ecosystem: "npm"` or disable it.
 
+**Bun PRs:** CI uses `bun install --frozen-lockfile`. [`.github/workflows/dependabot-bun-lock.yml`](../.github/workflows/dependabot-bun-lock.yml) runs on Dependabot PRs that touch `package.json` / `bun.lock`, runs `bun install`, and pushes an updated `bun.lock` when needed. The repo needs **Settings → Actions → General → Workflow permissions → Read and write** (or equivalent) so that job can push to the PR branch.
+
+**Security scan:** `scripts/pr-intent-scan.ts` skips dependency lockfiles so normal `registry.npmjs.org/…/*.tgz` lines in `bun.lock` are not treated as malicious download links.
+
 ## Releases (manual checklist)
 
 1. Bump **`package.json`** version (and extension `package.json` if it should track the CLI).
