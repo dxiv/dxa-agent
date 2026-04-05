@@ -1,6 +1,6 @@
 # DXA Agent
 
-**DXA Agent** is a **MIT-licensed** terminal coding agent: one `dxa-agent` command, your choice of model backend (OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), plus tools, **MCP**, and slash commands. This repo also includes a **VS Code extension** and a dark terminal theme.
+**DXA Agent** is a **MIT-licensed** terminal coding agent: one `dxa-agent` command, your choice of model backend (Anthropic Claude, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), plus tools, **MCP**, and slash commands. This repo also includes a **VS Code extension** and a dark terminal theme.
 
 **Legal:** not affiliated with Anthropic, PBC, or any other vendor. Trademarks, MIT terms, and how to raise concerns: **[LEGAL.md](LEGAL.md)** (general information only—not legal advice).
 
@@ -101,6 +101,7 @@ Beginner-friendly:
 Advanced / source build:
 
 - [Advanced setup](docs/advanced-setup.md) — Bun, profiles, `doctor:*`, env table
+- [.env.example](.env.example) — copy to `.env` for a local clone; uncomment **one** provider block (see file header)
 - [Android (Termux)](ANDROID_INSTALL.md) — build inside proot Ubuntu
 
 **Optional:** [`python/`](python/) — small Python helpers for experiments; not required for normal CLI install ([`python/README.md`](python/README.md)).
@@ -109,6 +110,7 @@ Advanced / source build:
 
 | Provider | Setup Path | Notes |
 | --- | --- | --- |
+| Anthropic (Claude) | `/provider` or env vars | Cloud default path; `ANTHROPIC_API_KEY` — template in [.env.example](.env.example) |
 | OpenAI-compatible | `/provider` or env vars | Works with OpenAI, OpenRouter, DeepSeek, Groq, Mistral, LM Studio, and other compatible `/v1` servers |
 | Gemini | `/provider` or env vars | Supports API key, access token, or local ADC workflow on current `main` |
 | GitHub Models | `/onboard-github` | Interactive onboarding with saved credentials |
@@ -200,6 +202,8 @@ bun run build
 node dist/cli.mjs
 ```
 
+For API keys when running from a clone, copy **[.env.example](.env.example)** to `.env`, uncomment a single provider section, and replace placeholders (see the comments at the top of that file).
+
 Helpful commands:
 
 - `bun run typecheck`
@@ -266,7 +270,8 @@ Coverage output is written to `coverage/lcov.info`, and DXA Agent also generates
 | `docs/` | User guides ([index](docs/README.md), [checklist](docs/setup-checklist.md), [first run](docs/first-run.md), [troubleshooting](docs/troubleshooting.md)) |
 | `python/` | Optional Python utilities ([readme](python/README.md)) |
 | `vscode-extension/dxa-agent-vscode/` | VS Code extension |
-| `.github/` | CI, issue/PR templates |
+| `.env.example` | Provider env template; copy to `.env` for local development |
+| `.github/` | PR checks workflow, `v*` [release artifacts](.github/workflows/release-artifacts.yml), Dependabot, issue/PR templates |
 | `bin/` | `dxa-agent` launcher (runs `dist/cli.mjs` when built) |
 
 ## VS Code Extension
