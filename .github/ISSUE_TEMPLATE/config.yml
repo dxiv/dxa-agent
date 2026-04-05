@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: DXA Agent Discussions
+    url: https://github.com/dxiv/dxa-agent/discussions
+    about: Use Discussions for setup help, questions, ideas, and community conversation.

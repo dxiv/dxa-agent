@@ -1,0 +1,129 @@
+{
+  "name": "dxa-agent-vscode",
+  "displayName": "DXA Agent",
+  "description": "Practical VS Code companion for DXA Agent with project-aware launch behavior and a real Control Center.",
+  "version": "0.1.1",
+  "publisher": "devnull-bootloader",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:dxa-agent.start",
+    "onCommand:dxa-agent.startInWorkspaceRoot",
+    "onCommand:dxa-agent.openDocs",
+    "onCommand:dxa-agent.openSetupDocs",
+    "onCommand:dxa-agent.openWorkspaceProfile",
+    "onCommand:dxa-agent.openControlCenter",
+    "onView:dxa-agent.controlCenter"
+  ],
+  "main": "./src/extension.js",
+  "files": [
+    "README.md",
+    "media/**",
+    "src/extension.js",
+    "src/presentation.js",
+    "src/state.js",
+    "themes/**"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "dxa-agent.start",
+        "title": "DXA Agent: Launch in Terminal",
+        "category": "DXA Agent"
+      },
+      {
+        "command": "dxa-agent.startInWorkspaceRoot",
+        "title": "DXA Agent: Launch in Workspace Root",
+        "category": "DXA Agent"
+      },
+      {
+        "command": "dxa-agent.openDocs",
+        "title": "DXA Agent: Open Repository",
+        "category": "DXA Agent"
+      },
+      {
+        "command": "dxa-agent.openSetupDocs",
+        "title": "DXA Agent: Open Setup Guide",
+        "category": "DXA Agent"
+      },
+      {
+        "command": "dxa-agent.openWorkspaceProfile",
+        "title": "DXA Agent: Open Workspace Profile",
+        "category": "DXA Agent"
+      },
+      {
+        "command": "dxa-agent.openControlCenter",
+        "title": "DXA Agent: Open Control Center",
+        "category": "DXA Agent"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dxa-agent",
+          "title": "DXA Agent",
+          "icon": "media/dxa-agent.svg"
+        }
+      ]
+    },
+    "views": {
+      "dxa-agent": [
+        {
+          "id": "dxa-agent.controlCenter",
+          "name": "Control Center",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "DXA Agent",
+      "properties": {
+        "dxa-agent.launchCommand": {
+          "type": "string",
+          "default": "dxa-agent",
+          "description": "Command run in the integrated terminal when launching DXA Agent."
+        },
+        "dxa-agent.terminalName": {
+          "type": "string",
+          "default": "DXA Agent",
+          "description": "Integrated terminal tab name for DXA Agent sessions."
+        },
+        "dxa-agent.useOpenAIShim": {
+          "type": "boolean",
+          "default": false,
+          "description": "Optionally set CLAUDE_CODE_USE_OPENAI=1 in launched DXA Agent terminals."
+        }
+      }
+    },
+    "themes": [
+      {
+        "label": "DXA Agent Terminal Black",
+        "uiTheme": "vs-dark",
+        "path": "./themes/dxa-agent-Terminal-Black.json"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node --test ./src/*.test.js",
+    "lint": "node -e \"for (const file of require('node:fs').readdirSync('./src')) { if (file.endsWith('.js')) { require('node:child_process').execFileSync(process.execPath, ['--check', require('node:path').join('src', file)], { stdio: 'inherit' }); } }\"",
+    "package": "npx @vscode/vsce package --no-dependencies"
+  },
+  "keywords": [
+    "dxa-agent",
+    "terminal",
+    "theme",
+    "cli",
+    "llm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dxiv/dxa-agent"
+  },
+  "license": "MIT"
+}
