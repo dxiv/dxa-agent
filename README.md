@@ -12,7 +12,8 @@
 
 [Quick start](#quick-start) · [Setup guides](#setup-guides) · [Providers](#supported-providers) · [Source build](#source-build-and-local-development) · [VS Code](#vs-code-extension) · [Community](#community)
 
-**New to terminals or npm?** **[docs/non-technical-setup.md](docs/non-technical-setup.md)** → [Windows](docs/quick-start-windows.md) or [macOS / Linux](docs/quick-start-mac-linux.md) → **[checklist](docs/setup-checklist.md)** → **[first run](docs/first-run.md)**. **All docs:** [docs/README.md](docs/README.md).
+**New to terminals or npm?** **[docs/non-technical-setup.md](docs/non-technical-setup.md)** → [Windows](docs/quick-start-windows.md) or [macOS / Linux](docs/quick-start-mac-linux.md) → **[checklist](docs/setup-checklist.md)** → **[first run](docs/first-run.md)**.
+**All docs:** [docs/README.md](docs/README.md).
 
 ## Why use it
 
