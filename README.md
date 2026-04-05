@@ -95,7 +95,6 @@ Beginner-friendly guides:
 Advanced and source-build guides:
 
 - [Advanced Setup](docs/advanced-setup.md)
-- [Android Install](ANDROID_INSTALL.md)
 
 ## Supported Providers
 
@@ -250,7 +249,6 @@ Coverage output is written to `coverage/lcov.info`, and DXA Agent also generates
 - `src/` - core CLI/runtime
 - `scripts/` - build, verification, and maintenance scripts
 - `docs/` - setup, contributor, and project documentation
-- `python/` - standalone Python helpers and their tests
 - `vscode-extension/dxa-agent-vscode/` - VS Code extension
 - `.github/` - repo automation, templates, and CI configuration
 - `bin/` - CLI launcher entrypoints
