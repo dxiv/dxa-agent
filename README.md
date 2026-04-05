@@ -217,7 +217,7 @@ Helpful commands:
 - `bun run verify:privacy`
 - focused `bun test ...` for the areas you touch
 
-**Tags:** pushing a `v*` tag runs [release artifacts](.github/workflows/release-artifacts.yml) (uploads `dist/cli.mjs` as a CI artifact). Maintainer checklist: [docs/maintainers.md](docs/maintainers.md).
+**Tags:** pushing a `v*` tag runs [release artefacts](.github/workflows/release-artifacts.yml) (uploads `dist/cli.mjs` as a CI artefact). Maintainer checklist: [docs/maintainers.md](docs/maintainers.md).
 
 ## Testing And Coverage
 
@@ -266,21 +266,32 @@ Coverage output is written to `coverage/lcov.info`, and OpenClaude also generate
 
 **`src/`** is the terminal agent; it compiles to **`dist/cli.mjs`**. Everything else is docs, build plumbing, optional add-ons, or repo metadata. The diagrams below are a quick visual; **path details** are in the list under them (single place — no separate table).
 
-**Overview** (three bands — read top to bottom)
+**Overview** (three layers — short labels so the diagram fits; see **Paths** for full names)
 
 ```mermaid
 flowchart TB
-  R1["Documentation — not part of the running CLI<br/>docs/ · README.md · ANDROID_INSTALL.md"]
-  R2["Terminal agent — the product<br/>src/ → dist/cli.mjs · bin/openclaude · package.json · tsconfig.json"]
-  R3["Tooling, integrations, and meta<br/>scripts/ · vscode-extension/ · python/ · .github/<br/>.env.example · CONTRIBUTING · CHANGELOG · LEGAL · LICENSE · SECURITY"]
+  subgraph L1[Documentation]
+    A[Guides and onboarding only — not the running CLI]
+  end
+  subgraph L2[Terminal agent]
+    B[TypeScript in src/ — builds to dist/cli.mjs]
+  end
+  subgraph L3[Tooling and meta]
+    C[scripts/, VS Code extension, python/, .github/, policy docs]
+  end
+  L1 --> L2
+  L2 --> L3
 ```
+
+(Arrows only keep the diagram stacked top-to-bottom, not an execution order.)
 
 **Git clone vs npm install** (`package.json` → `"files"` decides what npm ships)
 
 ```mermaid
-flowchart LR
-  CLONE["Git clone<br/>entire tree"]
-  NPM["npm package<br/>bin/<br/>dist/cli.mjs<br/>README.md"]
+flowchart TB
+  CLONE["Git clone — full repository"]
+  NPM["npm package — bin/, dist/cli.mjs, README.md only"]
+  CLONE --> NPM
 ```
 
 ### Paths
@@ -312,7 +323,7 @@ flowchart LR
 
 #### Repository / CI
 
-- **`.github/`** — [PR checks](.github/workflows/pr-checks.yml), `v*` [release artifacts](.github/workflows/release-artifacts.yml), Dependabot, issue/PR templates
+- **`.github/`** — [PR checks](.github/workflows/pr-checks.yml), `v*` [release artefacts](.github/workflows/release-artifacts.yml), Dependabot, issue/PR templates
 - **`.env.example`** — Provider env template; copy to `.env` for local development
 
 ## VS Code Extension
