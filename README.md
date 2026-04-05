@@ -264,77 +264,60 @@ Coverage output is written to `coverage/lcov.info`, and DXA Agent also generates
 
 ## Repository structure
 
-The **terminal agent** lives under `src/` and compiles to **`dist/cli.mjs`**. **Documentation** and **repo tooling** surround it but are not the running product. Diagrams render on **GitHub** (and most Markdown viewers with Mermaid support).
+**`src/`** is the terminal agent; it compiles to **`dist/cli.mjs`**. Everything else is docs, build plumbing, optional add-ons, or repo metadata. The diagrams below are a quick visual; **path details** are in the list under them (single place — no separate table).
 
-**Map — how the clone is organized**
+**Overview** (three bands — read top to bottom)
 
 ```mermaid
 flowchart TB
-  subgraph DOC["Documentation — for readers only"]
-    direction TB
-    D1["docs/ — quick starts, checklist, troubleshooting"]
-    D2["README.md — project overview"]
-    D3["ANDROID_INSTALL.md — Termux / Android build"]
-  end
-
-  subgraph AGENT["Terminal agent — the shipped CLI product"]
-    direction TB
-    A1["src/ — CLI, providers, tools, MCP, TUI, sessions"]
-    A2["bin/ — dxa-agent launcher → dist/cli.mjs"]
-    A3["package.json — @dxiv/dxa-agent metadata and scripts"]
-    A4["tsconfig.json — TypeScript config for src/"]
-  end
-
-  subgraph BUILD["Build and checks — maintainers and CI"]
-    B1["scripts/ — build, doctor, security scans, coverage UI"]
-  end
-
-  subgraph IDE["Editor add-on — separate deliverable"]
-    E1["vscode-extension/dxa-agent-vscode/ — extension + theme"]
-  end
-
-  subgraph META["Optional and repository meta"]
-    direction TB
-    M1["python/ — optional helpers, not required for CLI"]
-    M2[".github/ — workflows, Dependabot, templates, v* releases"]
-    M3[".env.example — provider template for local dev"]
-    M4["CONTRIBUTING, CHANGELOG, LEGAL, LICENSE, SECURITY"]
-  end
+  R1["Documentation — not part of the running CLI<br/>docs/ · README.md · ANDROID_INSTALL.md"]
+  R2["Terminal agent — the product<br/>src/ → dist/cli.mjs · bin/dxa-agent · package.json · tsconfig.json"]
+  R3["Tooling, integrations, and meta<br/>scripts/ · vscode-extension/ · python/ · .github/<br/>.env.example · CONTRIBUTING · CHANGELOG · LEGAL · LICENSE · SECURITY"]
 ```
 
-**Install vs clone — what differs** (subset comes from `package.json` → `"files"`)
+**Git clone vs npm install** (`package.json` → `"files"` decides what npm ships)
 
 ```mermaid
 flowchart LR
-  subgraph CLONE["Git clone (full tree)"]
-    direction TB
-    C1["Agent source, docs, scripts, extension, CI, …"]
-  end
-
-  subgraph NPM["npm package @dxiv/dxa-agent"]
-    direction TB
-    N1["bin/"]
-    N2["dist/cli.mjs — built at publish via prepack"]
-    N3["README.md"]
-  end
+  CLONE["Git clone<br/>entire tree"]
+  NPM["npm package<br/>bin/<br/>dist/cli.mjs<br/>README.md"]
 ```
 
-| Area | Path | Purpose |
-| --- | --- | --- |
-| Documentation | `docs/` | User guides ([index](docs/README.md), [checklist](docs/setup-checklist.md), [first run](docs/first-run.md), [troubleshooting](docs/troubleshooting.md)) |
-| Documentation | `ANDROID_INSTALL.md` | Build inside Termux / proot Ubuntu |
-| Terminal agent | `src/` | Core CLI and runtime (providers, tools, MCP, UI) |
-| Terminal agent | `bin/` | `dxa-agent` launcher (runs `dist/cli.mjs` when built) |
-| Terminal agent | `package.json` | Package metadata, npm scripts, published `files` list |
-| Build & checks | `scripts/` | Build pipeline, `doctor:*`, security scans, coverage helpers |
-| Editor add-on | `vscode-extension/dxa-agent-vscode/` | VS Code integration and theme |
-| Optional | `python/` | Optional Python utilities ([readme](python/README.md)) |
-| Repo / CI | `.github/` | [PR checks](.github/workflows/pr-checks.yml), `v*` [release artifacts](.github/workflows/release-artifacts.yml), Dependabot, issue/PR templates |
-| Repo / CI | `.env.example` | Provider env template; copy to `.env` for local development |
+### Paths
+
+#### Documentation
+
+- **`docs/`** — User guides: [index](docs/README.md), [checklist](docs/setup-checklist.md), [first run](docs/first-run.md), [troubleshooting](docs/troubleshooting.md)
+- **`ANDROID_INSTALL.md`** — Build inside Termux / proot Ubuntu
+- **`README.md`** — Project overview (also included in the npm tarball)
+
+#### Terminal agent
+
+- **`src/`** — Core CLI and runtime (providers, tools, MCP, UI)
+- **`bin/`** — `dxa-agent` launcher (runs `dist/cli.mjs` when built)
+- **`package.json`** — Metadata, scripts, and the published [`files`](package.json) list
+- **`tsconfig.json`** — TypeScript project for `src/`
+
+#### Build and checks
+
+- **`scripts/`** — Build pipeline, `doctor:*`, security scans, coverage helpers
+
+#### Editor add-on
+
+- **`vscode-extension/dxa-agent-vscode/`** — VS Code integration and terminal theme ([extension readme](vscode-extension/dxa-agent-vscode/README.md))
+
+#### Optional
+
+- **`python/`** — Optional utilities ([`python/README.md`](python/README.md)); not required for the CLI
+
+#### Repository / CI
+
+- **`.github/`** — [PR checks](.github/workflows/pr-checks.yml), `v*` [release artifacts](.github/workflows/release-artifacts.yml), Dependabot, issue/PR templates
+- **`.env.example`** — Provider env template; copy to `.env` for local development
 
 ## VS Code Extension
 
-The repo includes a VS Code extension in [`vscode-extension/dxa-agent-vscode`](vscode-extension/dxa-agent-vscode) for DXA Agent launch integration, provider-aware control-center UI, and theme support.
+Packaged as **Editor add-on** in [Repository structure](#repository-structure): [`vscode-extension/dxa-agent-vscode/`](vscode-extension/dxa-agent-vscode/) — launch integration, provider control-center UI, and terminal theme ([readme](vscode-extension/dxa-agent-vscode/README.md)).
 
 ## Security
 
