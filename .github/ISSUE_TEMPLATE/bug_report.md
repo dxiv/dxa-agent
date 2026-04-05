@@ -16,11 +16,11 @@ What broke, in one or two sentences?
 2.
 3.
 
-## Expected Behavior
+## Expected behaviour
 
 What should have happened?
 
-## Actual Behavior
+## Actual behaviour
 
 What happened instead?
 

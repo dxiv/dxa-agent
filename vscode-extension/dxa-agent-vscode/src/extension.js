@@ -854,11 +854,11 @@ function renderControlCenterHtml(status, options = {}) {
         </section>
       </header>
 
-      <section class="modules" aria-label="Control center details">
+      <section class="modules" aria-label="Control centre details">
         ${viewModel.detailSections.map(renderDetailSection).join('')}
       </section>
 
-      <section class="actions-layout" aria-label="Control center actions">
+      <section class="actions-layout" aria-label="Control centre actions">
         <section class="action-panel" aria-labelledby="actions-title">
           <h2 class="action-section-title" id="actions-title">Launch & Project</h2>
           ${renderActionButton(viewModel.actions.primary, 'primary')}
@@ -974,7 +974,7 @@ class DXA AgentControlCenterProvider {
   getErrorHtml(error) {
     const nonce = crypto.randomBytes(16).toString('base64');
     const message =
-      error instanceof Error ? error.message : 'Unknown Control Center error';
+      error instanceof Error ? error.message : 'Unknown Control Centre error';
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -1017,7 +1017,7 @@ class DXA AgentControlCenterProvider {
 </head>
 <body>
   <div class="panel">
-    <div class="title">Control Center Error</div>
+    <div class="title">Control Centre Error</div>
     <div class="message">${escapeHtml(message)}</div>
     <button id="refresh">Refresh</button>
   </div>

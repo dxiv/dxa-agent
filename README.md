@@ -131,7 +131,7 @@ Advanced / source build:
 
 ## Provider Notes
 
-DXA Agent supports multiple providers, but behavior is not identical across all of them.
+DXA Agent supports multiple providers, but behaviour is not identical across all of them.
 
 - Anthropic-specific features may not exist on other providers
 - Tool quality depends heavily on the selected model
@@ -142,7 +142,7 @@ For best results, use models with strong tool/function calling support.
 
 ## Agent Routing
 
-DXA Agent can route different agents to different models through settings-based routing. This is useful for cost optimization or splitting work by model strength.
+DXA Agent can route different agents to different models through settings-based routing. This is useful for cost optimisation or splitting work by model strength.
 
 Add to `~/.claude/settings.json`:
 
@@ -178,11 +178,11 @@ By default, `WebSearch` works on non-Anthropic models using DuckDuckGo. This giv
 
 > **Note:** DuckDuckGo fallback works by scraping search results and may be rate-limited, blocked, or subject to DuckDuckGo's Terms of Service. If you want a more reliable supported option, configure Firecrawl.
 
-For Anthropic-native backends and Codex responses, DXA Agent keeps the native provider web search behavior.
+For Anthropic-native backends and Codex responses, DXA Agent keeps the native provider web search behaviour.
 
 `WebFetch` works, but its basic HTTP plus HTML-to-markdown path can still fail on JavaScript-rendered sites or sites that block plain HTTP requests.
 
-Set a [Firecrawl](https://firecrawl.dev) API key if you want Firecrawl-powered search/fetch behavior:
+Set a [Firecrawl](https://firecrawl.dev) API key if you want Firecrawl-powered search/fetch behaviour:
 
 ```bash
 export FIRECRAWL_API_KEY=your-key-here
@@ -317,7 +317,7 @@ flowchart LR
 
 ## VS Code Extension
 
-Packaged as **Editor add-on** in [Repository structure](#repository-structure): [`vscode-extension/dxa-agent-vscode/`](vscode-extension/dxa-agent-vscode/) — launch integration, provider control-center UI, and terminal theme ([readme](vscode-extension/dxa-agent-vscode/README.md)).
+Packaged as **Editor add-on** in [Repository structure](#repository-structure): [`vscode-extension/dxa-agent-vscode/`](vscode-extension/dxa-agent-vscode/) — launch integration, provider Control Centre UI, and terminal theme ([readme](vscode-extension/dxa-agent-vscode/README.md)).
 
 ## Security
 
@@ -334,4 +334,4 @@ See **[CONTRIBUTING.md](CONTRIBUTING.md)** for clone → `bun install` → build
 
 ## Legal / trademarks
 
-**MIT** applies to material in this repository; dependencies have their own licenses. Third-party **names** appear only where **descriptive** (see [LEGAL.md](LEGAL.md)). Full license text: [LICENSE](LICENSE). *Not legal advice—consult counsel if you need a formal opinion.*
+**MIT** applies to material in this repository; dependencies have their own licences. Third-party **names** appear only where **descriptive** (see [LEGAL.md](LEGAL.md)). Full licence text: [LICENSE](LICENSE). *Not legal advice—consult a solicitor or other qualified legal adviser if you need a formal opinion.*

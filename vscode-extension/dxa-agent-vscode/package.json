@@ -1,7 +1,7 @@
 {
   "name": "dxa-agent-vscode",
   "displayName": "DXA Agent",
-  "description": "Practical VS Code companion for DXA Agent with project-aware launch behavior and a real Control Center.",
+  "description": "Practical VS Code companion for DXA Agent with project-aware launch behaviour and a real Control Centre.",
   "version": "0.1.1",
   "publisher": "devnull-bootloader",
   "engines": {
@@ -59,7 +59,7 @@
       },
       {
         "command": "dxa-agent.openControlCenter",
-        "title": "DXA Agent: Open Control Center",
+        "title": "DXA Agent: Open Control Centre",
         "category": "DXA Agent"
       }
     ],
@@ -76,7 +76,7 @@
       "dxa-agent": [
         {
           "id": "dxa-agent.controlCenter",
-          "name": "Control Center",
+          "name": "Control Centre",
           "type": "webview"
         }
       ]

@@ -1,6 +1,6 @@
 # Legal information — DXA Agent
 
-**This document is for transparency. It is not legal advice.** If you need advice for your situation (employer policy, country of use, redistribution), talk to a qualified attorney.
+**This document is for transparency. It is not legal advice.** If you need advice for your situation (employer policy, country of use, redistribution), talk to a solicitor or other qualified legal adviser.
 
 ---
 
@@ -10,7 +10,7 @@
 
 This project is **not** affiliated with, endorsed by, or sponsored by Anthropic, PBC, OpenAI, Google, GitHub, or any other model or platform vendor. Documentation may name third-party **products or APIs** only to explain configuration or interoperability (**descriptive use**—see §4).
 
-## 2. Copyright and your license to use this code
+## 2. Copyright and your licence to use this code
 
 The DXA Agent maintainers license **the source code and documentation in this repository** under the **MIT License**, unless a specific file states otherwise. The full text is in [LICENSE](LICENSE).
 
@@ -18,7 +18,7 @@ Subject to the MIT conditions, you may use, copy, modify, merge, publish, distri
 
 ## 3. Third-party software and services
 
-This project **depends on many other open source packages** (see `package.json`, `bun.lock`, and similar files). Each package remains under **its own license and copyright**. You are responsible for complying with those licenses when you build, ship, or redistribute combined works.
+This project **depends on many other open source packages** (see `package.json`, `bun.lock`, and similar files). Each package remains under **its own licence and copyright**. You are responsible for complying with those licences when you build, ship, or redistribute combined works.
 
 Optional integrations may call **public APIs** or use **SDKs** published by third parties. Those calls are subject to **those parties’ terms**, not to this repository’s maintainers.
 
@@ -26,7 +26,7 @@ Optional integrations may call **public APIs** or use **SDKs** published by thir
 
 Names such as **“Anthropic”**, **“Claude”**, **“Claude Code”**, **“OpenAI”**, **“Gemini”**, **“GitHub”**, and others are **trademarks** of their respective owners.
 
-Those names may appear in **documentation**, **configuration examples**, or **user-facing text** **only** where helpful to identify a **product**, **API**, or **setting** a user might already recognize. That is **descriptive (nominative) use**: it does **not** mean the trademark owner **built**, **runs**, or **endorses** DXA Agent, and it does **not** authorize use of their logos or trade dress as if they were ours.
+Those names may appear in **documentation**, **configuration examples**, or **user-facing text** **only** where helpful to identify a **product**, **API**, or **setting** a user might already recognise. That is **descriptive (nominative) use**: it does **not** mean the trademark owner **built**, **runs**, or **endorses** DXA Agent, and it does **not** authorize use of their logos or trade dress as if they were ours.
 
 **DXA Agent** is **our** project name.
 
@@ -48,7 +48,7 @@ We do **not** intend **false endorsement**, **trademark confusion**, or **bad-fa
 
 | Topic | Where to look |
 | --- | --- |
-| License for this repo’s code | [LICENSE](LICENSE) |
+| Licence for this repo’s code | [LICENSE](LICENSE) |
 | Maintainer-facing contribution norms | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Security reports | [SECURITY.md](SECURITY.md) |
 | Plain-language project intro | [README.md](README.md) |

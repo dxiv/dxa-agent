@@ -22,7 +22,7 @@ Creating these in the GitHub UI helps triage (names are suggestions):
 | `enhancement` | Feature or improvement |
 | `documentation` | Docs only |
 | `good first issue` | Small, scoped, newcomer-friendly |
-| `provider` | Provider / API behavior |
+| `provider` | Provider / API behaviour |
 | `windows` / `linux` / `macos` | Platform-specific |
 | `extension` | VS Code extension |
 

@@ -52,8 +52,8 @@ bun run dev:profile
 - Keep PRs focused on one problem or feature.
 - Avoid mixing unrelated cleanup into the same change.
 - Preserve existing repo patterns unless the change is intentionally refactoring them.
-- Add or update tests when the change affects behavior.
-- Update docs when setup, commands, or user-facing behavior changes.
+- Add or update tests when the change affects behaviour.
+- Update docs when setup, commands, or user-facing behaviour changes.
 
 **Commits:** short, human descriptions are preferred (what you changed and why), not corporate boilerplate—think “fixed bash path on windows” not “Address issue with shell resolution module.”
 
@@ -92,7 +92,7 @@ Good PRs usually include:
 
 If the PR touches UI, terminal presentation, or the VS Code extension, include screenshots when useful.
 
-If the PR changes provider behavior, mention which provider path was tested.
+If the PR changes provider behaviour, mention which provider path was tested.
 
 ## Code Style
 
@@ -106,13 +106,13 @@ If the PR changes provider behavior, mention which provider path was tested.
 DXA Agent supports multiple provider paths. If you change provider logic:
 
 - be explicit about which providers are affected
-- avoid breaking third-party providers while fixing first-party behavior
+- avoid breaking third-party providers while fixing first-party behaviour
 - test the exact provider/model path you changed when possible
 - call out any limitations or follow-up work in the PR description
 
 ## Good first issues
 
-Look for issues labeled **`good first issue`** (create the label in GitHub if it does not exist yet). Small doc fixes and focused tests are ideal starters.
+Look for issues labelled **`good first issue`** (create the label in GitHub if it does not exist yet). Small doc fixes and focused tests are ideal starters.
 
 ## Maintainer notes
 
@@ -127,6 +127,6 @@ Maintainers may ask for:
 - narrower scope
 - focused follow-up PRs
 - stronger validation
-- docs updates for behavior changes
+- docs updates for behaviour changes
 
 That is normal and helps keep the project reviewable as it grows.

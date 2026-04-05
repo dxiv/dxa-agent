@@ -183,9 +183,9 @@ test('renderControlCenterHtml restores landmark and heading semantics', () => {
   assert.match(html, /<main class="shell" aria-labelledby="control-center-title">/);
   assert.match(html, /<header class="hero">/);
   assert.match(html, /<h1 class="headline-title" id="control-center-title">/);
-  assert.match(html, /<section class="modules" aria-label="Control center details">/);
+  assert.match(html, /<section class="modules" aria-label="Control centre details">/);
   assert.match(html, /<h2 class="module-title" id="section-project">Project<\/h2>/);
-  assert.match(html, /<section class="actions-layout" aria-label="Control center actions">/);
+  assert.match(html, /<section class="actions-layout" aria-label="Control centre actions">/);
 });
 
 test('renderControlCenterHtml explains distinct launch targets when an active file directory is available', () => {
