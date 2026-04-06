@@ -2,6 +2,11 @@
 
 Changes for **[DXA Agent](https://github.com/dxiv/dxa-agent)** track the **`package.json`** version. **npm:** [@dxa-dev/agent](https://www.npmjs.com/package/@dxa-dev/agent).
 
+## 0.2.2
+
+- **`package.json`:** `repository` URL uses `https://github.com/dxiv/dxa-agent.git` (and `bugs`) so GitHub Packages can link the npm package to this repo.
+- **VS Code extension:** Version aligned with the CLI package (`0.2.2`).
+
 ## 0.2.1
 
 - GitHub Packages publish on `v*` tags; maintainer notes updated.
