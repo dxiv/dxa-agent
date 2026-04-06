@@ -1,13 +1,13 @@
 """
 ollama_provider.py
 ------------------
-Adds native Ollama support to dxa-agent.
-Lets Claude Code route requests to any locally-running Ollama model
-(llama3, mistral, codellama, phi3, qwen2, deepseek-coder, etc.)
-without needing an API key.
+Optional helper: talk to a local Ollama server from Python (Anthropic-shaped
+responses for experiments or sidecars). Not used by the main DXA Agent CLI.
 
-Usage (.env):
-    PREFERRED_PROVIDER=ollama
+Typical models: llama3, mistral, codellama, phi3, qwen2, deepseek-coder, etc.
+No API key required for local Ollama.
+
+Environment (see repo .env.example → “Python helpers”):
     OLLAMA_BASE_URL=http://localhost:11434
     BIG_MODEL=codellama:34b
     SMALL_MODEL=llama3:8b

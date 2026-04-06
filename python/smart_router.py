@@ -1,7 +1,7 @@
 """
 smart_router.py
 ---------------
-Intelligent auto-router for dxa-agent.
+Experimental multi-provider router for optional Python sidecars / experiments.
 
 Instead of always using one fixed provider, the smart router:
 - Pings all configured providers on startup
@@ -10,25 +10,27 @@ Instead of always using one fixed provider, the smart router:
 - Falls back automatically if a provider fails
 - Learns from real request timings over time
 
-Usage in server.py:
+Example:
     from smart_router import SmartRouter
     router = SmartRouter()
     await router.initialize()
-    result = await router.route(messages, model, stream)
+    result = await router.route(messages, claude_model="claude-sonnet")
 
-.env config:
-    ROUTER_MODE=smart          # or: fixed (default behaviour)
-    ROUTER_STRATEGY=latency    # or: cost, balanced
-    ROUTER_FALLBACK=true       # auto-retry on failure
+Environment (optional — see repo `.env.example`):
+    BIG_MODEL, SMALL_MODEL
+    OLLAMA_BASE_URL, ATOMIC_CHAT_BASE_URL
+    OPENAI_API_KEY, GEMINI_API_KEY (for cloud providers in the catalogue)
+    ROUTER_STRATEGY=balanced   # or: latency, cost
+    ROUTER_FALLBACK=true
 
-Contribution to: https://github.com/dxiv/dxa-agent
+Project: https://github.com/dxiv/dxa-agent
 """
 
 import asyncio
 import logging
 import os
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 import httpx
 
@@ -135,8 +137,8 @@ def build_default_providers() -> list[Provider]:
 
 class SmartRouter:
     """
-    Intelligently routes Claude Code API requests to the best
-    available LLM provider based on latency, cost, and health.
+    Intelligently routes API-style requests to the best available LLM provider
+    based on latency, cost, and health (optional Python tooling — not the main CLI).
     """
 
     def __init__(

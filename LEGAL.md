@@ -20,6 +20,8 @@ Subject to the MIT conditions, you may use, copy, modify, merge, publish, distri
 
 This project **depends on many other open source packages** (see `package.json`, `bun.lock`, and similar files). Each package remains under **its own licence and copyright**. You are responsible for complying with those licences when you build, ship, or redistribute combined works.
 
+The optional **`python/`** folder adds a separate, **optional** stack (for example **httpx**, **pytest**, and **pytest-asyncio** — see [`python/requirements.txt`](python/requirements.txt)). Nothing in `python/` is required to run the published CLI. If you install those dependencies, their licences apply in addition to the rest of the repo. Root [`pytest.ini`](pytest.ini) only configures running those Python tests.
+
 Optional integrations may call **public APIs** or use **SDKs** published by third parties. Those calls are subject to **those parties’ terms**, not to this repository’s maintainers.
 
 ## 4. Trademarks and naming
@@ -54,5 +56,7 @@ We do **not** intend **false endorsement**, **trademark confusion**, or **bad-fa
 | Plain-language project intro | [README.md](README.md) |
 | Maintainer release / labels notes | [docs/maintainers.md](docs/maintainers.md) |
 | End-user onboarding | [docs/first-run.md](docs/first-run.md), [docs/setup-checklist.md](docs/setup-checklist.md) |
+| Optional Python helpers (not the main CLI) | [python/README.md](python/README.md), [python/requirements.txt](python/requirements.txt) |
+| Environment variable examples | [.env.example](.env.example) |
 
 — dxiv / DXA Agent contributors

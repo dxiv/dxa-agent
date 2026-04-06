@@ -1,15 +1,12 @@
 """
 atomic_chat_provider.py
 -----------------------
-Adds native Atomic Chat support to dxa-agent.
-Lets Claude Code route requests to any locally-running model via
-Atomic Chat (Apple Silicon only) at 127.0.0.1:1337.
+Optional helper: local Atomic Chat (OpenAI-compatible `/v1` API), often on
+Apple Silicon at 127.0.0.1:1337. Not used by the main DXA Agent CLI.
 
-Atomic Chat exposes an OpenAI-compatible API, so messages are forwarded
-directly without translation.
+Messages are forwarded without translation (OpenAI chat-completions shape).
 
-Usage (.env):
-    PREFERRED_PROVIDER=atomic-chat
+Environment (see repo .env.example → “Python helpers”):
     ATOMIC_CHAT_BASE_URL=http://127.0.0.1:1337
 """
 

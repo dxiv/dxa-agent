@@ -9,3 +9,4 @@ dist/
 .dxa-agent-profile.json
 reports/
 coverage/
+.pytest_cache/
