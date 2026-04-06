@@ -56,7 +56,7 @@
     "@anthropic-ai/sandbox-runtime": "0.0.46",
     "@anthropic-ai/sdk": "0.82.0",
     "@anthropic-ai/vertex-sdk": "0.14.4",
-    "@commander-js/extra-typings": "12.1.0",
+    "@commander-js/extra-typings": "14.0.0",
     "@growthbook/growthbook": "1.6.5",
     "@mendable/firecrawl-js": "4.18.1",
     "@modelcontextprotocol/sdk": "1.29.0",
