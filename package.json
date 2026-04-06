@@ -1,6 +1,6 @@
 {
   "name": "@dxa-dev/agent",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "dxiv",
   "description": "Open source terminal coding agent by dxiv: multi-provider LLMs, tools, MCP, slash commands, VS Code extension. MIT.",
   "homepage": "https://www.npmjs.com/package/@dxa-dev/agent",
