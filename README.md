@@ -1,10 +1,16 @@
 # DXA Agent
 
-**DXA Agent** is an MIT-licensed terminal coding agent: one `dxa-agent` command, pluggable model backends (Anthropic Claude, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), tools, MCP, and slash commands. This repo ships the CLI plus a **VS Code extension** and a dark terminal theme.
+> **GitHub About:** **DXA Agent** is an MIT-licensed terminal coding agent: one `dxa-agent` command, pluggable model backends (Anthropic Claude, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), tools, MCP, and slash commands. This repo ships the CLI plus a **VS Code extension** and a dark terminal theme.
 
 **Legal:** not affiliated with Anthropic, PBC, or any other vendor. Trademarks, MIT terms, and how to raise concerns: **[LEGAL.md](LEGAL.md)** (general information only—not legal advice).
 
 **Upstream:** this repo is an independent distribution (**`@dxiv/dxa-agent`** on npm). Core CLI behaviour is periodically aligned with **[dxiv/dxa-agent](https://github.com/dxiv/dxa-agent)** (see [docs/maintainers.md](docs/maintainers.md) for how to sync `src/`). Docs, legal framing, CI, and packaging here are specific to this fork.
+
+**Status:** **Active** — full CLI, documentation, VS Code extension, and CI; this is not a placeholder stub.
+
+**What's here:** `bin/`, `dist/cli.mjs`, `src/`, `vscode-extension/`, `docs/`, optional `python/`, `.github/` workflows, and root policy files—see [Repository structure](#repository-structure) for paths.
+
+---
 
 [![PR Checks](https://github.com/dxiv/dxa-agent/actions/workflows/pr-checks.yml/badge.svg?branch=main)](https://github.com/dxiv/dxa-agent/actions/workflows/pr-checks.yml)
 [![Release](https://img.shields.io/github/v/tag/dxiv/dxa-agent?label=release&color=0ea5e9)](https://github.com/dxiv/dxa-agent/tags)
@@ -17,12 +23,16 @@
 **New to terminals or npm?** **[docs/non-technical-setup.md](docs/non-technical-setup.md)** → [Windows](docs/quick-start-windows.md) or [macOS / Linux](docs/quick-start-mac-linux.md) → **[checklist](docs/setup-checklist.md)** → **[first run](docs/first-run.md)**.
 **All docs:** [docs/README.md](docs/README.md).
 
+---
+
 ## Why use it
 
 - One CLI for cloud APIs and local inference
 - `/provider` for guided setup and a saved profile
 - Bash, file tools, grep/glob, agents, tasks, MCP, web helpers
 - Optional VS Code integration from this repo
+
+---
 
 ## Quick start
 
@@ -91,6 +101,8 @@ $env:OPENAI_MODEL="qwen2.5-coder:7b"
 dxa-agent
 ```
 
+---
+
 ## Setup guides
 
 **Index:** [docs/README.md](docs/README.md) · **Checklist:** [docs/setup-checklist.md](docs/setup-checklist.md) · **After install:** [docs/first-run.md](docs/first-run.md) · **Problems:** [docs/troubleshooting.md](docs/troubleshooting.md)
@@ -109,6 +121,8 @@ Advanced / source build:
 
 **Optional:** [`python/`](python/) — small Python helpers for experiments; not required for normal CLI install ([`python/README.md`](python/README.md)).
 
+---
+
 ## Supported providers
 
 | Provider | Setup Path | Notes |
@@ -122,6 +136,8 @@ Advanced / source build:
 | Atomic Chat | advanced setup | Local Apple Silicon backend |
 | Bedrock / Vertex / Foundry | env vars | Additional provider integrations for supported environments |
 
+---
+
 ## What works
 
 - **Tool-driven coding workflows**: Bash, file read/write/edit, grep, glob, agents, tasks, MCP, and slash commands
@@ -130,6 +146,8 @@ Advanced / source build:
 - **Images**: URL and base64 image inputs for providers that support vision
 - **Provider profiles**: Guided setup plus saved `.dxa-agent-profile.json` support
 - **Local and remote model backends**: Cloud APIs, local servers, and Apple Silicon local inference
+
+---
 
 ## Provider notes
 
@@ -141,6 +159,8 @@ DXA Agent supports multiple providers, but behaviour is not identical across all
 - Some providers impose lower output caps than the CLI defaults, and DXA Agent adapts where possible
 
 For best results, use models with strong tool/function calling support.
+
+---
 
 ## Agent routing
 
@@ -174,6 +194,8 @@ When no routing match is found, the global provider remains the fallback.
 
 `api_key` values in `settings.json` are plaintext. Don’t commit that file.
 
+---
+
 ## Web search and fetch
 
 By default, `WebSearch` works on non-Anthropic models using DuckDuckGo. This gives GPT-4o, DeepSeek, Gemini, Ollama, and other OpenAI-compatible providers a free web search path out of the box.
@@ -196,6 +218,8 @@ With Firecrawl enabled:
 - `WebFetch` uses Firecrawl's scrape endpoint instead of raw HTTP, handling JS-rendered pages correctly
 
 Free tier at [firecrawl.dev](https://firecrawl.dev) includes 500 credits. The key is optional.
+
+---
 
 ## Source build and local development
 
@@ -220,6 +244,8 @@ From a clone: create **`.env`** from [**`.env.example`**](.env.example), uncomme
 - focused `bun test ...` for the areas you touch
 
 **Tags:** pushing a `v*` tag runs [release artefacts](.github/workflows/release-artifacts.yml) (uploads `dist/cli.mjs` as a CI artefact). Maintainer checklist: [docs/maintainers.md](docs/maintainers.md).
+
+---
 
 ## Testing and coverage
 
@@ -250,6 +276,8 @@ Targeted runs:
 - `bun test path/to/file.test.ts`
 
 Before opening a PR, a sensible smoke pass is `bun run build`, `bun run smoke`, then either focused `bun test …` on what you touched or `bun run test:coverage` if you changed shared runtime or provider code.
+
+---
 
 ## Repository structure
 
@@ -339,23 +367,52 @@ flowchart LR
 - **`.env.example`** — Reference template in the repo; do not put secrets here.
 - **Root** — `CONTRIBUTING.md`, `CHANGELOG.md`, `LEGAL.md`, `LICENSE`, `SECURITY.md`
 
+---
+
 ## VS Code extension
 
 [`vscode-extension/dxa-agent-vscode/`](vscode-extension/dxa-agent-vscode/): launch the CLI from the editor, Control Centre in the activity bar, bundled terminal theme. [Extension readme](vscode-extension/dxa-agent-vscode/README.md).
 
+---
+
 ## Security
 
 If you believe you found a security issue, see [SECURITY.md](SECURITY.md).
+
+---
 
 ## Community
 
 - [Discussions](https://github.com/dxiv/dxa-agent/discussions) — questions, ideas, general chat
 - [Issues](https://github.com/dxiv/dxa-agent/issues) — bugs and concrete feature requests
 
+---
+
 ## Contributing
 
 **[CONTRIBUTING.md](CONTRIBUTING.md)** covers clone, `bun install`, build, and what CI expects. Big or ambiguous changes: open an issue before a huge PR.
 
+---
+
 ## Legal / trademarks
 
 **MIT** applies to material in this repository; dependencies have their own licences. Third-party **names** appear only where **descriptive** (see [LEGAL.md](LEGAL.md)). Full licence text: [LICENSE](LICENSE). *Not legal advice—consult a solicitor or other qualified legal adviser if you need a formal opinion.*
+
+---
+
+## Links
+
+| Resource | URL |
+| --- | --- |
+| **Language & site** | [dxa.dev](https://dxa.dev) (DEXA stack) |
+| **Compiler (Rust)** | [dxiv/dxa-compiler](https://github.com/dxiv/dxa-compiler) |
+| **WASM build (playground)** | [dxiv/dxa-wasm](https://github.com/dxiv/dxa-wasm) |
+| **This package (npm)** | [`@dxiv/dxa-agent`](https://www.npmjs.com/package/@dxiv/dxa-agent) |
+| **This repository** | [github.com/dxiv/dxa-agent](https://github.com/dxiv/dxa-agent) |
+| **Discussions** | [GitHub Discussions](https://github.com/dxiv/dxa-agent/discussions) |
+| **Issues** | [GitHub Issues](https://github.com/dxiv/dxa-agent/issues) |
+| **Security** | [SECURITY.md](SECURITY.md) |
+| **Legal / trademarks** | [LEGAL.md](LEGAL.md) |
+| **Contributing** | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| **Docs index** | [docs/README.md](docs/README.md) |
+| **License (MIT)** | [LICENSE](LICENSE) |

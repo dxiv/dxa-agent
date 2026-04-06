@@ -32,8 +32,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # Full-repo tsc is not clean yet; keep running for signal without blocking CI.
-      # See docs/maintainers.md — goal is to drive this to zero errors and remove continue-on-error.
+      # Non-blocking until the codebase is brought in line with strict tsc (see typecheck.log artifact on failure).
       - name: Typecheck
         id: typecheck
         continue-on-error: true

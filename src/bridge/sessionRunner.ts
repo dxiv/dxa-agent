@@ -44,7 +44,7 @@ const CHILD_ENV_ALLOWLIST = new Set([
 
 type BuildChildEnvOpts = {
   accessToken: string
-  useCcrV2: boolean
+  useCcrV2?: boolean
   workerEpoch?: number
   sandbox?: boolean
 }

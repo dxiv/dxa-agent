@@ -10,3 +10,6 @@ dist/
 reports/
 coverage/
 .pytest_cache/
+tsc-errors*.txt
+.tsc-errors.log
+tsc-out.txt

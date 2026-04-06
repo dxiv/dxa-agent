@@ -216,7 +216,7 @@ export async function initReplBridge(
     // falsely trip a buffered check; the still-valid token would connect fine.
     // Check actual expiry instead: past-expiry AND refresh-failed → truly dead.
     const tokens = getClaudeAIOAuthTokens()
-    if (tokens && tokens.expiresAt !== null && tokens.expiresAt <= Date.now()) {
+    if (tokens && tokens.expiresAt != null && tokens.expiresAt <= Date.now()) {
       logBridgeSkip(
         'oauth_expired_unrefreshable',
         '[bridge:repl] Skipping: OAuth token expired and refresh failed (re-login required)',
