@@ -67,6 +67,7 @@ Common checks:
 bun run typecheck
 bun run build
 bun run smoke
+bun test --max-concurrency=1
 ```
 
 Focused tests:
@@ -80,6 +81,18 @@ When working on provider/runtime setup, this can also help:
 ```bash
 bun run doctor:runtime
 ```
+
+## First PR checklist
+
+Use this when you want your branch to match what CI runs on GitHub:
+
+1. Branch from current **`main`** (or the branch the maintainer asked for).
+2. **`bun install`** — use **Bun**; do not add **`package-lock.json`** (this repo is Bun-first; the file is ignored).
+3. **`bun run build`** and **`bun run smoke`**.
+4. **`bun test --max-concurrency=1`** — same as the Linux job in [`.github/workflows/pr-checks.yml`](.github/workflows/pr-checks.yml).
+5. For larger or security-sensitive diffs: **`bun run security:pr-scan -- --base origin/main`** (adjust `--base` if your default branch differs).
+6. **`bun run typecheck`** — optional signal today (CI treats it as informational); fix new errors in files you touch when practical.
+7. Describe what you changed, why, and which commands you ran in the PR body.
 
 ## Pull Requests
 

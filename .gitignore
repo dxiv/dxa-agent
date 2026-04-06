@@ -1,4 +1,6 @@
 node_modules/
+# Bun is the supported package manager; avoid accidental npm lockfile commits.
+package-lock.json
 dist/
 *.tsbuildinfo
 .env

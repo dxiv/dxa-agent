@@ -31,7 +31,7 @@ test('extracts slug from ssh GitHub URLs', () => {
 
 test('rejects malformed or non-GitHub URLs', () => {
   assert.equal(extractGitHubRepoSlug('https://gitlab.com/dxiv/dxa-agent'), null)
-  assert.equal(extractGitHubRepoSlug('https://github.com/dxiv'), null)
+  assert.equal(extractGitHubRepoSlug('https://github.com/FakeOrg'), null)
   assert.equal(extractGitHubRepoSlug('not actually github.com/dxiv/dxa-agent'), null)
   assert.equal(
     extractGitHubRepoSlug('https://evil.example/?next=github.com/dxiv/dxa-agent'),

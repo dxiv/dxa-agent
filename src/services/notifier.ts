@@ -35,7 +35,7 @@ export async function sendNotification(
   })
 }
 
-const DEFAULT_TITLE = 'DXA Agent'
+const DEFAULT_TITLE = 'Open Claude'
 
 async function sendToChannel(
   channel: string,

@@ -75,7 +75,7 @@ export function AgentDetail(t0) {
     if (!agent.tools || agent.tools.length === 0) {
       return <Text>None</Text>;
     }
-    return <>{resolvedTools.validTools.length > 0 && <Text>{resolvedTools.validTools.join(", ")}</Text>}{resolvedTools.invalidTools.length > 0 && <Text color="warning">{figures.warning} Unrecognised:{" "}{resolvedTools.invalidTools.join(", ")}</Text>}</>;
+    return <>{resolvedTools.validTools.length > 0 && <Text>{resolvedTools.validTools.join(", ")}</Text>}{resolvedTools.invalidTools.length > 0 && <Text color="warning">{figures.warning} Unrecognized:{" "}{resolvedTools.invalidTools.join(", ")}</Text>}</>;
   };
   const T0 = Box;
   const t5 = "column";

@@ -108,10 +108,10 @@ function buildControlCenterViewModel(status = {}) {
 
   return {
     header: {
-      eyebrow: 'DXA Agent Control Centre',
+      eyebrow: 'DXA Agent Control Center',
       title: 'Project-aware DXA Agent companion',
       subtitle:
-        'Useful local status, predictable launch behaviour, and quick access to the workflows you actually use.',
+        'Useful local status, predictable launch behavior, and quick access to the workflows you actually use.',
     },
     headerBadges: [
       {

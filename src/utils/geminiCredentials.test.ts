@@ -27,6 +27,7 @@ async function importFreshModule() {
 
 beforeEach(() => {
   process.env = { ...originalEnv }
+  delete process.env.CLAUDE_CODE_SIMPLE
   storageState = {}
 })
 

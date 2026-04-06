@@ -154,7 +154,7 @@ export function formatZodError(
       }
     } else if (isUnrecognizedKeysIssue(issue)) {
       const keys = issue.keys.join(', ')
-      message = `Unrecognised ${plural(issue.keys.length, 'field')}: ${keys}`
+      message = `Unrecognized ${plural(issue.keys.length, 'field')}: ${keys}`
     } else if (isTooSmallIssue(issue)) {
       message = `Number must be greater than or equal to ${issue.minimum}`
       expected = String(issue.minimum)

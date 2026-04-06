@@ -33,9 +33,20 @@ jobs:
         run: bun install --frozen-lockfile
 
       # Full-repo tsc is not clean yet; keep running for signal without blocking CI.
+      # See docs/maintainers.md — goal is to drive this to zero errors and remove continue-on-error.
       - name: Typecheck
+        id: typecheck
         continue-on-error: true
-        run: bun run typecheck
+        run: |
+          set -o pipefail
+          bun run typecheck 2>&1 | tee typecheck.log
+
+      - name: Upload typecheck log
+        if: always() && steps.typecheck.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: typecheck-log
+          path: typecheck.log
 
       - name: Smoke check
         run: bun run smoke
@@ -50,6 +61,45 @@ jobs:
 
       - name: Provider recommendation tests
         run: bun run test:provider-recommendation
+
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+        with:
+          bun-version: 1.3.11
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Unit tests with coverage
+        run: bun run test:coverage
+
+      - name: Upload lcov artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
+          use_oidc: true
 
   windows-smoke:
     runs-on: windows-latest

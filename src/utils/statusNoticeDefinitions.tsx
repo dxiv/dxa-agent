@@ -119,7 +119,7 @@ const bothAuthMethodsNotice: StatusNoticeDefinition = {
           <Text color="warning">{figures.warning}</Text>
           <Text color="warning">
             Auth conflict: Both a token ({authTokenInfo.source}) and an API key
-            ({apiKeySource}) are set. This may lead to unexpected behaviour.
+            ({apiKeySource}) are set. This may lead to unexpected behavior.
           </Text>
         </Box>
         <Box flexDirection="column" marginLeft={3}>
