@@ -1,4 +1,4 @@
-# DXA Agent
+# dxa-agent
 
 > **GitHub About:** **DXA Agent** is an MIT-licensed terminal coding agent: one `dxa-agent` command, pluggable model backends (Anthropic Claude, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), tools, MCP, and slash commands. This repo ships the CLI plus a **VS Code extension** and a dark terminal theme.
 
