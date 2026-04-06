@@ -10,8 +10,10 @@
 
 ### Option A: npm
 
+Package page: [**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent).
+
 ```bash
-npm install -g @dxiv/dxa-agent
+npm install -g @dxa-agent/dxa-agent
 ```
 
 ### Option B: From source with Bun

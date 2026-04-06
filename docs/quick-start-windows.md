@@ -4,7 +4,7 @@
 
 **You will:** install Node (if needed), install DXA Agent with npm, set three environment variables for your chosen AI provider, then run `dxa-agent`.
 
-**Other paths:** [Non-technical walkthrough](non-technical-setup.md) · [macOS / Linux](quick-start-mac-linux.md) · [Advanced / source build](advanced-setup.md) · [Troubleshooting](troubleshooting.md)
+**Other paths:** [Non-technical walkthrough](non-technical-setup.md) · [macOS / Linux](quick-start-mac-linux.md) · [Advanced / source build](advanced-setup.md) · [Troubleshooting](troubleshooting.md) · [npm package](https://www.npmjs.com/package/@dxa-agent/dxa-agent)
 
 ---
 
@@ -26,7 +26,7 @@
 ## Install DXA Agent
 
 ```powershell
-npm install -g @dxiv/dxa-agent
+npm install -g @dxa-agent/dxa-agent
 ```
 
 If `dxa-agent` is not found afterward, **close PowerShell completely**, open a new window, and try `dxa-agent` again. If it still fails, see [Troubleshooting](troubleshooting.md).
@@ -138,11 +138,11 @@ Open a **new** PowerShell after this. **Warning:** your API key is stored in Win
 ## Update or remove
 
 ```powershell
-npm install -g @dxiv/dxa-agent@latest
+npm install -g @dxa-agent/dxa-agent@latest
 ```
 
 ```powershell
-npm uninstall -g @dxiv/dxa-agent
+npm uninstall -g @dxa-agent/dxa-agent
 ```
 
 ---

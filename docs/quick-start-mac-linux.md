@@ -4,7 +4,7 @@
 
 **You will:** install Node (if needed), install DXA Agent with npm, `export` three environment variables for your AI provider, then run `dxa-agent`.
 
-**Other paths:** [Non-technical walkthrough](non-technical-setup.md) · [Windows](quick-start-windows.md) · [Advanced / source build](advanced-setup.md) · [Troubleshooting](troubleshooting.md)
+**Other paths:** [Non-technical walkthrough](non-technical-setup.md) · [Windows](quick-start-windows.md) · [Advanced / source build](advanced-setup.md) · [Troubleshooting](troubleshooting.md) · [npm package](https://www.npmjs.com/package/@dxa-agent/dxa-agent)
 
 ---
 
@@ -31,13 +31,13 @@
 ## Install DXA Agent
 
 ```bash
-npm install -g @dxiv/dxa-agent
+npm install -g @dxa-agent/dxa-agent
 ```
 
 If you see `EACCES` / permission errors, either:
 
 - use a Node version manager ([nvm](https://github.com/nvm-sh/nvm), [fnm](https://github.com/Schniz/fnm), etc.), **or**
-- run with `sudo npm install -g @dxiv/dxa-agent` (less ideal but common on first setup).
+- run with `sudo npm install -g @dxa-agent/dxa-agent` (less ideal but common on first setup).
 
 If `dxa-agent` is not found, close the terminal, open a new one, and try again. Check `npm bin -g` is on your `PATH` (`echo $PATH`).
 
@@ -149,11 +149,11 @@ Then run `source ~/.zshrc` or open a new tab.
 ## Update or remove
 
 ```bash
-npm install -g @dxiv/dxa-agent@latest
+npm install -g @dxa-agent/dxa-agent@latest
 ```
 
 ```bash
-npm uninstall -g @dxiv/dxa-agent
+npm uninstall -g @dxa-agent/dxa-agent
 ```
 
 ---

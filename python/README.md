@@ -1,6 +1,6 @@
 # Python utilities (optional)
 
-These modules are **not** required to install or run the main **DXA Agent** CLI (`npm install -g @dxiv/dxa-agent` or a normal `bun` source build).
+These modules are **not** required to install or run the main **DXA Agent** CLI ([**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent): `npm install -g @dxa-agent/dxa-agent`, or a normal `bun` source build).
 
 They are **optional helpers** for experimenting with OpenAI-compatible routing (for example Atomic Chat, Ollama) outside the TypeScript entrypoints. Use them if you are building a small sidecar or testing provider behaviour.
 
