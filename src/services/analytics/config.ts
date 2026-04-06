@@ -17,7 +17,7 @@ import { isTelemetryDisabled } from '../../utils/privacyLevel.js'
  * - Privacy level is no-telemetry or essential-traffic
  */
 export function isAnalyticsDisabled(): boolean {
-  // OpenClaude does not send product telemetry.
+  // Open Claude does not send product telemetry.
   return true
 }
 

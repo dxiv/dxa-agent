@@ -108,10 +108,10 @@ function buildControlCenterViewModel(status = {}) {
 
   return {
     header: {
-      eyebrow: 'OpenClaude Control Centre',
+      eyebrow: 'OpenClaude Control Center',
       title: 'Project-aware OpenClaude companion',
       subtitle:
-        'Useful local status, predictable launch behaviour, and quick access to the workflows you actually use.',
+        'Useful local status, predictable launch behavior, and quick access to the workflows you actually use.',
     },
     headerBadges: [
       {

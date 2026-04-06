@@ -53,7 +53,7 @@ export function extractConversationText(messages: Message[]): string {
     : text
 }
 
-const SESSION_TITLE_PROMPT = `Generate a concise, sentence-case title (3-7 words) that captures the main topic or goal of this coding session. The title should be clear enough that the user recognises the session in a list. Use sentence case: capitalize only the first word and proper nouns.
+const SESSION_TITLE_PROMPT = `Generate a concise, sentence-case title (3-7 words) that captures the main topic or goal of this coding session. The title should be clear enough that the user recognizes the session in a list. Use sentence case: capitalize only the first word and proper nouns.
 
 Return JSON with a single "title" field.
 
@@ -127,7 +127,7 @@ export async function generateSessionTitle(
 
     // Fallback: When using 3P providers without a compatible schema,
     // default to the application name.
-    return 'OpenClaude'
+    return 'Open Claude'
   }
 }
 

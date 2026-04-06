@@ -13,6 +13,8 @@ Security fixes target the latest **`main`** branch and the latest **`@dxiv/openc
 Security fixes are generally released in the next patch version and may also be
 landed directly on `main` before a package release is published.
 
+Static analysis (**CodeQL Advanced**) runs on **`main`**, pull requests, and a weekly schedule, scanning **GitHub Actions**, **JavaScript/TypeScript**, and **Python** (see [`.github/workflows/codeql.yml`](.github/workflows/codeql.yml)). It complements manual review and dependency updates; it is not a substitute for responsible disclosure.
+
 ## Reporting a Vulnerability
 
 If you believe you have found a security vulnerability in OpenClaude, please

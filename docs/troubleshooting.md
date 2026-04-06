@@ -47,6 +47,18 @@ If the CLI says it cannot find bash, install [Git for Windows](https://git-scm.c
 - Run `bun install --frozen-lockfile` from the repo root.
 - On Windows, prefer a normal path without odd permissions (avoid syncing-only folders if builds fail mysteriously).
 
+## After merging or syncing `src/` from upstream
+
+If you pull a large update to `src/` (for example from [Gitlawb/openclaude](https://github.com/Gitlawb/openclaude)):
+
+1. **`git fetch upstream`** (or your remote name) and merge or cherry-pick as you prefer.
+2. From the repo root: **`bun install`** (or `bun install --frozen-lockfile` in CI) so `node_modules` matches **`bun.lock`**.
+3. **`bun run build`** — stale **`dist/cli.mjs`** will not reflect new TypeScript until you rebuild.
+4. **`bun test --max-concurrency=1`** — same flags as PR CI; catches env-sensitive tests.
+5. If something still looks wrong, remove **`dist/`** and rebuild once (generated output only).
+
+Reconcile **branding** after syncing: root **`package.json`**, **`scripts/build.ts`** (`MACRO.*` strings), **`bin/openclaude`**, and **`vscode-extension/openclaude-vscode/README.md`** (install line should stay **`@dxiv/openclaude`** for this fork).
+
 ## `dist/cli.mjs` not found
 
 Run `bun run build` from the repository root, or use `bun run dev` for development. The `openclaude` shim in `bin/` only runs a **built** `dist/cli.mjs`.

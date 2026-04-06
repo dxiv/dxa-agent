@@ -4,6 +4,8 @@
 
 **Legal:** not affiliated with Anthropic, PBC, or any other vendor. Trademarks, MIT terms, and how to raise concerns: **[LEGAL.md](LEGAL.md)** (general information only—not legal advice).
 
+**Upstream:** this repo is an independent distribution (**`@dxiv/openclaude`** on npm). Core CLI behaviour is periodically aligned with **[Gitlawb/openclaude](https://github.com/Gitlawb/openclaude)** (see [docs/maintainers.md](docs/maintainers.md) for how to sync `src/`). Docs, legal framing, CI, and packaging here are specific to this fork.
+
 [![PR Checks](https://github.com/dxiv/OpenClaude/actions/workflows/pr-checks.yml/badge.svg?branch=main)](https://github.com/dxiv/OpenClaude/actions/workflows/pr-checks.yml)
 [![Release](https://img.shields.io/github/v/tag/dxiv/OpenClaude?label=release&color=0ea5e9)](https://github.com/dxiv/OpenClaude/tags)
 [![Discussions](https://img.shields.io/badge/discussions-open-7c3aed)](https://github.com/dxiv/OpenClaude/discussions)

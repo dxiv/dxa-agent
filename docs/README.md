@@ -11,6 +11,7 @@ Pick a path by **experience** and **goal**:
 | OpenClaude is running | What to type first (`/help`, `/provider`, …) | [First run](first-run.md) |
 | A developer | Clone repo, Bun, `doctor:*`, profiles | [Advanced setup](advanced-setup.md) |
 | Stuck | Errors, PATH, ripgrep, keys, Ollama | [Troubleshooting](troubleshooting.md) |
+| Maintaining this fork | Upstream sync, releases, Dependabot, CI | [Maintainers](maintainers.md) |
 | On **Android** | Termux + proot build | [Android (Termux)](../ANDROID_INSTALL.md) |
 | Experimenting with Python | Optional `python/` helpers | [Python README](../python/README.md) |
 

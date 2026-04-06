@@ -221,7 +221,7 @@ export function restoreAgentFromSession(
   )
   if (!resumedAgent) {
     logForDebugging(
-      `Resumed session had agent "${agentSetting}" but it is no longer available. Using default behaviour.`,
+      `Resumed session had agent "${agentSetting}" but it is no longer available. Using default behavior.`,
     )
     setMainThreadAgentType(undefined)
     return { agentDefinition: undefined, agentType: undefined }

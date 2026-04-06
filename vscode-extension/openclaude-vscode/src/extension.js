@@ -13,8 +13,8 @@ const {
 } = require('./state');
 const { buildControlCenterViewModel } = require('./presentation');
 
-const OPENCLAUDE_REPO_URL = 'https://github.com/dxiv/OpenClaude';
-const OPENCLAUDE_SETUP_URL = 'https://github.com/dxiv/OpenClaude/blob/main/README.md#quick-start';
+const OPENCLAUDE_REPO_URL = 'https://github.com/Gitlawb/openclaude';
+const OPENCLAUDE_SETUP_URL = 'https://github.com/Gitlawb/openclaude/blob/main/README.md#quick-start';
 const PROFILE_FILE_NAME = '.openclaude-profile.json';
 
 function escapeHtml(value) {
@@ -854,11 +854,11 @@ function renderControlCenterHtml(status, options = {}) {
         </section>
       </header>
 
-      <section class="modules" aria-label="Control centre details">
+      <section class="modules" aria-label="Control center details">
         ${viewModel.detailSections.map(renderDetailSection).join('')}
       </section>
 
-      <section class="actions-layout" aria-label="Control centre actions">
+      <section class="actions-layout" aria-label="Control center actions">
         <section class="action-panel" aria-labelledby="actions-title">
           <h2 class="action-section-title" id="actions-title">Launch & Project</h2>
           ${renderActionButton(viewModel.actions.primary, 'primary')}
@@ -974,7 +974,7 @@ class OpenClaudeControlCenterProvider {
   getErrorHtml(error) {
     const nonce = crypto.randomBytes(16).toString('base64');
     const message =
-      error instanceof Error ? error.message : 'Unknown Control Centre error';
+      error instanceof Error ? error.message : 'Unknown Control Center error';
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -1017,7 +1017,7 @@ class OpenClaudeControlCenterProvider {
 </head>
 <body>
   <div class="panel">
-    <div class="title">Control Centre Error</div>
+    <div class="title">Control Center Error</div>
     <div class="message">${escapeHtml(message)}</div>
     <button id="refresh">Refresh</button>
   </div>
