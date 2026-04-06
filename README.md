@@ -4,7 +4,7 @@
 
 **Legal:** not affiliated with Anthropic, PBC, or any other vendor. Trademarks, MIT terms, and how to raise concerns: **[LEGAL.md](LEGAL.md)** (general information only—not legal advice).
 
-**Upstream:** this repo is an independent distribution (**[`@dxa-agent/dxa-agent`](https://www.npmjs.com/package/@dxa-agent/dxa-agent)** on npm). Core CLI behaviour is periodically aligned with **[dxiv/dxa-agent](https://github.com/dxiv/dxa-agent)** (see [docs/maintainers.md](docs/maintainers.md) for how to sync `src/`). Docs, legal framing, CI, and packaging here are specific to this fork.
+**Upstream:** this repo is an independent distribution (**[`@dxa-dev/agent`](https://www.npmjs.com/package/@dxa-dev/agent)** on npm). Core CLI behaviour is periodically aligned with **[dxiv/dxa-agent](https://github.com/dxiv/dxa-agent)** (see [docs/maintainers.md](docs/maintainers.md) for how to sync `src/`). Docs, legal framing, CI, and packaging here are specific to this fork.
 
 **Status:** **Active** — full CLI, documentation, VS Code extension, and CI; this is not a placeholder stub.
 
@@ -17,7 +17,7 @@
 [![Discussions](https://img.shields.io/badge/discussions-open-7c3aed)](https://github.com/dxiv/dxa-agent/discussions)
 [![Security Policy](https://img.shields.io/badge/security-policy-0f766e)](SECURITY.md)
 [![License](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
-[![npm](https://img.shields.io/npm/v/@dxa-agent/dxa-agent?label=npm&color=cb3837)](https://www.npmjs.com/package/@dxa-agent/dxa-agent)
+[![npm](https://img.shields.io/npm/v/@dxa-dev/agent?label=npm&color=cb3837)](https://www.npmjs.com/package/@dxa-dev/agent)
 
 [Quick start](#quick-start) · [Setup](#setup-guides) · [Providers](#supported-providers) · [Source build](#source-build-and-local-development) · [Repo layout](#repository-structure) · [VS Code](#vs-code-extension) · [Contributing](#contributing) · [Security](#security) · [Community](#community)
 
@@ -41,12 +41,12 @@ You need **Node.js 20+** and a terminal. If that’s new territory, use **[docs/
 
 ### Install
 
-**npm:** [@dxa-agent/dxa-agent](https://www.npmjs.com/package/@dxa-agent/dxa-agent)
+**npm:** [@dxa-dev/agent](https://www.npmjs.com/package/@dxa-dev/agent)
 
 Use **npm** to install the published CLI. **[GitHub](https://github.com/dxiv/dxa-agent)** is for source code, issues, and discussions—not a separate “installer” download.
 
 ```bash
-npm install -g @dxa-agent/dxa-agent
+npm install -g @dxa-dev/agent
 ```
 
 Install **[ripgrep](https://github.com/BurntSushi/ripgrep)** and ensure `rg` is on your `PATH`. If the CLI prints `ripgrep not found`, fix `PATH`, then open a **new** terminal window — [Troubleshooting](docs/troubleshooting.md) has more detail.
@@ -323,7 +323,7 @@ flowchart TB
 
 **Clone vs npm install**
 
-A full **git clone** matches the chart. **`npm install -g @dxa-agent/dxa-agent`** ([npm package](https://www.npmjs.com/package/@dxa-agent/dxa-agent)) only unpacks what `package.json` lists under `"files"` — right now `bin/`, `dist/cli.mjs`, and `README.md`.
+A full **git clone** matches the chart. **`npm install -g @dxa-dev/agent`** ([npm package](https://www.npmjs.com/package/@dxa-dev/agent)) only unpacks what `package.json` lists under `"files"` — right now `bin/`, `dist/cli.mjs`, and `README.md`.
 
 ```mermaid
 flowchart LR
@@ -412,7 +412,7 @@ If you believe you found a security issue, see [SECURITY.md](SECURITY.md).
 | **Language & site** | [dxa.dev](https://dxa.dev) (DEXA stack) |
 | **Compiler (Rust)** | [dxiv/dxa-compiler](https://github.com/dxiv/dxa-compiler) |
 | **WASM build (playground)** | [dxiv/dxa-wasm](https://github.com/dxiv/dxa-wasm) |
-| **This package (npm)** | [`@dxa-agent/dxa-agent`](https://www.npmjs.com/package/@dxa-agent/dxa-agent) |
+| **This package (npm)** | [`@dxa-dev/agent`](https://www.npmjs.com/package/@dxa-dev/agent) |
 | **This repository** | [github.com/dxiv/dxa-agent](https://github.com/dxiv/dxa-agent) |
 | **Discussions** | [GitHub Discussions](https://github.com/dxiv/dxa-agent/discussions) |
 | **Issues** | [GitHub Issues](https://github.com/dxiv/dxa-agent/issues) |

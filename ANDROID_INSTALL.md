@@ -2,7 +2,7 @@
 
 Run DXA Agent on Android with **Termux** + **proot-distro** (Ubuntu). **Bun** is used to build the CLI; Bun’s Linux build runs inside Ubuntu, not on bare Termux.
 
-**Desktop / npm:** the published CLI is [**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent) — use that path on Windows, macOS, or Linux instead of this Android build when you can.
+**Desktop / npm:** the published CLI is [**`@dxa-dev/agent`**](https://www.npmjs.com/package/@dxa-dev/agent) — use that path on Windows, macOS, or Linux instead of this Android build when you can.
 
 **Legal note:** third-party apps (Termux, OpenRouter, model hosts) have their own terms—this guide only describes one way to build and run this repo.
 

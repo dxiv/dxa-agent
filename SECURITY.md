@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes target the latest **`main`** branch and the latest [**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent) npm release.
+Security fixes target the latest **`main`** branch and the latest [**`@dxa-dev/agent`**](https://www.npmjs.com/package/@dxa-dev/agent) npm release.
 
 | Version | Supported |
 | ------- | --------- |
@@ -61,7 +61,7 @@ This policy applies to:
 
 - the DXA Agent source code in this repository
 - official release artifacts published from this repository
-- the [`@dxa-agent/dxa-agent`](https://www.npmjs.com/package/@dxa-agent/dxa-agent) npm package
+- the [`@dxa-dev/agent`](https://www.npmjs.com/package/@dxa-dev/agent) npm package
 
 This policy does not cover:
 
