@@ -121,7 +121,7 @@
     "cli",
     "llm"
   ],
-  "homepage": "https://www.npmjs.com/package/@dxa-agent/dxa-agent",
+  "homepage": "https://www.npmjs.com/package/@dxa-dev/agent",
   "repository": {
     "type": "git",
     "url": "https://github.com/dxiv/dxa-agent"

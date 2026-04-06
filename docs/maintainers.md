@@ -2,7 +2,7 @@
 
 ## Aligning `src/` with [dxiv/dxa-agent](https://github.com/dxiv/dxa-agent)
 
-This fork keeps its own history, docs, npm package ([**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent)), and CI. Runtime code under **`src/`** can be refreshed from upstream when you want feature parity.
+This fork keeps its own history, docs, npm package ([**`@dxa-dev/agent`**](https://www.npmjs.com/package/@dxa-dev/agent)), and CI. Runtime code under **`src/`** can be refreshed from upstream when you want feature parity.
 
 1. Add the remote once: `git remote add upstream https://github.com/dxiv/dxa-agent.git` (skip if it already exists).
 2. `git fetch upstream main`
@@ -11,7 +11,7 @@ This fork keeps its own history, docs, npm package ([**`@dxa-agent/dxa-agent`**]
    - **Whole tree:** `git checkout upstream/main -- src/`
    - **Single file:** `git checkout upstream/main -- path/to/file.ts`
 5. **`bun install`** then **`bun run build`**, **`bun test --max-concurrency=1`**, **`bun run smoke`**.
-6. Re-apply fork-specific bits if needed: root **`package.json`** name, **`scripts/build.ts`** `MACRO.ISSUES_EXPLAINER` / `MACRO.PACKAGE_URL`, **`bin/dxa-agent.mjs`**, **`vscode-extension/dxa-agent-vscode/README.md`** (`@dxa-agent/dxa-agent`), and any docs you do not want overwritten.
+6. Re-apply fork-specific bits if needed: root **`package.json`** name, **`scripts/build.ts`** `MACRO.ISSUES_EXPLAINER` / `MACRO.PACKAGE_URL`, **`bin/dxa-agent.mjs`**, **`vscode-extension/dxa-agent-vscode/README.md`** (`@dxa-dev/agent`), and any docs you do not want overwritten.
 
 See also [Troubleshooting → After merging or syncing `src/`](troubleshooting.md#after-merging-or-syncing-src-from-upstream).
 
@@ -50,7 +50,7 @@ Development and CI use **Bun** and **`bun.lock`**. **`package-lock.json`** is gi
 2. Update **[CHANGELOG.md](../CHANGELOG.md)** with a dated bullet list for that version.
 3. Commit and push; tag: `git tag v0.x.y && git push origin v0.x.y`.
 4. **GitHub Actions** builds **`dist/cli.mjs`** for each `v*` tag and uploads it as a workflow artifact (see `.github/workflows/release-artifacts.yml`). Download from the run’s **Artifacts** if you need the bundle without publishing npm.
-5. Publish [**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent) to npm when ready (`npm publish` from a clean tree after `bun run build` / `prepack` — use your own npm org credentials).
+5. Publish [**`@dxa-dev/agent`**](https://www.npmjs.com/package/@dxa-dev/agent) to npm when ready (`npm publish` from a clean tree after `bun run build` / `prepack` — use your own npm org credentials).
 
 ## Suggested issue labels
 

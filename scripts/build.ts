@@ -62,7 +62,7 @@ const result = await Bun.build({
     'MACRO.BUILD_TIME': JSON.stringify(new Date().toISOString()),
     'MACRO.ISSUES_EXPLAINER':
       JSON.stringify('report the issue at https://github.com/dxiv/dxa-agent/issues'),
-    'MACRO.PACKAGE_URL': JSON.stringify('@dxa-agent/dxa-agent'),
+    'MACRO.PACKAGE_URL': JSON.stringify('@dxa-dev/agent'),
     'MACRO.NATIVE_PACKAGE_URL': 'undefined',
   },
   plugins: [

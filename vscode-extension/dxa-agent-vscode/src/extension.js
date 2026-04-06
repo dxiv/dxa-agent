@@ -288,7 +288,7 @@ async function launchDxaAgent(options = {}) {
 
   if (!installed) {
     const action = await vscode.window.showErrorMessage(
-      `DXA Agent command not found: ${executable}. Install: https://www.npmjs.com/package/@dxa-agent/dxa-agent (npm install -g @dxa-agent/dxa-agent)`,
+      `DXA Agent command not found: ${executable}. Install: https://www.npmjs.com/package/@dxa-dev/agent (npm install -g @dxa-dev/agent)`,
       'Open Setup Guide',
       'Open Repository',
     );
