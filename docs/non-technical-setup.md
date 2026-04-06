@@ -49,15 +49,17 @@ You should see a version number. If either command fails, reinstall Node from [n
 
 ## 4. Install DXA Agent (one command)
 
+Published package: [**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent) on npm.
+
 In the same terminal:
 
 ```text
-npm install -g @dxiv/dxa-agent
+npm install -g @dxa-agent/dxa-agent
 ```
 
 Wait until it finishes. This downloads the DXA Agent command-line tool onto your machine.
 
-**If you see permission errors:** on Mac/Linux you may need `sudo npm install -g @dxiv/dxa-agent` (you will be prompted for your password). On Windows, run PowerShell **as Administrator** once, or fix npm’s global folder using [npm’s permission docs](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally).
+**If you see permission errors:** on Mac/Linux you may need `sudo npm install -g @dxa-agent/dxa-agent` (you will be prompted for your password). On Windows, run PowerShell **as Administrator** once, or fix npm’s global folder using [npm’s permission docs](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally).
 
 ---
 

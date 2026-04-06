@@ -24,4 +24,4 @@ Pick a path by **experience** and **goal**:
 
 ---
 
-**Project:** [README.md](../README.md) · **Contribute:** [CONTRIBUTING.md](../CONTRIBUTING.md) · **Maintainers:** [maintainers.md](maintainers.md) · **Legal:** [LEGAL.md](../LEGAL.md) · **Security:** [SECURITY.md](../SECURITY.md)
+**Project:** [README.md](../README.md) · **npm:** [@dxa-agent/dxa-agent](https://www.npmjs.com/package/@dxa-agent/dxa-agent) · **Contribute:** [CONTRIBUTING.md](../CONTRIBUTING.md) · **Maintainers:** [maintainers.md](maintainers.md) · **Legal:** [LEGAL.md](../LEGAL.md) · **Security:** [SECURITY.md](../SECURITY.md)

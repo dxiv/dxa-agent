@@ -2,7 +2,7 @@
 
 You already ran `dxa-agent` from a terminal and see the **interactive UI**. This page explains what to do next, in plain language.
 
-**Not installed yet?** Use [Non-technical setup](non-technical-setup.md) or [Windows](quick-start-windows.md) / [macOS / Linux](quick-start-mac-linux.md) first.
+**Not installed yet?** Install from npm: [**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent), or use [Non-technical setup](non-technical-setup.md) or [Windows](quick-start-windows.md) / [macOS / Linux](quick-start-mac-linux.md) first.
 
 ---
 

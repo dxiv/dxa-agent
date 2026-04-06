@@ -2,6 +2,8 @@
 
 ## `dxa-agent` command not found after `npm install -g`
 
+Published package: [**`@dxa-agent/dxa-agent`**](https://www.npmjs.com/package/@dxa-agent/dxa-agent).
+
 1. **Close the terminal completely** and open a new one — global npm bins are often picked up only in new sessions.
 2. **Check npm’s global bin directory** is on your `PATH`:
    - Run `npm prefix -g` — on many systems the binary is under `<that path>/bin` (Mac/Linux) or `<that path>` (some Windows setups).
@@ -10,7 +12,7 @@
 4. **Fallback without fixing PATH (temporary):**
 
    ```bash
-   npx --yes @dxiv/dxa-agent@latest
+   npx --yes @dxa-agent/dxa-agent@latest
    ```
 
    (Still set your provider env vars in the same shell first.) This is slower than a global install but confirms the package works.
@@ -57,7 +59,7 @@ If you pull a large update to `src/` (for example from [dxiv/dxa-agent](https://
 4. **`bun test --max-concurrency=1`** — same flags as PR CI; catches env-sensitive tests.
 5. If something still looks wrong, remove **`dist/`** and rebuild once (generated output only).
 
-Reconcile **branding** after syncing: root **`package.json`**, **`scripts/build.ts`** (`MACRO.*` strings), **`bin/dxa-agent`**, and **`vscode-extension/dxa-agent-vscode/README.md`** (install line should stay **`@dxiv/dxa-agent`** for this fork).
+Reconcile **branding** after syncing: root **`package.json`**, **`scripts/build.ts`** (`MACRO.*` strings), **`bin/dxa-agent.mjs`**, and **`vscode-extension/dxa-agent-vscode/README.md`** (install line should stay **`@dxa-agent/dxa-agent`** for this fork).
 
 ## `dist/cli.mjs` not found
 
@@ -70,7 +72,7 @@ Run `bun run build` from the repository root, or use `bun run dev` for developme
 
 ## VS Code extension shows “command not found”
 
-Install the CLI globally (`npm install -g @dxiv/dxa-agent`) **or** ensure the `dxa-agent` you built is on the **same PATH** VS Code’s integrated terminal uses. See [extension README](../vscode-extension/dxa-agent-vscode/README.md).
+Install the CLI globally (`npm install -g @dxa-agent/dxa-agent` — [npm package](https://www.npmjs.com/package/@dxa-agent/dxa-agent)) **or** ensure the `dxa-agent` you built is on the **same PATH** VS Code’s integrated terminal uses. See [extension README](../vscode-extension/dxa-agent-vscode/README.md).
 
 ## Still stuck?
 
