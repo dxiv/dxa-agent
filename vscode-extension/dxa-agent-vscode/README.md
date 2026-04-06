@@ -41,11 +41,11 @@ A practical VS Code companion for DXA Agent with a project-aware **Control Cente
 
 ## Settings
 
-- `dxa-agent.launchCommand` (default: `dxa-agent`)
-- `dxa-agent.terminalName` (default: `DXA Agent`)
-- `dxa-agent.useOpenAIShim` (default: `false`)
+- `dxaAgent.launchCommand` (default: `dxa-agent`)
+- `dxaAgent.terminalName` (default: `DXA Agent`)
+- `dxaAgent.useOpenAIShim` (default: `false`)
 
-`dxa-agent.useOpenAIShim` only injects `CLAUDE_CODE_USE_OPENAI=1` into terminals launched by the extension. It does not guess or configure a provider by itself.
+`dxaAgent.useOpenAIShim` only injects `CLAUDE_CODE_USE_OPENAI=1` into terminals launched by the extension. It does not guess or configure a provider by itself.
 
 ## Notes on Status Detection
 

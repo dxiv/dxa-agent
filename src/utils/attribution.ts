@@ -77,7 +77,7 @@ export function getAttributionTexts(): AttributionTexts {
   const defaultAttribution =
     '🤖 Generated with [DXA Agent](https://github.com/dxiv/dxa-agent)'
   const coAuthorDomain =
-    getAPIProvider() === 'firstParty' ? 'anthropic.com' : 'dxa-agent.dev'
+    getAPIProvider() === 'firstParty' ? 'anthropic.com' : 'dxa.dev'
   const defaultCommit = isEnvTruthy(
     process.env.DXA_AGENT_DISABLE_CO_AUTHORED_BY,
   )

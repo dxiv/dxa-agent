@@ -62,7 +62,7 @@ test('renderControlCenterHtml uses the DXA Agent wordmark, status rail, and warm
   const { renderControlCenterHtml } = loadExtension();
   const html = renderControlCenterHtml(createStatus(), { nonce: 'test-nonce', platform: 'win32' });
 
-  assert.match(html, /Open<span class="wordmark-accent">Claude<\/span>/);
+  assert.match(html, /DXA<span class="wordmark-accent"> Agent<\/span>/);
   assert.match(html, /class="status-rail"/);
   assert.match(html, /\.sunset-gradient\s*\{/);
   assert.match(html, /class="action-button primary" id="launch"/);
@@ -98,9 +98,9 @@ test('renderControlCenterHtml shows explicit disabled and empty states when work
   assert.doesNotMatch(html, /id="openProfile"/);
 });
 
-test('DXA AgentControlCenterProvider.getHtml supplies a nonce to the redesigned renderer', () => {
-  const { DXA AgentControlCenterProvider } = loadExtension();
-  const provider = new DXA AgentControlCenterProvider();
+test('DxaAgentControlCenterProvider.getHtml supplies a nonce to the redesigned renderer', () => {
+  const { DxaAgentControlCenterProvider } = loadExtension();
+  const provider = new DxaAgentControlCenterProvider();
 
   assert.doesNotThrow(() => provider.getHtml(createStatus()));
 

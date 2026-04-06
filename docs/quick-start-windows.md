@@ -91,7 +91,7 @@ dxa-agent
    $env:OPENAI_BASE_URL="http://localhost:11434/v1"
    $env:OPENAI_MODEL="llama3.2:3b"
 
-   dxa-agent
+   DXA Agent
    ```
 
 Use the same model name you pulled (`ollama list` to see names).

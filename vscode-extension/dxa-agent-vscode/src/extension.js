@@ -201,7 +201,7 @@ function readWorkspaceProfile(profilePath) {
 }
 
 async function collectControlCenterState() {
-  const configured = vscode.workspace.getConfiguration('dxa-agent');
+  const configured = vscode.workspace.getConfiguration('dxaAgent');
   const launchCommand = configured.get('launchCommand', 'dxa-agent');
   const terminalName = configured.get('terminalName', 'DXA Agent');
   const shimEnabled = configured.get('useOpenAIShim', false);
@@ -259,9 +259,9 @@ async function collectControlCenterState() {
   };
 }
 
-async function launchDXA Agent(options = {}) {
+async function launchDxaAgent(options = {}) {
   const { requireWorkspace = false } = options;
-  const configured = vscode.workspace.getConfiguration('dxa-agent');
+  const configured = vscode.workspace.getConfiguration('dxaAgent');
   const launchCommand = configured.get('launchCommand', 'dxa-agent');
   const terminalName = configured.get('terminalName', 'DXA Agent');
   const shimEnabled = configured.get('useOpenAIShim', false);
@@ -838,7 +838,7 @@ function renderControlCenterHtml(status, options = {}) {
         <div class="hero-top">
           <div class="brand">
             <div class="eyebrow">${escapeHtml(viewModel.header.eyebrow)}</div>
-            <div class="wordmark" aria-label="DXA Agent wordmark">Open<span class="wordmark-accent">Claude</span></div>
+            <div class="wordmark" aria-label="DXA Agent wordmark">DXA<span class="wordmark-accent"> Agent</span></div>
             <div class="headline">
               <h1 class="headline-title" id="control-center-title">${escapeHtml(viewModel.header.title)}</h1>
               <p class="headline-subtitle">${escapeHtml(viewModel.header.subtitle)}</p>
@@ -878,7 +878,7 @@ function renderControlCenterHtml(status, options = {}) {
             </button>
             <button class="support-link" id="repo" type="button">
               <span class="support-link-label">Open Repository</span>
-              <span class="summary-detail">Browse the upstream DXA Agent project.</span>
+              <span class="summary-detail">Browse the DXA Agent repository.</span>
             </button>
             <button class="support-link" id="commands" type="button">
               <span class="support-link-label">Open Command Palette</span>
@@ -912,7 +912,7 @@ function renderControlCenterHtml(status, options = {}) {
 </html>`;
 }
 
-class DXA AgentControlCenterProvider {
+class DxaAgentControlCenterProvider {
   constructor() {
     this.webviewView = null;
   }
@@ -930,10 +930,10 @@ class DXA AgentControlCenterProvider {
     webviewView.webview.onDidReceiveMessage(async message => {
       switch (message?.type) {
         case 'launch':
-          await launchDXA Agent();
+          await launchDxaAgent();
           break;
         case 'launchRoot':
-          await launchDXA Agent({ requireWorkspace: true });
+          await launchDxaAgent({ requireWorkspace: true });
           break;
         case 'openProfile':
           await openWorkspaceProfile();
@@ -1041,46 +1041,46 @@ class DXA AgentControlCenterProvider {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  const provider = new DXA AgentControlCenterProvider();
+  const provider = new DxaAgentControlCenterProvider();
   const refreshProvider = () => {
     void provider.refresh();
   };
 
-  const startCommand = vscode.commands.registerCommand('dxa-agent.start', async () => {
-    await launchDXA Agent();
+  const startCommand = vscode.commands.registerCommand('dxaAgent.start', async () => {
+    await launchDxaAgent();
   });
 
   const startInWorkspaceRootCommand = vscode.commands.registerCommand(
-    'dxa-agent.startInWorkspaceRoot',
+    'dxaAgent.startInWorkspaceRoot',
     async () => {
-      await launchDXA Agent({ requireWorkspace: true });
+      await launchDxaAgent({ requireWorkspace: true });
     },
   );
 
-  const openDocsCommand = vscode.commands.registerCommand('dxa-agent.openDocs', async () => {
+  const openDocsCommand = vscode.commands.registerCommand('dxaAgent.openDocs', async () => {
     await vscode.env.openExternal(vscode.Uri.parse(DXA_AGENT_REPO_URL));
   });
 
   const openSetupDocsCommand = vscode.commands.registerCommand(
-    'dxa-agent.openSetupDocs',
+    'dxaAgent.openSetupDocs',
     async () => {
       await vscode.env.openExternal(vscode.Uri.parse(DXA_AGENT_SETUP_URL));
     },
   );
 
   const openWorkspaceProfileCommand = vscode.commands.registerCommand(
-    'dxa-agent.openWorkspaceProfile',
+    'dxaAgent.openWorkspaceProfile',
     async () => {
       await openWorkspaceProfile();
     },
   );
 
-  const openUiCommand = vscode.commands.registerCommand('dxa-agent.openControlCenter', async () => {
+  const openUiCommand = vscode.commands.registerCommand('dxaAgent.openControlCenter', async () => {
     await vscode.commands.executeCommand('workbench.view.extension.dxaAgent');
   });
 
   const providerDisposable = vscode.window.registerWebviewViewProvider(
-    'dxa-agent.controlCenter',
+    'dxaAgent.controlCenter',
     provider,
   );
 
@@ -1096,7 +1096,7 @@ function activate(context) {
     providerDisposable,
     profileWatcher,
     vscode.workspace.onDidChangeConfiguration(event => {
-      if (event.affectsConfiguration('dxa-agent')) {
+      if (event.affectsConfiguration('dxaAgent')) {
         refreshProvider();
       }
     }),
@@ -1113,7 +1113,7 @@ function deactivate() {}
 module.exports = {
   activate,
   deactivate,
-  DXA AgentControlCenterProvider,
+  DxaAgentControlCenterProvider,
   renderControlCenterHtml,
   resolveLaunchTargets,
 };

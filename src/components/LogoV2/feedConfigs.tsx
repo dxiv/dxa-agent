@@ -41,7 +41,7 @@ export function createWhatsNewFeed(releaseNotes: string[]): FeedConfig {
   });
   const emptyMessage = "external" === 'ant' ? 'Unable to fetch latest claude-cli-internal commits' : 'Check /release-notes for recent updates';
   return {
-    title: "external" === 'ant' ? "Open Claude Updates [internal-only: Latest CC commits]" : "Open Claude Updates",
+    title: "external" === 'ant' ? "DXA Agent Updates [internal-only: Latest CC commits]" : "DXA Agent Updates",
     lines,
     footer: lines.length > 0 ? '/release-notes for more' : undefined,
     emptyMessage
@@ -73,7 +73,7 @@ export function createProjectOnboardingFeed(steps: Step[]): FeedConfig {
 }
 export function createGuestPassesFeed(): FeedConfig {
   const reward = getCachedReferrerReward();
-  const subtitle = reward ? `Share Open Claude and earn ${formatCreditAmount(reward)} of extra usage` : 'Share Open Claude with friends';
+  const subtitle = reward ? `Share DXA Agent and earn ${formatCreditAmount(reward)} of extra usage` : 'Share DXA Agent with friends';
   return {
     title: '3 guest passes',
     lines: [],

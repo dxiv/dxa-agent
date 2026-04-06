@@ -99,7 +99,7 @@ dxa-agent
    export OPENAI_BASE_URL=http://localhost:11434/v1
    export OPENAI_MODEL=llama3.2:3b
 
-   dxa-agent
+   DXA Agent
    ```
 
 Match `OPENAI_MODEL` to a name from `ollama list`.

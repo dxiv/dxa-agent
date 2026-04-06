@@ -34,7 +34,7 @@ pkg install git proot-distro
 
 ### Step 3 — Clone this repository
 
-GitHub creates a folder named **`DXA Agent`** (capital **O** and **C**):
+GitHub creates a folder named **`dxa-agent`** (capital **O** and **C**):
 
 ```bash
 cd ~

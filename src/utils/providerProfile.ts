@@ -16,6 +16,7 @@ import { readGeminiAccessToken } from './geminiCredentials.ts'
 import { getOllamaChatBaseUrl } from './providerDiscovery.ts'
 
 export const PROFILE_FILE_NAME = '.dxa-agent-profile.json'
+
 export const DEFAULT_GEMINI_BASE_URL =
   'https://generativelanguage.googleapis.com/v1beta/openai'
 export const DEFAULT_GEMINI_MODEL = 'gemini-2.0-flash'
@@ -81,6 +82,14 @@ type ProfileFileLocation = {
 }
 
 function resolveProfileFilePath(options?: ProfileFileLocation): string {
+  if (options?.filePath) {
+    return options.filePath
+  }
+
+  return resolve(options?.cwd ?? process.cwd(), PROFILE_FILE_NAME)
+}
+
+function resolveProfileWritePath(options?: ProfileFileLocation): string {
   if (options?.filePath) {
     return options.filePath
   }
@@ -390,7 +399,7 @@ export function saveProfileFile(
   profileFile: ProfileFile,
   options?: ProfileFileLocation,
 ): string {
-  const filePath = resolveProfileFilePath(options)
+  const filePath = resolveProfileWritePath(options)
   writeFileSync(filePath, JSON.stringify(profileFile, null, 2), {
     encoding: 'utf8',
     mode: 0o600,
@@ -399,7 +408,7 @@ export function saveProfileFile(
 }
 
 export function deleteProfileFile(options?: ProfileFileLocation): string {
-  const filePath = resolveProfileFilePath(options)
+  const filePath = resolveProfileWritePath(options)
   rmSync(filePath, { force: true })
   return filePath
 }
