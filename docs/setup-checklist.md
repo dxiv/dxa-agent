@@ -11,7 +11,7 @@ Use this to verify your machine **before** and **after** installing DXA Agent. C
 - [ ] **Ripgrep** installed (`rg --version`). If missing, see [Troubleshooting — ripgrep](troubleshooting.md).
 - [ ] **Windows only:** [Git for Windows](https://git-scm.com/download/win) installed if DXA Agent asks for `bash.exe` (see [Troubleshooting](troubleshooting.md)).
 - [ ] **Cloud provider:** API key ready **or** **local:** Ollama / LM Studio installed and running with a model loaded.
-- [ ] You ran **`npm install -g @dxa-agent/dxa-agent`** ([npm](https://www.npmjs.com/package/@dxa-agent/dxa-agent)) and a **new** terminal if `dxa-agent` was not found right away.
+- [ ] You ran **`npm install -g @dxa-dev/agent`** ([npm](https://www.npmjs.com/package/@dxa-dev/agent)) and a **new** terminal if `dxa-agent` was not found right away.
 
 ---
 
