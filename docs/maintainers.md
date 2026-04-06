@@ -49,8 +49,8 @@ Development and CI use **Bun** and **`bun.lock`**. **`package-lock.json`** is gi
 1. Bump **`package.json`** version (and extension `package.json` if it should track the CLI).
 2. Update **[CHANGELOG.md](../CHANGELOG.md)** with a dated bullet list for that version.
 3. Commit and push; tag: `git tag v0.x.y && git push origin v0.x.y`.
-4. **GitHub Actions** builds **`dist/cli.mjs`** for each `v*` tag and uploads it as a workflow artifact (see `.github/workflows/release-artifacts.yml`). Download from the run’s **Artifacts** if you need the bundle without publishing npm.
-5. Publish [**`@dxa-dev/agent`**](https://www.npmjs.com/package/@dxa-dev/agent) to npm when ready (`npm publish` from a clean tree after `bun run build` / `prepack` — use your own npm org credentials).
+4. **GitHub Actions** builds **`dist/cli.mjs`** for each `v*` tag and uploads it as a workflow artifact (see `.github/workflows/release-artifacts.yml`). Download from the run’s **Artifacts** if you need the bundle without publishing npm. The same `v*` tag triggers **`.github/workflows/publish-github-packages.yml`**, which publishes the package to **GitHub Packages** ([npm registry on GitHub](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)). The `@dxa-dev` scope must match a GitHub user or organization that your token can publish to; if the workflow fails with a permissions error, ensure the **`dxa-dev`** org exists (or adjust scope) and that **Actions** has **Packages: write** for the workflow.
+5. Publish [**`@dxa-dev/agent`**](https://www.npmjs.com/package/@dxa-dev/agent) to the **public npm registry** when ready (`npm publish` from a clean tree after `bun run build` / `prepack` — `package.json` `publishConfig.registry` points at **registry.npmjs.org**; use your npm org credentials). Installing from GitHub Packages instead requires a **`.npmrc`** line such as `@dxa-dev:registry=https://npm.pkg.github.com` and a **classic PAT** with `read:packages` (see GitHub’s npm Packages docs).
 
 ## Suggested issue labels
 

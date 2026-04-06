@@ -162,7 +162,8 @@
   ],
   "license": "SEE LICENSE FILE",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "overrides": {
     "lodash-es": "4.18.1"
