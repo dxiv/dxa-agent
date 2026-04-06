@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test'
-import { buildSdkUrl } from './workSecret.ts'
+import { buildSdkUrl } from './workSecret.js'
 
 // Finding #42-5: buildSdkUrl uses string.includes() on the full URL,
 // so a remote URL containing "localhost" in its path gets ws:// (unencrypted).

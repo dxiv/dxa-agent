@@ -80,24 +80,33 @@ function computeSearchText(msg: RenderableMessage): string {
       break
     }
     case 'attachment': {
+      const att = msg.attachment as {
+        type: string
+        memories?: Array<{ content: string }>
+        commandMode?: string
+        isMeta?: boolean
+        prompt?: string | Array<{ type: string; text: string }>
+      }
       // relevant_memories renders full m.content in transcript mode
       // (AttachmentMessage.tsx <Ansi>{m.content}</Ansi>). Visible but
       // unsearchable without this — [ dump finds it, / doesn't.
-      if (msg.attachment.type === 'relevant_memories') {
-        raw = msg.attachment.memories.map(m => m.content).join('\n')
+      if (att.type === 'relevant_memories' && att.memories) {
+        raw = att.memories.map(m => m.content).join('\n')
       } else if (
         // Mid-turn prompts — queued while an agent is running. Render via
         // UserTextMessage (AttachmentMessage.tsx:~348). stickyPromptText
         // (VirtualMessageList.tsx:~103) has the same guards — mirror here.
-        msg.attachment.type === 'queued_command' &&
-        msg.attachment.commandMode !== 'task-notification' &&
-        !msg.attachment.isMeta
+        att.type === 'queued_command' &&
+        att.commandMode !== 'task-notification' &&
+        !att.isMeta
       ) {
-        const p = msg.attachment.prompt
-        raw =
-          typeof p === 'string'
-            ? p
-            : p.flatMap(b => (b.type === 'text' ? [b.text] : [])).join('\n')
+        const p = att.prompt
+        if (p !== undefined) {
+          raw =
+            typeof p === 'string'
+              ? p
+              : p.flatMap(b => (b.type === 'text' ? [b.text] : [])).join('\n')
+        }
       }
       break
     }

@@ -53,7 +53,7 @@ export type TeleportProgressCallback = (step: TeleportProgressStep) => void;
  */
 function createTeleportResumeSystemMessage(branchError: Error | null): SystemMessage {
   if (branchError === null) {
-    return createSystemMessage('Session resumed', 'suggestion');
+    return createSystemMessage('Session resumed', 'info');
   }
   const formattedError = branchError instanceof TeleportOperationError ? branchError.formattedMessage : branchError.message;
   return createSystemMessage(`Session resumed without branch: ${formattedError}`, 'warning');

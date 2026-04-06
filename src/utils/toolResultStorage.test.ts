@@ -1,7 +1,8 @@
 import { expect, test } from 'bun:test'
 
-import { createUserMessage } from './messages.ts'
-import { applyToolResultReplacementsToMessages } from './toolResultStorage.ts'
+import type { UserMessage } from '../types/message.js'
+import { createUserMessage } from './messages.js'
+import { applyToolResultReplacementsToMessages } from './toolResultStorage.js'
 
 test('applyToolResultReplacementsToMessages replaces matching tool results and preserves unrelated messages', () => {
   const unrelated = createUserMessage({ content: 'keep me' })
@@ -31,10 +32,11 @@ test('applyToolResultReplacementsToMessages replaces matching tool results and p
   expect(next).not.toBe(messages)
   expect(next[0]).toBe(unrelated)
   expect(next[1]).not.toBe(oversizedResult)
-  expect((next[1]!.message.content as Array<{ content: string }>)[0]!.content).toBe(
-    replacement,
-  )
-  expect(next[1]!.toolUseResult).toBeUndefined()
+  expect(
+    ((next[1] as UserMessage).message.content as Array<{ content: string }>)[0]!
+      .content,
+  ).toBe(replacement)
+  expect((next[1] as UserMessage).toolUseResult).toBeUndefined()
 })
 
 test('applyToolResultReplacementsToMessages is idempotent when messages are already hydrated', () => {

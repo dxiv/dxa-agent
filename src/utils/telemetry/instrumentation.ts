@@ -13,16 +13,22 @@ import {
   BatchLogRecordProcessor,
   ConsoleLogRecordExporter,
   LoggerProvider,
+  type LogRecordExporter,
 } from '@opentelemetry/sdk-logs'
 import {
   ConsoleMetricExporter,
   MeterProvider,
   PeriodicExportingMetricReader,
+  type MetricReader,
+  type PushMetricExporter,
 } from '@opentelemetry/sdk-metrics'
+
+type MetricExporterOrReader = PushMetricExporter | MetricReader
 import {
   BasicTracerProvider,
   BatchSpanProcessor,
   ConsoleSpanExporter,
+  type SpanExporter,
 } from '@opentelemetry/sdk-trace-base'
 import {
   ATTR_SERVICE_NAME,
@@ -134,7 +140,7 @@ async function getOtlpReaders() {
       DEFAULT_METRICS_EXPORT_INTERVAL_MS.toString(),
   )
 
-  const exporters = []
+  const exporters: MetricExporterOrReader[] = []
   for (const exporterType of exporterTypes) {
     if (exporterType === 'console') {
       // Custom console exporter that shows resource attributes
@@ -226,7 +232,7 @@ async function getOtlpLogExporters() {
     `[3P telemetry] getOtlpLogExporters: types=${jsonStringify(exporterTypes)}, protocol=${protocol}, endpoint=${endpoint}`,
   )
 
-  const exporters = []
+  const exporters: LogRecordExporter[] = []
   for (const exporterType of exporterTypes) {
     if (exporterType === 'console') {
       exporters.push(new ConsoleLogRecordExporter())
@@ -273,7 +279,7 @@ async function getOtlpLogExporters() {
 async function getOtlpTraceExporters() {
   const exporterTypes = parseExporterTypes(process.env.OTEL_TRACES_EXPORTER)
 
-  const exporters = []
+  const exporters: SpanExporter[] = []
   for (const exporterType of exporterTypes) {
     if (exporterType === 'console') {
       exporters.push(new ConsoleSpanExporter())
@@ -452,7 +458,7 @@ export async function initializeTelemetry() {
   // Enable via CLAUDE_CODE_PERFETTO_TRACE=1 or CLAUDE_CODE_PERFETTO_TRACE=<path>
   initializePerfettoTracing()
 
-  const readers = []
+  const readers: MetricReader[] = []
 
   // Add customer exporters (if enabled)
   const telemetryEnabled = isTelemetryEnabled()

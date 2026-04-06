@@ -713,7 +713,11 @@ async function* queryLoop(
               // These partial messages (especially thinking blocks) have invalid signatures
               // that would cause "thinking blocks cannot be modified" API errors.
               for (const msg of assistantMessages) {
-                yield { type: 'tombstone' as const, message: msg }
+                yield {
+                  type: 'tombstone' as const,
+                  uuid: msg.uuid,
+                  message: msg,
+                }
               }
               logEvent('tengu_orphaned_messages_tombstoned', {
                 orphanedMessageCount: assistantMessages.length,

@@ -327,8 +327,10 @@ export async function countTokensViaHaikuFallback(
 export function roughTokenCountEstimationForMessages(
   messages: readonly {
     type: string
-    message?: { content?: unknown }
-    attachment?: Attachment
+    /** User/assistant payloads differ; tombstones nest `Message` — keep loose for call sites. */
+    message?: unknown
+    /** `Message` uses `unknown` on attachment payloads to avoid import cycles with `attachments.ts`. */
+    attachment?: unknown
   }[],
 ): number {
   let totalTokens = 0
@@ -340,24 +342,31 @@ export function roughTokenCountEstimationForMessages(
 
 export function roughTokenCountEstimationForMessage(message: {
   type: string
-  message?: { content?: unknown }
-  attachment?: Attachment
+  message?: unknown
+  attachment?: unknown
 }): number {
-  if (
-    (message.type === 'assistant' || message.type === 'user') &&
-    message.message?.content
-  ) {
-    return roughTokenCountEstimationForContent(
-      message.message?.content as
-        | string
-        | Array<Anthropic.ContentBlock>
-        | Array<Anthropic.ContentBlockParam>
-        | undefined,
-    )
+  if (message.type === 'assistant' || message.type === 'user') {
+    const inner = message.message
+    if (
+      inner &&
+      typeof inner === 'object' &&
+      'content' in inner &&
+      (inner as { content?: unknown }).content
+    ) {
+      return roughTokenCountEstimationForContent(
+        (inner as { content: unknown }).content as
+          | string
+          | Array<Anthropic.ContentBlock>
+          | Array<Anthropic.ContentBlockParam>
+          | undefined,
+      )
+    }
   }
 
   if (message.type === 'attachment' && message.attachment) {
-    const userMessages = normalizeAttachmentForAPI(message.attachment)
+    const userMessages = normalizeAttachmentForAPI(
+      message.attachment as Attachment,
+    )
     let total = 0
     for (const userMsg of userMessages) {
       total += roughTokenCountEstimationForContent(userMsg.message.content)
