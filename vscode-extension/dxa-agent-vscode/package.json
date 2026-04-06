@@ -2,7 +2,7 @@
   "name": "dxa-agent-vscode",
   "displayName": "DXA Agent",
   "description": "Practical VS Code companion for DXA Agent with project-aware launch behavior and a real Control Center.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "publisher": "devnull-bootloader",
   "engines": {
     "vscode": "^1.95.0"
