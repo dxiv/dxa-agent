@@ -799,6 +799,15 @@ const TEST_PROJECT_CONFIG_FOR_TESTING: ProjectConfig = {
   ...DEFAULT_PROJECT_CONFIG,
 }
 
+function isTestRuntime(): boolean {
+  if (process.env.NODE_ENV === 'test') return true
+  // Bun does not set NODE_ENV for `bun test` by default.
+  // Detect the test runner via argv so config reads/writes stay in-memory.
+  const argv = process.argv.map(arg => arg.toLowerCase())
+  // Typical argv: [".../bun(.exe)", "test", ...]
+  return argv[1] === 'test' || argv.includes('test')
+}
+
 export function isProjectConfigKey(key: string): key is ProjectConfigKey {
   return PROJECT_CONFIG_KEYS.includes(key as ProjectConfigKey)
 }
@@ -827,7 +836,7 @@ function wouldLoseAuthState(fresh: {
 export function saveGlobalConfig(
   updater: (currentConfig: GlobalConfig) => GlobalConfig,
 ): void {
-  if (process.env.NODE_ENV === 'test') {
+  if (isTestRuntime()) {
     const config = updater(TEST_GLOBAL_CONFIG_FOR_TESTING)
     // Skip if no changes (same reference returned)
     if (config === TEST_GLOBAL_CONFIG_FOR_TESTING) {
@@ -1033,7 +1042,7 @@ let freshnessWatcherStarted = false
 // fs.watchFile polls stat on the libuv threadpool and only calls us when mtime
 // changed — a stalled stat never blocks the main thread.
 function startGlobalConfigFreshnessWatcher(): void {
-  if (freshnessWatcherStarted || process.env.NODE_ENV === 'test') return
+  if (freshnessWatcherStarted || isTestRuntime()) return
   freshnessWatcherStarted = true
   const file = getGlobalClaudeFile()
   watchFile(
@@ -1080,7 +1089,7 @@ function writeThroughGlobalConfigCache(config: GlobalConfig): void {
 }
 
 export function getGlobalConfig(): GlobalConfig {
-  if (process.env.NODE_ENV === 'test') {
+  if (isTestRuntime()) {
     return TEST_GLOBAL_CONFIG_FOR_TESTING
   }
 
@@ -1638,7 +1647,7 @@ export const getProjectPathForConfig = memoize((): string => {
 })
 
 export function getCurrentProjectConfig(): ProjectConfig {
-  if (process.env.NODE_ENV === 'test') {
+  if (isTestRuntime()) {
     return TEST_PROJECT_CONFIG_FOR_TESTING
   }
 
@@ -1663,7 +1672,7 @@ export function getCurrentProjectConfig(): ProjectConfig {
 export function saveCurrentProjectConfig(
   updater: (currentConfig: ProjectConfig) => ProjectConfig,
 ): void {
-  if (process.env.NODE_ENV === 'test') {
+  if (isTestRuntime()) {
     const config = updater(TEST_PROJECT_CONFIG_FOR_TESTING)
     // Skip if no changes (same reference returned)
     if (config === TEST_PROJECT_CONFIG_FOR_TESTING) {
