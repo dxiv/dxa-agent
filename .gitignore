@@ -8,6 +8,9 @@ dist/
 !.env.example
 .dxa-agent-profile.json
 reports/
+GEMINI.md
+package-lock.json
+/.claude
 coverage/
 .pytest_cache/
 tsc-errors*.txt
