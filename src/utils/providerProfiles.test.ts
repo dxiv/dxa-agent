@@ -1,18 +1,30 @@
-import { afterEach, describe, expect, test } from 'bun:test'
+import { afterEach, describe, expect, mock, test } from 'bun:test'
 
-import { saveGlobalConfig, type ProviderProfile } from './config.js'
-import { getAPIProvider } from './model/providers.js'
-import {
-  applyActiveProviderProfileFromConfig,
-  applyProviderProfileToProcessEnv,
-  deleteProviderProfile,
-  getProviderProfiles,
-  getProviderPresetDefaults,
-  persistActiveProviderProfileModel,
-} from './providerProfiles.js'
+import type { ProviderProfile } from './config.js'
 
 async function importFreshProvidersModule() {
   return import(`./model/providers.ts?ts=${Date.now()}-${Math.random()}`)
+}
+
+async function importFreshProviderProfilesModule() {
+  let configState = {
+    providerProfiles: [] as ProviderProfile[],
+    activeProviderProfileId: undefined as string | undefined,
+    openaiAdditionalModelOptionsCache: [] as any[],
+    openaiAdditionalModelOptionsCacheByProfile: {} as Record<string, any[]>,
+  }
+
+  mock.module('./config.js', () => ({
+    getGlobalConfig: () => configState,
+    saveGlobalConfig: (updater: (current: typeof configState) => typeof configState) => {
+      configState = updater(configState)
+    },
+  }))
+
+  const providerProfiles = await import(
+    `./providerProfiles.js?ts=${Date.now()}-${Math.random()}`
+  )
+  return { ...providerProfiles, __setConfigState: (next: typeof configState) => { configState = next } }
 }
 
 const originalEnv = { ...process.env }
@@ -36,6 +48,7 @@ const RESTORED_KEYS = [
 ] as const
 
 afterEach(() => {
+  mock.restore()
   for (const key of RESTORED_KEYS) {
     if (originalEnv[key] === undefined) {
       delete process.env[key]
@@ -43,14 +56,6 @@ afterEach(() => {
       process.env[key] = originalEnv[key]
     }
   }
-
-  saveGlobalConfig(current => ({
-    ...current,
-    providerProfiles: [],
-    activeProviderProfileId: undefined,
-    openaiAdditionalModelOptionsCache: [],
-    openaiAdditionalModelOptionsCacheByProfile: {},
-  }))
 })
 
 function buildProfile(overrides: Partial<ProviderProfile> = {}): ProviderProfile {
@@ -65,7 +70,9 @@ function buildProfile(overrides: Partial<ProviderProfile> = {}): ProviderProfile
 }
 
 describe('applyProviderProfileToProcessEnv', () => {
-  test('openai profile clears competing gemini/github flags', () => {
+  test('openai profile clears competing gemini/github flags', async () => {
+    const { applyProviderProfileToProcessEnv } =
+      await importFreshProviderProfilesModule()
     process.env.CLAUDE_CODE_USE_GEMINI = '1'
     process.env.CLAUDE_CODE_USE_GITHUB = '1'
 
@@ -79,10 +86,12 @@ describe('applyProviderProfileToProcessEnv', () => {
     expect(process.env.CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED_ID).toBe(
       'provider_test',
     )
-    expect(getAPIProvider()).toBe('openai')
+    expect(getFreshAPIProvider()).toBe('openai')
   })
 
-  test('anthropic profile clears competing gemini/github flags', () => {
+  test('anthropic profile clears competing gemini/github flags', async () => {
+    const { applyProviderProfileToProcessEnv } =
+      await importFreshProviderProfilesModule()
     process.env.CLAUDE_CODE_USE_GEMINI = '1'
     process.env.CLAUDE_CODE_USE_GITHUB = '1'
 
@@ -104,7 +113,9 @@ describe('applyProviderProfileToProcessEnv', () => {
 })
 
 describe('applyActiveProviderProfileFromConfig', () => {
-  test('does not override explicit startup provider selection', () => {
+  test('does not override explicit startup provider selection', async () => {
+    const { applyActiveProviderProfileFromConfig } =
+      await importFreshProviderProfilesModule()
     process.env.CLAUDE_CODE_USE_OPENAI = '1'
     process.env.OPENAI_BASE_URL = 'http://localhost:11434/v1'
     process.env.OPENAI_MODEL = 'qwen2.5:3b'
@@ -125,7 +136,9 @@ describe('applyActiveProviderProfileFromConfig', () => {
     expect(process.env.OPENAI_MODEL).toBe('qwen2.5:3b')
   })
 
-  test('does not override explicit startup selection when profile marker is stale', () => {
+  test('does not override explicit startup selection when profile marker is stale', async () => {
+    const { applyActiveProviderProfileFromConfig } =
+      await importFreshProviderProfilesModule()
     process.env.CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED = '1'
     process.env.CLAUDE_CODE_USE_OPENAI = '1'
     process.env.OPENAI_BASE_URL = 'http://localhost:11434/v1'
@@ -148,7 +161,9 @@ describe('applyActiveProviderProfileFromConfig', () => {
     expect(process.env.OPENAI_MODEL).toBe('qwen2.5:3b')
   })
 
-  test('re-applies active profile when profile-managed env drifts', () => {
+  test('re-applies active profile when profile-managed env drifts', async () => {
+    const { applyActiveProviderProfileFromConfig, applyProviderProfileToProcessEnv } =
+      await importFreshProviderProfilesModule()
     applyProviderProfileToProcessEnv(
       buildProfile({
         id: 'saved_openai',
@@ -176,7 +191,9 @@ describe('applyActiveProviderProfileFromConfig', () => {
     expect(process.env.OPENAI_BASE_URL).toBe('http://192.168.33.108:11434/v1')
   })
 
-  test('does not re-apply active profile when flags conflict with current provider', () => {
+  test('does not re-apply active profile when flags conflict with current provider', async () => {
+    const { applyActiveProviderProfileFromConfig, applyProviderProfileToProcessEnv } =
+      await importFreshProviderProfilesModule()
     applyProviderProfileToProcessEnv(
       buildProfile({
         id: 'saved_openai',
@@ -204,7 +221,9 @@ describe('applyActiveProviderProfileFromConfig', () => {
     expect(process.env.OPENAI_MODEL).toBe('github:copilot')
   })
 
-  test('applies active profile when no explicit provider is selected', () => {
+  test('applies active profile when no explicit provider is selected', async () => {
+    const { applyActiveProviderProfileFromConfig } =
+      await importFreshProviderProfilesModule()
     delete process.env.CLAUDE_CODE_USE_OPENAI
     delete process.env.CLAUDE_CODE_USE_GEMINI
     delete process.env.CLAUDE_CODE_USE_GITHUB
@@ -234,18 +253,25 @@ describe('applyActiveProviderProfileFromConfig', () => {
 })
 
 describe('persistActiveProviderProfileModel', () => {
-  test('updates active profile model and current env for profile-managed sessions', () => {
+  test('updates active profile model and current env for profile-managed sessions', async () => {
+    const {
+      applyProviderProfileToProcessEnv,
+      getProviderProfiles,
+      persistActiveProviderProfileModel,
+      __setConfigState,
+    } = await importFreshProviderProfilesModule()
     const activeProfile = buildProfile({
       id: 'saved_openai',
       baseUrl: 'http://192.168.33.108:11434/v1',
       model: 'kimi-k2.5:cloud',
     })
 
-    saveGlobalConfig(current => ({
-      ...current,
+    __setConfigState({
       providerProfiles: [activeProfile],
       activeProviderProfileId: activeProfile.id,
-    }))
+      openaiAdditionalModelOptionsCache: [],
+      openaiAdditionalModelOptionsCacheByProfile: {},
+    })
     applyProviderProfileToProcessEnv(activeProfile)
 
     const updated = persistActiveProviderProfileModel('minimax-m2.5:cloud')
@@ -263,17 +289,23 @@ describe('persistActiveProviderProfileModel', () => {
     expect(saved?.model).toBe('minimax-m2.5:cloud')
   })
 
-  test('does not mutate process env when session is not profile-managed', () => {
+  test('does not mutate process env when session is not profile-managed', async () => {
+    const {
+      getProviderProfiles,
+      persistActiveProviderProfileModel,
+      __setConfigState,
+    } = await importFreshProviderProfilesModule()
     const activeProfile = buildProfile({
       id: 'saved_openai',
       model: 'kimi-k2.5:cloud',
     })
 
-    saveGlobalConfig(current => ({
-      ...current,
+    __setConfigState({
       providerProfiles: [activeProfile],
       activeProviderProfileId: activeProfile.id,
-    }))
+      openaiAdditionalModelOptionsCache: [],
+      openaiAdditionalModelOptionsCacheByProfile: {},
+    })
 
     process.env.CLAUDE_CODE_USE_OPENAI = '1'
     process.env.OPENAI_MODEL = 'cli-model'
@@ -291,7 +323,9 @@ describe('persistActiveProviderProfileModel', () => {
 })
 
 describe('getProviderPresetDefaults', () => {
-  test('ollama preset defaults to a local Ollama model', () => {
+  test('ollama preset defaults to a local Ollama model', async () => {
+    const { getProviderPresetDefaults } =
+      await importFreshProviderProfilesModule()
     delete process.env.OPENAI_MODEL
 
     const defaults = getProviderPresetDefaults('ollama')
@@ -302,7 +336,9 @@ describe('getProviderPresetDefaults', () => {
 })
 
 describe('deleteProviderProfile', () => {
-  test('deleting final profile clears provider env when active profile applied it', () => {
+  test('deleting final profile clears provider env when active profile applied it', async () => {
+    const { applyProviderProfileToProcessEnv, deleteProviderProfile, __setConfigState } =
+      await importFreshProviderProfilesModule()
     applyProviderProfileToProcessEnv(
       buildProfile({
         id: 'only_profile',
@@ -312,11 +348,12 @@ describe('deleteProviderProfile', () => {
       }),
     )
 
-    saveGlobalConfig(current => ({
-      ...current,
+    __setConfigState({
       providerProfiles: [buildProfile({ id: 'only_profile' })],
       activeProviderProfileId: 'only_profile',
-    }))
+      openaiAdditionalModelOptionsCache: [],
+      openaiAdditionalModelOptionsCacheByProfile: {},
+    })
 
     const result = deleteProviderProfile('only_profile')
 
@@ -342,16 +379,19 @@ describe('deleteProviderProfile', () => {
     expect(process.env.ANTHROPIC_API_KEY).toBeUndefined()
   })
 
-  test('deleting final profile preserves explicit startup provider env', () => {
+  test('deleting final profile preserves explicit startup provider env', async () => {
+    const { deleteProviderProfile, __setConfigState } =
+      await importFreshProviderProfilesModule()
     process.env.CLAUDE_CODE_USE_OPENAI = '1'
     process.env.OPENAI_BASE_URL = 'http://localhost:11434/v1'
     process.env.OPENAI_MODEL = 'qwen2.5:3b'
 
-    saveGlobalConfig(current => ({
-      ...current,
+    __setConfigState({
       providerProfiles: [buildProfile({ id: 'only_profile' })],
       activeProviderProfileId: 'only_profile',
-    }))
+      openaiAdditionalModelOptionsCache: [],
+      openaiAdditionalModelOptionsCacheByProfile: {},
+    })
 
     const result = deleteProviderProfile('only_profile')
 
