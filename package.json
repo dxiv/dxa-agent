@@ -1,6 +1,6 @@
 {
   "name": "@dxa-dev/deimos",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "author": "dxiv",
   "description": "Deimos by DXA — MIT terminal coding agent: multi-provider LLMs, tools, MCP, slash commands, VS Code extension. https://dxa.dev/deimos/",
   "homepage": "https://dxa.dev/deimos/",
