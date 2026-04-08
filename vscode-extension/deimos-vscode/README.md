@@ -2,7 +2,7 @@
 
 **[Deimos](https://dxa.dev/deimos/)** · **[DXA](https://dxa.dev)** · npm [`@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos)
 
-A practical VS Code companion for the **`deimos`** CLI: project-aware **Control Center**, predictable terminal launch, quick workflows, and the **Deimos Terminal Black** theme.
+VS Code companion for the **`deimos`** CLI: a project-aware **Control Center**, deterministic terminal launch, first-class workflows, and the **Deimos Terminal Black** theme—built to keep editor and shell in the same orbit.
 
 ## Features
 

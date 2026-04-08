@@ -16,6 +16,6 @@
 
 ## Notes
 
-- Provider + model tested (if relevant):
-- Screenshots (if UI / terminal / VS Code changed):
-- Follow-ups / known limits:
+- Provider and model exercised (if relevant):
+- Screenshots (UI, terminal, or VS Code changes):
+- Follow-ups and known limits:

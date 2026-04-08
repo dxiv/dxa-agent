@@ -44,9 +44,7 @@ Development and CI use **Bun** and **`bun.lock`**. **`package-lock.json`** is gi
 4. **Release artifacts:** `.github/workflows/release-artifacts.yml` uploads **`dist/cli.mjs`** for each `v*` tag. **GitHub Packages:** `.github/workflows/publish-github-packages.yml` runs on the same tags; optional repo secret **`GH_PACKAGES_TOKEN`** if the default token cannot publish the **`@dxa-dev`** scope. Registry details: [GitHub npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry). To attach the package to **`dxiv/dxa-deimos`**, **`package.json`** **`repository.url`** must stay **`https://github.com/dxiv/dxa-deimos.git`**; after the next publish, it should list under the repo’s **Packages** (or use the package’s **Settings** on GitHub to **connect repository** once).
 5. **npmjs.org:** `npm publish` uses **`publishConfig.registry`** in **`package.json`** (public npm). Use your npm credentials.
 
-## Suggested issue labels
-
-Creating these in the GitHub UI helps triage (names are suggestions):
+## Issue labels
 
 | Label | Use |
 | --- | --- |

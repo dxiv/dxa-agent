@@ -2,11 +2,11 @@
 
 **[Deimos](https://dxa.dev/deimos/)** · [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos) · npm [`@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos)
 
-Thanks for contributing. Patches work best when they are **small, tested, and easy to review**.
+Contributions are welcome. Patches are easiest to merge when they are **small, tested, and scoped to one concern**.
 
 ## Before you start
 
-- Read **[LEGAL.md](LEGAL.md)** once (copyright, third-party deps, trademarks—short).
+- Read **[LEGAL.md](LEGAL.md)** (copyright, third-party dependencies, trademarks).
 - Search [issues](https://github.com/dxiv/dxa-deimos/issues) and [discussions](https://github.com/dxiv/dxa-deimos/discussions) before opening a new thread.
 - **Issues:** confirmed bugs and concrete feature work. **Discussions:** setup questions, ideas.
 - **Larger changes:** open an issue first so scope is agreed.
@@ -127,7 +127,7 @@ Deimos supports multiple provider paths. If you change provider logic:
 
 ## Good first issues
 
-Look for issues labelled **`good first issue`** (create the label in GitHub if it does not exist yet). Small doc fixes and focused tests are ideal starters.
+Look for issues labelled **`good first issue`**. Small documentation fixes and focused tests are ideal starters.
 
 ## Maintainer notes
 

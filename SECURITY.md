@@ -1,5 +1,7 @@
 # Security policy
 
+This document describes how Deimos handles vulnerability reports and which releases receive fixes.
+
 ## Supported versions
 
 Security fixes target the latest **`main`** branch and the latest [**`@dxa-dev/deimos`**](https://www.npmjs.com/package/@dxa-dev/deimos) npm release.

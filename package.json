@@ -2,7 +2,7 @@
   "name": "@dxa-dev/deimos",
   "version": "0.2.10",
   "author": "dxiv",
-  "description": "Deimos by DXA — MIT terminal coding agent: multi-provider LLMs, tools, MCP, slash commands, VS Code extension. https://dxa.dev/deimos/",
+  "description": "Deimos by DXA — terminal-native coding agent: multi-model routing, tools, MCP, slash commands, VS Code integration. https://dxa.dev/deimos/",
   "homepage": "https://dxa.dev/deimos/",
   "githubPackagesPage": "https://github.com/orgs/dxa-dev/packages/npm/package/deimos",
   "type": "module",
@@ -159,7 +159,7 @@
   },
   "keywords": [
     "deimos",
-    "claude-code",
+    "terminal-agent",
     "openai",
     "llm",
     "cli",

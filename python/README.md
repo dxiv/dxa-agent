@@ -33,6 +33,6 @@ From the repository root (uses repo-root [`pytest.ini`](../pytest.ini) for async
 pytest -v
 ```
 
-## Note
+## Relation to the main CLI
 
-Provider setup for day-to-day Deimos use is documented in the main guides: [Advanced Setup](../docs/advanced-setup.md) and the [README](../README.md). Legal / third-party notes: [LEGAL.md](../LEGAL.md).
+Provider setup for day-to-day Deimos use is documented in [Advanced Setup](../docs/advanced-setup.md) and the [README](../README.md). Third-party and trademark context: [LEGAL.md](../LEGAL.md).

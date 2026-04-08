@@ -1,6 +1,6 @@
 # Deimos setup for new users
 
-**[Deimos](https://dxa.dev/deimos/)** — MIT terminal coding agent from **[DXA](https://dxa.dev)**. Install the published CLI [`@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos); no clone required for this path.
+**[Deimos](https://dxa.dev/deimos/)** — terminal coding agent from **[DXA](https://dxa.dev)**. Install the published CLI [`@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos); no clone required for this path.
 
 This page is for you if you want Deimos running **without** cloning the repo or touching the source code. You will use **Node.js** (to run the installer), a **terminal** (a text window where you type commands), and an account or app from an **AI provider** (OpenAI, Ollama, etc.).
 
@@ -13,7 +13,7 @@ This page is for you if you want Deimos running **without** cloning the repo or 
 | You need | What it is |
 | --- | --- |
 | **A computer** | Windows 10/11, macOS, or a common Linux distribution |
-| **Node.js 20+** | Free runtime from [nodejs.org](https://nodejs.org/) — download the **LTS** installer and use the defaults |
+| **Node.js 22+** | Free runtime from [nodejs.org](https://nodejs.org/) — download the **LTS** installer and use the defaults |
 | **A terminal** | A program that runs text commands (see below) |
 | **An AI backend** | Either a **cloud API key** (e.g. OpenAI) **or** a **local** app like [Ollama](https://ollama.com/) so the assistant has a model to talk to |
 

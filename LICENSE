@@ -25,16 +25,17 @@ SOFTWARE.
 Third-party components
 
 This repository may depend on other open source packages. Each dependency
-remains under its own license and copyright; see the package metadata
-(e.g. package.json and lockfiles) and vendor notices for those terms.
+remains under its own license and copyright. See package metadata (for example
+package.json and lockfiles) and any bundled vendor notices for applicable terms.
 
 Trademarks
 
-"Anthropic" and "Claude" are trademarks of Anthropic, PBC.
-Deimos is independently maintained open source and is not affiliated with,
-endorsed by, or sponsored by Anthropic or any other model provider. References
-to those names are for factual description only (for example, optional APIs,
-configuration flags, or interoperability), not to suggest origin or endorsement.
+"Anthropic" and "Claude" are trademarks of Anthropic, PBC. Deimos is
+independently maintained open source software. It is not affiliated with,
+endorsed by, or sponsored by Anthropic or any other model or platform provider.
+References to those marks are for factual, nominative description (for example,
+optional APIs, configuration, or interoperability) and do not imply origin,
+sponsorship, or endorsement.
 
-For third-party packages, nominative use, and how to raise concerns, see
-LEGAL.md in this repository.
+For third-party components, nominative use, and reporting concerns about
+content in this repository, see LEGAL.md.

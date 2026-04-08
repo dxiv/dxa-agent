@@ -58,7 +58,7 @@ Anything **without** a leading `/` is sent to the model as a normal request, for
 - “Explain what `package.json` does in this folder.”
 - “Add error handling to the function in `src/foo.ts`.”
 
-**Tip:** `cd` to your **project folder** in the same terminal **before** running `deimos`, so paths and git context match the code you care about.
+`cd` in the same terminal to your **project root** before running `deimos`, so paths and git context match the code you care about.
 
 ---
 

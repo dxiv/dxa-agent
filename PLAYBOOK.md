@@ -2,7 +2,7 @@
 
 **[dxa.dev/deimos/](https://dxa.dev/deimos/)** · [Documentation index](docs/README.md) · [Cheatsheet](docs/CHEATSHEET.md)
 
-Practical guide to run Deimos with a **local model** (for example Ollama), work safely, and get reliable day-to-day results from a **source checkout**. For installs from npm, see the [README](README.md) quick start; this document assumes you are in a **git clone** with Bun available.
+Operational guide for running Deimos against a **local model** (for example Ollama), keeping sessions clean, and getting consistent results from a **source checkout**. For the published CLI only, use the [README](README.md) quick start; this playbook assumes a **git clone** with Bun available.
 
 ## 1. What you have
 

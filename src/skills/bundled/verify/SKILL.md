@@ -1,2 +1,3 @@
-// Auto-generated stub — replace with real implementation.
-export {}
+# Reference
+
+Bundled with the Deimos `/verify` skill. Companion examples: `examples/cli.md`, `examples/server.md`.

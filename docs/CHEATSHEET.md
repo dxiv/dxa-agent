@@ -1,6 +1,6 @@
 # Deimos — terminal cheatsheet
 
-**[Deimos](https://dxa.dev/deimos/)** · MIT terminal coding agent · **[DXA](https://dxa.dev)**
+**[Deimos](https://dxa.dev/deimos/)** · **[DXA](https://dxa.dev)** · terminal-native agent
 
 Quick reference for the interactive `deimos` CLI. Install and first-run: **[README.md](../README.md)** (Quick start → Install).
 

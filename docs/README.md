@@ -2,6 +2,8 @@
 
 **Product / link hub:** [dxa.dev/deimos/](https://dxa.dev/deimos/) · **Package:** [`@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos) · **Repo:** [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)
 
+These pages are the field manual for **Deimos**: install paths, provider setup, diagnostics, and day-to-day terminal use—written to match the same dark, deliberate tone as the CLI itself.
+
 Pick a path by **experience** and **goal**:
 
 | I am… | I want… | Start here |

@@ -1,17 +1,18 @@
 # <img width="335" height="89" alt="image" src="https://github.com/user-attachments/assets/833f9e93-c7f6-4a2c-91fd-1285699bcf0b" />
 
-> **[dxa.dev/deimos/](https://dxa.dev/deimos/)** · **[npm `@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos)** · **[Source @ dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)**  
-> **Deimos** is an **MIT** terminal coding agent from **[DXA](https://dxa.dev)**: one `deimos` command, pluggable model backends (Anthropic’s Claude models, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), tools, **MCP**, and slash commands. This repo ships the **CLI**, a **VS Code extension**, and a **dark terminal theme** tuned for long sessions.
+> **[dxa.dev/deimos/](https://dxa.dev/deimos/)** · **[npm `@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos)** · **[Source @ dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)**
 
-**Link hub:** npm, GitHub, and related entry points are gathered on **[dxa.dev/deimos/](https://dxa.dev/deimos/)** — start there when you want one canonical page.
+**Deimos** takes its name from Mars’s outer moon—small, fast, and locked in orbit at the edge of the light. From **[DXA](https://dxa.dev)** it is a **terminal-native** coding agent: one `deimos` command, **multi-model routing** across pluggable backends (Anthropic, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), a full **tool** surface, **MCP**, slash commands, **agent orchestration**, and streaming sessions built for depth work. This repository ships the **CLI**, a **VS Code extension**, and a **dark terminal theme** forged for long runs in the shell.
 
-**Legal:** not affiliated with Anthropic, PBC, or any other vendor. Trademarks, MIT terms, and how to raise concerns: **[LEGAL.md](LEGAL.md)** (general information only—not legal advice).
+**Link hub:** **[dxa.dev/deimos/](https://dxa.dev/deimos/)** is the canonical entry—npm, GitHub, and related surfaces in one place.
 
-**Distribution:** The published package is [**@dxa-dev/deimos**](https://www.npmjs.com/package/@dxa-dev/deimos). This repository is the source tree and issue tracker for **[github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)**.
+**License & marks:** [MIT](LICENSE). Third-party names and APIs appear only for interoperability and factual description. **[LEGAL.md](LEGAL.md)** sets out attribution, trademarks, and how to report concerns.
 
-**Status:** **Active** — full CLI, documentation, VS Code extension, and CI; this is not a placeholder stub.
+**Package:** [**@dxa-dev/deimos**](https://www.npmjs.com/package/@dxa-dev/deimos). **Source & issues:** **[github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)**.
 
-**What's here:** `bin/`, `dist/cli.mjs`, `src/`, `vscode-extension/`, `docs/`, optional `python/`, `.github/` workflows, and root policy files—see [Repository structure](#repository-structure) for paths.
+**Scope:** CLI, documentation, VS Code extension, and CI are maintained as a single product line.
+
+**Tree:** `bin/`, `dist/cli.mjs`, `src/`, `vscode-extension/`, `docs/`, optional `python/`, `.github/` workflows, and root policy files—see [Repository structure](#repository-structure).
 
 ---
 
@@ -36,10 +37,10 @@
 
 ## Why use it
 
-- One CLI for cloud APIs and local inference
-- `/provider` for guided setup and a saved profile
-- Bash, file tools, grep/glob, agents, tasks, MCP, web helpers
-- Optional VS Code integration from this repo
+- **One surface** for cloud APIs, local inference, and mixed routing—swap models without swapping tools
+- **`/provider`** for guided setup, saved profiles, and reproducible environment
+- **Bash**, file tools, **grep**/**glob**, **agents**, **tasks**, **MCP**, and web helpers—built for real repos, not demos
+- **VS Code** integration and terminal theme from this repo when you want the editor and shell aligned
 
 ---
 
@@ -462,13 +463,13 @@ Telemetry-related environment variables include `DISABLE_TELEMETRY` and `DEIMOS_
 
 ## Contributing
 
-**[CONTRIBUTING.md](CONTRIBUTING.md)** covers clone, `bun install`, build, and what CI expects. Big or ambiguous changes: open an issue before a huge PR.
+**[CONTRIBUTING.md](CONTRIBUTING.md)** covers clone, `bun install`, build, and what CI expects. For large or unclear scope, open an issue before sending a very large pull request.
 
 ---
 
 ## Legal / trademarks
 
-**MIT** applies to material in this repository; dependencies have their own licences. Third-party **names** appear only where **descriptive** (see [LEGAL.md](LEGAL.md)). Full licence text: [LICENSE](LICENSE). *Not legal advice—consult a solicitor or other qualified legal adviser if you need a formal opinion.*
+**MIT** applies to material in this repository; dependencies have their own licenses. Third-party **names** appear only where **descriptive** (see [LEGAL.md](LEGAL.md)). Full license text: [LICENSE](LICENSE).
 
 ---
 
