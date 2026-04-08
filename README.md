@@ -1,4 +1,4 @@
-# Deimos
+# <img width="335" height="89" alt="image" src="https://github.com/user-attachments/assets/833f9e93-c7f6-4a2c-91fd-1285699bcf0b" />
 
 > **[dxa.dev/deimos/](https://dxa.dev/deimos/)** · **[npm `@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos)** · **[Source @ dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)**  
 > **Deimos** is an **MIT** terminal coding agent from **[DXA](https://dxa.dev)**: one `deimos` command, pluggable model backends (Anthropic’s Claude models, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), tools, **MCP**, and slash commands. This repo ships the **CLI**, a **VS Code extension**, and a **dark terminal theme** tuned for long sessions.
