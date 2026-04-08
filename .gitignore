@@ -1,0 +1,21 @@
+node_modules/
+# Bun is the supported package manager; avoid accidental npm lockfile commits.
+package-lock.json
+dist/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.deimos-profile.json
+reports/
+GEMINI.md
+package-lock.json
+/.claude
+coverage/
+.pytest_cache/
+tsc-errors*.txt
+.tsc-errors.log
+tsc-out.txt
+tsc-full.txt
+typecheck-out.txt
+.npmrc

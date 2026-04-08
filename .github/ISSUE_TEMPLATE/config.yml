@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Deimos Discussions
+    url: https://github.com/dxiv/dxa-deimos/discussions
+    about: Use Discussions for setup help, questions, ideas, and community conversation.
