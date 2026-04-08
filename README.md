@@ -1,7 +1,7 @@
 # Deimos
 
 > **[dxa.dev/deimos/](https://dxa.dev/deimos/)** · **[npm `@dxa-dev/deimos`](https://www.npmjs.com/package/@dxa-dev/deimos)** · **[Source @ dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)**  
-> **Deimos** is an **MIT** terminal coding agent from **[DXA](https://dxa.dev)**: one `deimos` command, pluggable model backends (Anthropic’s API, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), tools, **MCP**, and slash commands. This repo ships the **CLI**, a **VS Code extension**, and a **dark terminal theme** tuned for long sessions.
+> **Deimos** is an **MIT** terminal coding agent from **[DXA](https://dxa.dev)**: one `deimos` command, pluggable model backends (Anthropic’s Claude models, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), tools, **MCP**, and slash commands. This repo ships the **CLI**, a **VS Code extension**, and a **dark terminal theme** tuned for long sessions.
 
 **Link hub:** npm, GitHub, and related entry points are gathered on **[dxa.dev/deimos/](https://dxa.dev/deimos/)** — start there when you want one canonical page.
 
@@ -145,7 +145,7 @@ Advanced / source build:
 
 | Provider | Setup Path | Notes |
 | --- | --- | --- |
-| Anthropic | `/provider` or env vars | Cloud default path; set `ANTHROPIC_API_KEY` in **`.env`** (layout in [.env.example](.env.example)) |
+| Anthropic (Claude models) | `/provider` or env vars | Cloud default path; set `ANTHROPIC_API_KEY` in **`.env`** (layout in [.env.example](.env.example)) |
 | OpenAI-compatible | `/provider` or env vars | OpenAI, OpenRouter, DeepSeek, Groq, Mistral, Together, Qwen (DashScope), Perplexity, LM Studio, Moonshot, and other `/v1`-compatible hosts |
 | Gemini | `/provider` or env vars | Supports API key, access token, or local ADC workflow on current `main` |
 | GitHub Models | `/onboard-github` | Interactive onboarding with saved credentials |
