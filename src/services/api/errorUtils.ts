@@ -274,3 +274,50 @@ export function formatAPIError(error: APIError): string {
   }
   return capUserFacingDetail(error.message)
 }
+
+const DEIMOS_INTERNAL_ERROR_HINT =
+  'Try /doctor or `deimos doctor`. For a log trace, set DEIMOS_DEBUG=1.'
+
+/**
+ * Turns arbitrary thrown values into short, user-safe text (redacted, length-capped).
+ * Use when surfacing unexpected failures from Deimos itself (not raw API errors).
+ */
+export function describeThrowableForUser(error: unknown, maxLen = 500): string {
+  if (error instanceof Error) {
+    const m = error.message?.trim() ?? ''
+    if (
+      m.length > 0 &&
+      m !== 'undefined' &&
+      m !== 'null' &&
+      m !== 'Error'
+    ) {
+      return capUserFacingDetail(m, maxLen)
+    }
+    if (error.name && error.name !== 'Error') {
+      return capUserFacingDetail(`${error.name} (no message)`, maxLen)
+    }
+  } else if (typeof error === 'string') {
+    const m = error.trim()
+    if (m.length > 0 && m !== 'undefined' && m !== 'null') {
+      return capUserFacingDetail(m, maxLen)
+    }
+  } else if (error !== undefined && error !== null) {
+    const m = String(error).trim()
+    if (m.length > 0 && m !== 'undefined' && m !== 'null') {
+      return capUserFacingDetail(m, maxLen)
+    }
+  }
+  return 'No details were reported — enable DEIMOS_DEBUG=1 or run with --debug and check the log.'
+}
+
+/** Assistant row when the query loop throws instead of yielding a structured API error. */
+export function formatInternalDeimosAssistantError(error: unknown): string {
+  const cap = describeThrowableForUser(error, 600)
+  return `API Error: Something went wrong inside Deimos — ${cap} · ${DEIMOS_INTERNAL_ERROR_HINT}`
+}
+
+/** tool_result text when the turn aborts before executing pending tool uses. */
+export function formatToolSkippedAfterDeimosFailure(error: unknown): string {
+  const cap = describeThrowableForUser(error, 400)
+  return `Deimos hit an error before this tool could run: ${cap} · ${DEIMOS_INTERNAL_ERROR_HINT}`
+}

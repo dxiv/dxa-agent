@@ -8,15 +8,13 @@ import { getDesktopInstallStatus, openCurrentSessionInDesktop } from '../utils/d
 import { errorMessage } from '../utils/errors.js';
 import { gracefulShutdown } from '../utils/gracefulShutdown.js';
 import { flushSessionStorage } from '../utils/sessionStorage.js';
+import { PRODUCT_URL } from '../constants/product.js';
 import { LoadingState } from './design-system/LoadingState.js';
-const DESKTOP_DOCS_URL = 'https://clau.de/desktop';
+const DESKTOP_DOCS_URL = PRODUCT_URL;
 export function getDownloadUrl(): string {
-  switch (process.platform) {
-    case 'win32':
-      return 'https://dxa.dev/deimos/api/desktop/win32/x64/exe/latest/redirect';
-    default:
-      return 'https://dxa.dev/deimos/api/desktop/darwin/universal/dmg/latest/redirect';
-  }
+  // The desktop app is optional and may not be published for all deployments.
+  // Fall back to the project homepage instead of a hard-coded download endpoint.
+  return PRODUCT_URL;
 }
 type DesktopHandoffState = 'checking' | 'prompt-download' | 'flushing' | 'opening' | 'success' | 'error';
 type Props = {

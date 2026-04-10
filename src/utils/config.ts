@@ -219,7 +219,7 @@ export type GlobalConfig = {
   // @deprecated - Migrated to ~/.claude/cache/changelog.md. Keep for migration support.
   cachedChangelog?: string
   mcpServers?: Record<string, McpServerConfig>
-  // Cloud (dxa.dev/deimos) MCP connectors that have successfully connected at least once.
+  // Cloud (github.com/dxiv/dxa-deimos) MCP connectors that have successfully connected at least once.
   // Used to gate "connector unavailable" / "needs auth" startup notifications:
   // a connector the user has actually used is worth flagging when it breaks,
   // but an org-configured connector that's been needs-auth since day one is
@@ -593,9 +593,9 @@ export type GlobalConfig = {
   // Keyed by provider profile id.
   openaiAdditionalModelOptionsCacheByProfile?: Record<string, ModelOption[]>
 
-  // Disk cache for /api/deimos/organizations/metrics_enabled.
+  // Disk cache for the metrics-enabled endpoint (first-party only by default).
   // Org-level settings change rarely; persisting across processes avoids a
-  // cold API call on every `claude -p` invocation.
+  // cold API call on every `deimos -p` invocation.
   metricsStatusCache?: {
     enabled: boolean
     timestamp: number
@@ -1210,6 +1210,26 @@ export function getCustomApiKeyStatus(
   return 'new'
 }
 
+/** Compare merged config to defaults without re-stringifying default values on every key. */
+function pickConfigDiffersFromDefaults<A extends object>(
+  config: A,
+  defaultConfig: A,
+): Partial<A> {
+  const defaultJsonCache = new Map<string, string>()
+  for (const k of Object.keys(defaultConfig)) {
+    defaultJsonCache.set(k, jsonStringify(defaultConfig[k as keyof A]))
+  }
+  return pickBy(config, (value, key) => {
+    if (Object.prototype.hasOwnProperty.call(defaultConfig, key)) {
+      return jsonStringify(value) !== defaultJsonCache.get(key)
+    }
+    return (
+      jsonStringify(value) !==
+      jsonStringify((defaultConfig as Record<string, unknown>)[key])
+    )
+  }) as Partial<A>
+}
+
 function saveConfig<A extends object>(
   file: string,
   config: A,
@@ -1222,11 +1242,7 @@ function saveConfig<A extends object>(
   fs.mkdirSync(dir)
 
   // Filter out any values that match the defaults
-  const filteredConfig = pickBy(
-    config,
-    (value, key) =>
-      jsonStringify(value) !== jsonStringify(defaultConfig[key as keyof A]),
-  )
+  const filteredConfig = pickConfigDiffersFromDefaults(config, defaultConfig)
   // Write config file with secure permissions - mode only applies to new files
   writeFileSyncAndFlush_DEPRECATED(
     file,
@@ -1329,10 +1345,9 @@ function saveConfigWithLock<A extends object>(
     }
 
     // Filter out any values that match the defaults
-    const filteredConfig = pickBy(
+    const filteredConfig = pickConfigDiffersFromDefaults(
       mergedConfig,
-      (value, key) =>
-        jsonStringify(value) !== jsonStringify(defaultConfig[key as keyof A]),
+      defaultConfig,
     )
 
     // Create timestamped backup of existing config before writing

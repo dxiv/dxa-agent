@@ -1,6 +1,6 @@
 # Deimos — documentation
 
-**Product / link hub:** [dxa.dev/deimos/](https://dxa.dev/deimos/) · **Package:** [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli) · **Repo:** [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)
+**Product / link hub:** [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) · **Package:** [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli) · **Repo:** [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)
 
 These pages are the field manual for **Deimos**: install paths, provider setup, diagnostics, and day-to-day terminal use—written to match the same dark, deliberate tone as the CLI itself.
 
@@ -31,4 +31,4 @@ Pick a path by **experience** and **goal**:
 
 ---
 
-**DXA / Deimos:** [dxa.dev/deimos/](https://dxa.dev/deimos/) · **Project README:** [README.md](../README.md) · **npm:** [@dxa-deimos/cli](https://www.npmjs.com/package/@dxa-deimos/cli) · **GitHub Packages:** [dxa-dev/cli](https://github.com/orgs/dxa-dev/packages/npm/package/cli) · **Contribute:** [CONTRIBUTING.md](../CONTRIBUTING.md) · **Maintainers:** [maintainers.md](maintainers.md) · **Legal:** [LEGAL.md](../LEGAL.md) · **Security:** [SECURITY.md](../SECURITY.md)
+**DXA / Deimos:** [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) · **Project README:** [README.md](../README.md) · **Env reference:** [`.env.example`](../.env.example) · **npm:** [@dxa-deimos/cli](https://www.npmjs.com/package/@dxa-deimos/cli) · **GitHub Packages:** [dxa-dev/cli](https://github.com/orgs/dxa-dev/packages/npm/package/cli) · **Contribute:** [CONTRIBUTING.md](../CONTRIBUTING.md) · **Maintainers:** [maintainers.md](maintainers.md) · **Legal:** [LEGAL.md](../LEGAL.md) · **Security:** [SECURITY.md](../SECURITY.md)

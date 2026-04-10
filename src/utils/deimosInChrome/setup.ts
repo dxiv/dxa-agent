@@ -31,7 +31,7 @@ import {
 import { getChromeSystemPrompt } from './prompt.js'
 import { isChromeExtensionInstalledPortable } from './setupPortable.js'
 
-const CHROME_EXTENSION_RECONNECT_URL = 'https://clau.de/chrome/reconnect'
+const CHROME_EXTENSION_RECONNECT_URL = 'about:blank'
 
 const NATIVE_HOST_IDENTIFIER = 'com.anthropic.deimos_browser_extension'
 const NATIVE_HOST_MANIFEST_NAME = `${NATIVE_HOST_IDENTIFIER}.json`

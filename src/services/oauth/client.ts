@@ -72,7 +72,7 @@ type OauthProfileApi = {
 }
 
 /**
- * Check if the user has dxa.dev/deimos authentication scope
+ * Check if the user has github.com/dxiv/dxa-deimos authentication scope
  * @private Only call this if you're OAuth / auth related code!
  */
 export function shouldUseDeimosCloudAuth(scopes: string[] | undefined): boolean {

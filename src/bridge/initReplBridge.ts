@@ -100,7 +100,7 @@ export type InitBridgeOptions = {
   perpetual?: boolean
   /**
    * When true, the bridge only forwards events outbound (no SSE inbound
-   * stream). Used by CCR mirror mode — local sessions visible on dxa.dev/deimos
+   * stream). Used by CCR mirror mode — local sessions visible on github.com/dxiv/dxa-deimos
    * without enabling inbound control.
    */
   outboundOnly?: boolean
@@ -141,7 +141,7 @@ export async function initReplBridge(
   // since each implementation has its own floor (tengu_bridge_min_version
   // for v1, tengu_bridge_repl_v2_config.min_version for v2).
 
-  // 2. Check OAuth — must be signed in with dxa.dev/deimos. Runs before the
+  // 2. Check OAuth — must be signed in with github.com/dxiv/dxa-deimos. Runs before the
   // policy check so console-auth users get the actionable "/login" hint
   // instead of a misleading policy error from a stale/wrong-org cache.
   if (!getBridgeAccessToken()) {
@@ -246,14 +246,14 @@ export async function initReplBridge(
 
   // 5. Derive session title. Precedence: explicit initialName → /rename
   // (session storage) → last meaningful user message → generated slug.
-  // Cosmetic only (dxa.dev/deimos session list); the model never sees it.
+  // Cosmetic only (github.com/dxiv/dxa-deimos session list); the model never sees it.
   // Two flags: `hasExplicitTitle` (initialName or /rename — never auto-
   // overwrite) vs. `hasTitle` (any title, including auto-derived — blocks
   // the count-1 re-derivation but not count-3). The onUserMessage callback
   // (wired to both v1 and v2 below) derives from the 1st prompt and again
   // from the 3rd so mobile/web show a title that reflects more context.
   // The slug fallback (e.g. "remote-control-graceful-unicorn") makes
-  // auto-started sessions distinguishable in the dxa.dev/deimos list before the
+  // auto-started sessions distinguishable in the github.com/dxiv/dxa-deimos list before the
   // first prompt.
   let title = `remote-control-${generateShortWordSlug()}`
   let hasTitle = false
@@ -415,7 +415,7 @@ export async function initReplBridge(
         `[bridge:repl] Skipping: ${versionError}`,
         true,
       )
-      onStateChange?.('failed', 'run `claude update` to upgrade')
+      onStateChange?.('failed', 'run `deimos /upgrade` or update your CLI build')
       return null
     }
     logForDebugging(
@@ -456,7 +456,7 @@ export async function initReplBridge(
   const versionError = checkBridgeMinVersion()
   if (versionError) {
     logBridgeSkip('version_too_old', `[bridge:repl] Skipping: ${versionError}`)
-    onStateChange?.('failed', 'run `claude update` to upgrade')
+    onStateChange?.('failed', 'run `deimos /upgrade` or update your CLI build')
     return null
   }
 
@@ -560,7 +560,7 @@ function deriveTitle(raw: string): string | undefined {
   // First sentence is usually the intent; rest is often context/detail.
   // Capture group instead of lookbehind — keeps YARR JIT happy.
   const firstSentence = /^(.*?[.!?])\s/.exec(clean)?.[1] ?? clean
-  // Collapse newlines/tabs — titles are single-line in the dxa.dev/deimos list.
+  // Collapse newlines/tabs — titles are single-line in the github.com/dxiv/dxa-deimos list.
   const flat = firstSentence.replace(/\s+/g, ' ').trim()
   if (!flat) return undefined
   return flat.length > TITLE_MAX_LEN

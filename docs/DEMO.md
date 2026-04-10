@@ -1,6 +1,6 @@
 # Deimos — 5-minute demo script (recording-safe)
 
-**Brand:** [Deimos @ DXA](https://dxa.dev/deimos/) · [Docs index](README.md) · [Cheatsheet](CHEATSHEET.md)
+**Brand:** [Deimos @ DXA](https://github.com/dxiv/dxa-deimos/) · [Docs index](README.md) · [Cheatsheet](CHEATSHEET.md)
 
 **Audience:** Anyone evaluating a terminal coding agent.  
 **Goal:** Show a real project workflow, tool use, context awareness, and MCP visibility—without exposing secrets or personal paths.

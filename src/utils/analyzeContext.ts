@@ -61,6 +61,7 @@ import {
 } from './messages.js'
 import { getRuntimeMainLoopModel } from './model/model.js'
 import type { SettingSource } from './settings/constants.js'
+import pMap from 'p-map'
 import { jsonStringify } from './slowOperations.js'
 import { buildEffectiveSystemPrompt } from './systemPrompt.js'
 import type { Theme } from './theme.js'
@@ -550,6 +551,21 @@ function findSkillTool(tools: Tools): Tool | undefined {
   return findToolByName(tools, SKILL_TOOL_NAME)
 }
 
+async function countDefinitionTokensForSkillSlashTool(
+  tool: Tool | undefined,
+  getToolPermissionContext: () => Promise<ToolPermissionContext>,
+  agentInfo: AgentDefinitionsResult | null,
+): Promise<number> {
+  if (!tool) {
+    return 0
+  }
+  return countToolDefinitionTokens(
+    [tool],
+    getToolPermissionContext,
+    agentInfo,
+  )
+}
+
 async function countSlashCommandTokens(
   tools: Tools,
   getToolPermissionContext: () => Promise<ToolPermissionContext>,
@@ -568,8 +584,8 @@ async function countSlashCommandTokens(
     }
   }
 
-  const slashCommandTokens = await countToolDefinitionTokens(
-    [slashCommandTool],
+  const slashCommandTokens = await countDefinitionTokensForSkillSlashTool(
+    slashCommandTool,
     getToolPermissionContext,
     agentInfo,
   )
@@ -610,8 +626,8 @@ async function countSkillTokens(
     // This is the same tool counted by countSlashCommandTokens(), but we track it separately
     // here for display purposes. These tokens should NOT be added to context categories
     // to avoid double-counting.
-    const skillTokens = await countToolDefinitionTokens(
-      [slashCommandTool],
+    const skillTokens = await countDefinitionTokensForSkillSlashTool(
+      slashCommandTool,
       getToolPermissionContext,
       agentInfo,
     )
@@ -676,8 +692,9 @@ export async function countMcpToolTokens(
   // Include name + description + input schema to match what toolToAPISchema
   // sends — otherwise tools with similar schemas but different descriptions
   // get identical counts (MCP tools share the same base Zod inputSchema).
-  const estimates = await Promise.all(
-    mcpTools.map(async t =>
+  const estimates = await pMap(
+    mcpTools,
+    async t =>
       roughTokenCountEstimation(
         jsonStringify({
           name: t.name,
@@ -689,7 +706,7 @@ export async function countMcpToolTokens(
           input_schema: t.inputJSONSchema ?? {},
         }),
       ),
-    ),
+    { concurrency: 4 },
   )
   const estimateTotal = estimates.reduce((s, e) => s + e, 0) || 1
   const mcpToolTokensByTool = estimates.map(e =>

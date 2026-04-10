@@ -1687,7 +1687,8 @@ test('sanitizes malformed MCP tool schemas before sending them to OpenAI', async
     | undefined
 
   expect(parameters?.additionalProperties).toBe(false)
-  expect(parameters?.required).toEqual(['priority'])
+  // No required[] in the original schema → none added (optional properties must not be forced required)
+  expect(parameters?.required).toEqual([])
   expect(properties?.priority?.type).toBe('integer')
   expect(properties?.priority?.enum).toEqual([0, 1, 2, 3])
   expect(properties?.priority).not.toHaveProperty('default')

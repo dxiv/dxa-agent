@@ -32,7 +32,7 @@ export type OAuthTokens = {
   scope?: string
   scopes?: string[]
   subscriptionType?: SubscriptionType
-  /** Present for dxa.dev/deimos subscriber tokens; mirrored in secure storage. */
+  /** Present for github.com/dxiv/dxa-deimos subscriber tokens; mirrored in secure storage. */
   rateLimitTier?: RateLimitTier
   profile?: OAuthProfilePayload
   tokenAccount?: OAuthTokenAccountFallback

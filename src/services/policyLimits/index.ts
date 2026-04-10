@@ -7,7 +7,7 @@
  *
  * Eligibility:
  * - Console users (API key): All eligible
- * - OAuth users (dxa.dev/deimos): Only Team and Enterprise/C4E subscribers are eligible
+ * - OAuth users (github.com/dxiv/dxa-deimos): Only Team and Enterprise/C4E subscribers are eligible
  * - API fails open (non-blocking) - if fetch fails, continues without restrictions
  * - API returns empty restrictions for users without policy limits
  */
@@ -187,13 +187,13 @@ export function isPolicyLimitsEligible(): boolean {
     // No API key available - continue to check OAuth
   }
 
-  // For OAuth users, check if they have dxa.dev/deimos tokens
+  // For OAuth users, check if they have github.com/dxiv/dxa-deimos tokens
   const tokens = getDeimosCloudOAuthTokens()
   if (!tokens?.accessToken) {
     return false
   }
 
-  // Must have dxa.dev/deimos inference scope
+  // Must have github.com/dxiv/dxa-deimos inference scope
   if (!tokens.scopes?.includes(DEIMOS_CLOUD_INFERENCE_SCOPE)) {
     return false
   }
@@ -244,7 +244,7 @@ function getAuthHeaders(): {
     // No API key available - continue to check OAuth
   }
 
-  // Fall back to OAuth tokens (for dxa.dev/deimos users)
+  // Fall back to OAuth tokens (for github.com/dxiv/dxa-deimos users)
   const oauthTokens = getDeimosCloudOAuthTokens()
   if (oauthTokens?.accessToken) {
     return {

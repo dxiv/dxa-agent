@@ -74,7 +74,7 @@ export function DeimosMdExternalIncludesDialog(t0: Props) {
   }
   let t8;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t8 = <Text dimColor={true}>Important: Only use Deimos with files you trust. Accessing untrusted files may pose security risks{" "}<Link url="https://dxa.dev/deimos/docs/en/security" />{" "}</Text>;
+    t8 = <Text dimColor={true}>Important: Only use Deimos with files you trust. Accessing untrusted files may pose security risks{" "}<Link url="https://github.com/dxiv/dxa-deimos/docs/en/security" />{" "}</Text>;
     $[8] = t8;
   } else {
     t8 = $[8];

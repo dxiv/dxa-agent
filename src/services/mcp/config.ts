@@ -2,7 +2,7 @@ import { feature } from 'bun:bundle'
 import { chmod, open, rename, stat, unlink } from 'fs/promises'
 import mapValues from 'lodash-es/mapValues.js'
 import memoize from 'lodash-es/memoize.js'
-import { dirname, join, parse } from 'path'
+import { basename, dirname, join, parse } from 'path'
 import { getPlatform } from 'src/utils/platform.js'
 import type { PluginError } from '../../types/plugin.js'
 import { getPluginErrorMessage } from '../../types/plugin.js'
@@ -61,6 +61,12 @@ import { getProjectMcpServerStatus } from './utils.js'
  */
 export function getEnterpriseMcpFilePath(): string {
   return join(getManagedFilePath(), 'managed-mcp.json')
+}
+
+/** Windows stdio MCP: command may be `npx`, `npx.cmd`, `npx.exe`, or a full path to any of those. */
+function isBareNpxInvocation(command: string): boolean {
+  const base = basename(command).toLowerCase()
+  return base === 'npx' || base === 'npx.cmd' || base === 'npx.exe'
 }
 
 /**
@@ -162,7 +168,7 @@ function getServerUrl(config: McpServerConfig): string | null {
 }
 
 /**
- * CCR proxy URL path markers. In remote sessions, dxa.dev/deimos connectors arrive
+ * CCR proxy URL path markers. In remote sessions, github.com/dxiv/dxa-deimos connectors arrive
  * via --mcp-config with URLs rewritten to route through the CCR/session-ingress
  * SHTTP proxy. The original vendor URL is preserved in the mcp_url query param
  * so the proxy knows where to forward. See api-go/ccr/internal/ccrshared/
@@ -266,11 +272,11 @@ export function dedupPluginMcpServers(
 }
 
 /**
- * Filter dxa.dev/deimos connectors, dropping any whose signature matches an enabled
+ * Filter github.com/dxiv/dxa-deimos connectors, dropping any whose signature matches an enabled
  * manually-configured server. Manual wins: a user who wrote .mcp.json or ran
- * `claude mcp add` expressed higher intent than a connector toggled in the web UI.
+ * `deimos mcp add` expressed higher intent than a connector toggled in the web UI.
  *
- * Connector keys are `dxa.dev/deimos <DisplayName>` so they never key-collide with
+ * Connector keys are `github.com/dxiv/dxa-deimos <DisplayName>` so they never key-collide with
  * manual servers in the merge — this content-based check catches the case where
  * both point at the same underlying URL (e.g. `mcp__slack__*` and
  * `mcp__claude_ai_Slack__*` both hitting mcp.slack.com, ~600 chars/turn wasted).
@@ -299,7 +305,7 @@ export function dedupDeimosCloudMcpServers(
     const manualDup = sig !== null ? manualSigs.get(sig) : undefined
     if (manualDup !== undefined) {
       logForDebugging(
-        `Suppressing dxa.dev/deimos connector "${name}": duplicates manually-configured "${manualDup}"`,
+        `Suppressing github.com/dxiv/dxa-deimos connector "${name}": duplicates manually-configured "${manualDup}"`,
       )
       suppressed.push({ name, duplicateOf: manualDup })
       continue
@@ -1060,11 +1066,11 @@ export function getMcpConfigByName(name: string): ScopedMcpServerConfig | null {
 }
 
 /**
- * Get Deimos MCP configurations (excludes dxa.dev/deimos servers from the
+ * Get Deimos MCP configurations (excludes github.com/dxiv/dxa-deimos servers from the
  * returned set — they're fetched separately and merged by callers).
  * This is fast: only local file reads; no awaited network calls on the
  * critical path. The optional extraDedupTargets promise (e.g. the in-flight
- * dxa.dev/deimos connector fetch) is awaited only after loadAllPluginsCacheOnly() completes,
+ * github.com/dxiv/dxa-deimos connector fetch) is awaited only after loadAllPluginsCacheOnly() completes,
  * so the two overlap rather than serialize.
  * @returns Deimos server configurations with appropriate scopes
  */
@@ -1251,7 +1257,7 @@ export async function getDeimosMcpConfigs(
 }
 
 /**
- * Get all MCP configurations across all scopes, including dxa.dev/deimos servers.
+ * Get all MCP configurations across all scopes, including github.com/dxiv/dxa-deimos servers.
  * This may be slow due to network calls - use getDeimosMcpConfigs() for fast startup.
  * @returns All server configurations with appropriate scopes
  */
@@ -1259,12 +1265,12 @@ export async function getAllMcpConfigs(): Promise<{
   servers: Record<string, ScopedMcpServerConfig>
   errors: PluginError[]
 }> {
-  // In enterprise mode, don't load dxa.dev/deimos servers (enterprise has exclusive control)
+  // In enterprise mode, don't load github.com/dxiv/dxa-deimos servers (enterprise has exclusive control)
   if (doesEnterpriseMcpConfigExist()) {
     return getDeimosMcpConfigs()
   }
 
-  // Kick off the dxa.dev/deimos fetch before getDeimosMcpConfigs so it overlaps
+  // Kick off the github.com/dxiv/dxa-deimos fetch before getDeimosMcpConfigs so it overlaps
   // with loadAllPluginsCacheOnly() inside. Memoized — the awaited call below is a cache hit.
   const deimosCloudMcpPromise = fetchDeimosCloudMcpConfigsIfEligible()
   const { servers: claudeCodeServers, errors } = await getDeimosMcpConfigs(
@@ -1276,15 +1282,15 @@ export async function getAllMcpConfigs(): Promise<{
   const { allowed: deimoscloudMcpServers } =
     filterMcpServersByPolicy(deimosCloudMcpConfigs)
 
-  // Suppress dxa.dev/deimos connectors that duplicate an enabled manual server.
-  // Keys never collide (`slack` vs `dxa.dev/deimos Slack`) so the merge below
+  // Suppress github.com/dxiv/dxa-deimos connectors that duplicate an enabled manual server.
+  // Keys never collide (`slack` vs `github.com/dxiv/dxa-deimos Slack`) so the merge below
   // won't catch this — need content-based dedup by URL signature.
   const { servers: dedupedDeimosCloudMcp } = dedupDeimosCloudMcpServers(
     deimoscloudMcpServers,
     claudeCodeServers,
   )
 
-  // Merge with dxa.dev/deimos having lowest precedence
+  // Merge with github.com/dxiv/dxa-deimos having lowest precedence
   const servers = Object.assign({}, dedupedDeimosCloudMcp, claudeCodeServers)
 
   return { servers, errors }
@@ -1352,15 +1358,13 @@ export function parseMcpConfig(params: {
     if (
       getPlatform() === 'windows' &&
       (!configToCheck.type || configToCheck.type === 'stdio') &&
-      (configToCheck.command === 'npx' ||
-        configToCheck.command.endsWith('\\npx') ||
-        configToCheck.command.endsWith('/npx'))
+      isBareNpxInvocation(configToCheck.command)
     ) {
       errors.push({
         ...(filePath && { file: filePath }),
         path: `mcpServers.${name}`,
         message: `Windows requires 'cmd /c' wrapper to execute npx`,
-        suggestion: `Change command to "cmd" with args ["/c", "npx", ...]. See: https://dxa.dev/deimos/docs/en/mcp#configure-mcp-servers`,
+        suggestion: `Change command to "cmd" with args ["/c", "npx", ...]. See: https://github.com/dxiv/dxa-deimos/docs/en/mcp#configure-mcp-servers`,
         mcpErrorMetadata: {
           scope,
           serverName: name,
@@ -1374,6 +1378,210 @@ export function parseMcpConfig(params: {
   return {
     config: { mcpServers: validatedServers },
     errors,
+  }
+}
+
+const MCP_PARSE_FILE_CACHE_LIMIT = 128
+const parseMcpConfigFileCache = new Map<
+  string,
+  {
+    mtimeMs: number
+    result: { config: McpJsonConfig | null; errors: ValidationError[] }
+  }
+>()
+
+function rememberParsedMcpFile(
+  key: string,
+  mtimeMs: number,
+  result: { config: McpJsonConfig | null; errors: ValidationError[] },
+): void {
+  if (parseMcpConfigFileCache.size >= MCP_PARSE_FILE_CACHE_LIMIT) {
+    parseMcpConfigFileCache.clear()
+  }
+  parseMcpConfigFileCache.set(key, { mtimeMs, result })
+}
+
+function parseMcpConfigFileContentsAndCache(params: {
+  filePath: string
+  expandVars: boolean
+  scope: ConfigScope
+  mtimeMs: number
+  configContent: string
+}): {
+  config: McpJsonConfig | null
+  errors: ValidationError[]
+} {
+  const { filePath, expandVars, scope, mtimeMs, configContent } = params
+  const cacheKey = `${filePath}\0${expandVars}\0${scope}`
+
+  const parsedJson = safeParseJSON(configContent)
+
+  if (!parsedJson) {
+    logForDebugging(
+      `MCP config is not valid JSON: ${filePath} (scope=${scope}, length=${configContent.length}, first100=${jsonStringify(configContent.slice(0, 100))})`,
+      { level: 'error' },
+    )
+    return {
+      config: null,
+      errors: [
+        {
+          file: filePath,
+          path: '',
+          message: `MCP config is not a valid JSON`,
+          suggestion: 'Fix the JSON syntax errors in the file',
+          mcpErrorMetadata: {
+            scope,
+            severity: 'fatal',
+          },
+        },
+      ],
+    }
+  }
+
+  const result = parseMcpConfig({
+    configObject: parsedJson,
+    expandVars,
+    scope,
+    filePath,
+  })
+  rememberParsedMcpFile(cacheKey, mtimeMs, result)
+  return result
+}
+
+function statMcpConfigFile(
+  filePath: string,
+  scope: ConfigScope,
+):
+  | { ok: true; mtimeMs: number }
+  | { ok: false; errors: ValidationError[] } {
+  const fs = getFsImplementation()
+  try {
+    const st = fs.statSync(filePath)
+    if (!st.isFile()) {
+      return {
+        ok: false,
+        errors: [
+          {
+            file: filePath,
+            path: '',
+            message: `MCP config path is not a regular file: ${filePath}`,
+            suggestion: 'Use a path to a .mcp.json file',
+            mcpErrorMetadata: {
+              scope,
+              severity: 'fatal',
+            },
+          },
+        ],
+      }
+    }
+    return { ok: true, mtimeMs: Math.floor(st.mtimeMs) }
+  } catch (error: unknown) {
+    const code = getErrnoCode(error)
+    if (code === 'ENOENT') {
+      return {
+        ok: false,
+        errors: [
+          {
+            file: filePath,
+            path: '',
+            message: `MCP config file not found: ${filePath}`,
+            suggestion: 'Check that the file path is correct',
+            mcpErrorMetadata: {
+              scope,
+              severity: 'fatal',
+            },
+          },
+        ],
+      }
+    }
+    logForDebugging(
+      `MCP config stat error for ${filePath} (scope=${scope}): ${error}`,
+      { level: 'error' },
+    )
+    return {
+      ok: false,
+      errors: [
+        {
+          file: filePath,
+          path: '',
+          message: `Failed to access file: ${error}`,
+          suggestion: 'Check file permissions and ensure the path is valid',
+          mcpErrorMetadata: {
+            scope,
+            severity: 'fatal',
+          },
+        },
+      ],
+    }
+  }
+}
+
+async function statMcpConfigFileAsync(
+  filePath: string,
+  scope: ConfigScope,
+): Promise<
+  | { ok: true; mtimeMs: number }
+  | { ok: false; errors: ValidationError[] }
+> {
+  const fs = getFsImplementation()
+  try {
+    const st = await fs.stat(filePath)
+    if (!st.isFile()) {
+      return {
+        ok: false,
+        errors: [
+          {
+            file: filePath,
+            path: '',
+            message: `MCP config path is not a regular file: ${filePath}`,
+            suggestion: 'Use a path to a .mcp.json file',
+            mcpErrorMetadata: {
+              scope,
+              severity: 'fatal',
+            },
+          },
+        ],
+      }
+    }
+    return { ok: true, mtimeMs: Math.floor(st.mtimeMs) }
+  } catch (error: unknown) {
+    const code = getErrnoCode(error)
+    if (code === 'ENOENT') {
+      return {
+        ok: false,
+        errors: [
+          {
+            file: filePath,
+            path: '',
+            message: `MCP config file not found: ${filePath}`,
+            suggestion: 'Check that the file path is correct',
+            mcpErrorMetadata: {
+              scope,
+              severity: 'fatal',
+            },
+          },
+        ],
+      }
+    }
+    logForDebugging(
+      `MCP config stat error for ${filePath} (scope=${scope}): ${error}`,
+      { level: 'error' },
+    )
+    return {
+      ok: false,
+      errors: [
+        {
+          file: filePath,
+          path: '',
+          message: `Failed to access file: ${error}`,
+          suggestion: 'Check file permissions and ensure the path is valid',
+          mcpErrorMetadata: {
+            scope,
+            severity: 'fatal',
+          },
+        },
+      ],
+    }
   }
 }
 
@@ -1392,6 +1600,18 @@ export function parseMcpConfigFromFilePath(params: {
 } {
   const { filePath, expandVars, scope } = params
   const fs = getFsImplementation()
+
+  const st = statMcpConfigFile(filePath, scope)
+  if (!st.ok) {
+    return { config: null, errors: st.errors }
+  }
+  const { mtimeMs } = st
+
+  const cacheKey = `${filePath}\0${expandVars}\0${scope}`
+  const cached = parseMcpConfigFileCache.get(cacheKey)
+  if (cached && cached.mtimeMs === mtimeMs) {
+    return cached.result
+  }
 
   let configContent: string
   try {
@@ -1436,11 +1656,66 @@ export function parseMcpConfigFromFilePath(params: {
     }
   }
 
-  const parsedJson = safeParseJSON(configContent)
+  return parseMcpConfigFileContentsAndCache({
+    filePath,
+    expandVars,
+    scope,
+    mtimeMs,
+    configContent,
+  })
+}
 
-  if (!parsedJson) {
+/**
+ * Async variant of {@link parseMcpConfigFromFilePath} for startup paths that
+ * should avoid blocking the event loop on stat/read.
+ */
+export async function parseMcpConfigFromFilePathAsync(params: {
+  filePath: string
+  expandVars: boolean
+  scope: ConfigScope
+}): Promise<{
+  config: McpJsonConfig | null
+  errors: ValidationError[]
+}> {
+  const { filePath, expandVars, scope } = params
+  const fs = getFsImplementation()
+
+  const st = await statMcpConfigFileAsync(filePath, scope)
+  if (!st.ok) {
+    return { config: null, errors: st.errors }
+  }
+  const { mtimeMs } = st
+
+  const cacheKey = `${filePath}\0${expandVars}\0${scope}`
+  const cached = parseMcpConfigFileCache.get(cacheKey)
+  if (cached && cached.mtimeMs === mtimeMs) {
+    return cached.result
+  }
+
+  let configContent: string
+  try {
+    configContent = await fs.readFile(filePath, { encoding: 'utf8' })
+  } catch (error: unknown) {
+    const code = getErrnoCode(error)
+    if (code === 'ENOENT') {
+      return {
+        config: null,
+        errors: [
+          {
+            file: filePath,
+            path: '',
+            message: `MCP config file not found: ${filePath}`,
+            suggestion: 'Check that the file path is correct',
+            mcpErrorMetadata: {
+              scope,
+              severity: 'fatal',
+            },
+          },
+        ],
+      }
+    }
     logForDebugging(
-      `MCP config is not valid JSON: ${filePath} (scope=${scope}, length=${configContent.length}, first100=${jsonStringify(configContent.slice(0, 100))})`,
+      `MCP config read error for ${filePath} (scope=${scope}): ${error}`,
       { level: 'error' },
     )
     return {
@@ -1449,8 +1724,8 @@ export function parseMcpConfigFromFilePath(params: {
         {
           file: filePath,
           path: '',
-          message: `MCP config is not a valid JSON`,
-          suggestion: 'Fix the JSON syntax errors in the file',
+          message: `Failed to read file: ${error}`,
+          suggestion: 'Check file permissions and ensure the file exists',
           mcpErrorMetadata: {
             scope,
             severity: 'fatal',
@@ -1460,11 +1735,12 @@ export function parseMcpConfigFromFilePath(params: {
     }
   }
 
-  return parseMcpConfig({
-    configObject: parsedJson,
+  return parseMcpConfigFileContentsAndCache({
+    filePath,
     expandVars,
     scope,
-    filePath,
+    mtimeMs,
+    configContent,
   })
 }
 

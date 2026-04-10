@@ -4,7 +4,7 @@ import { homedir } from 'os'
 import { join } from 'path'
 import { isFsInaccessible } from '../errors.js'
 
-export const CHROME_EXTENSION_URL = 'https://dxa.dev/deimos/chrome'
+export const CHROME_EXTENSION_URL = 'https://github.com/dxiv/dxa-deimos/chrome'
 
 // Production extension ID
 const PROD_EXTENSION_ID = 'fcoeoabgfenejglbffodgkkbkcdhcgfn'

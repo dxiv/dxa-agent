@@ -97,7 +97,7 @@ type VoiceStreamMessage =
 
 export function isVoiceStreamAvailable(): boolean {
   // voice_stream uses the same OAuth as Deimos — available when the
-  // user is authenticated with Anthropic (dxa.dev/deimos subscriber or has
+  // user is authenticated with Anthropic (github.com/dxiv/dxa-deimos subscriber or has
   // valid OAuth tokens).
   if (!isAnthropicAuthEnabled()) {
     return false
@@ -123,11 +123,11 @@ export async function connectVoiceStream(
 
   // voice_stream is a private_api route, but /api/ws/ is also exposed on
   // the api.anthropic.com listener (service_definitions.yaml private-api:
-  // visibility.external: true). We target that host instead of dxa.dev/deimos
-  // because the dxa.dev/deimos CF zone uses TLS fingerprinting and challenges
+  // visibility.external: true). We target that host instead of github.com/dxiv/dxa-deimos
+  // because the github.com/dxiv/dxa-deimos CF zone uses TLS fingerprinting and challenges
   // non-browser clients (anthropics/deimos#34094). Same private-api
   // pod, same OAuth Bearer auth — just a CF zone that doesn't block us.
-  // Desktop dictation still uses dxa.dev/deimos (Swift URLSession has a
+  // Desktop dictation still uses github.com/dxiv/dxa-deimos (Swift URLSession has a
   // browser-class JA3 fingerprint, so CF lets it through).
   const wsBaseUrl =
     process.env.VOICE_STREAM_BASE_URL ||

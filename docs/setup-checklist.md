@@ -1,6 +1,6 @@
 # Setup checklist
 
-Use this to verify your machine **before** and **after** installing **[Deimos](https://dxa.dev/deimos/)** (`deimos` on the command line). Check boxes as you go.
+Use this to verify your machine **before** and **after** installing **[Deimos](https://github.com/dxiv/dxa-deimos/)** (`deimos` on the command line). Check boxes as you go.
 
 ---
 

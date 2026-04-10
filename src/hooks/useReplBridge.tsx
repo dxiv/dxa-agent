@@ -48,7 +48,7 @@ const MAX_CONSECUTIVE_INIT_FAILURES = 3;
  * Watches AppState.replBridgeEnabled — when toggled off (via /config or footer),
  * the bridge is torn down. When toggled back on, it re-initializes.
  *
- * Inbound messages from dxa.dev/deimos are injected into the REPL via queuedCommands.
+ * Inbound messages from github.com/dxiv/dxa-deimos are injected into the REPL via queuedCommands.
  */
 export function useReplBridge(messages: Message[], setMessages: (action: React.SetStateAction<Message[]>) => void, abortControllerRef: React.RefObject<AbortController | null>, commands: readonly Command[], mainLoopModel: string): {
   sendBridgeResult: () => void;
@@ -152,7 +152,7 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
             shouldShowAppUpgradeMessage
           } = await import('../bridge/envLessBridgeConfig.js');
 
-          // Assistant mode: perpetual bridge session — dxa.dev/deimos shows one
+          // Assistant mode: perpetual bridge session — github.com/dxiv/dxa-deimos shows one
           // continuous conversation across CLI restarts instead of a new
           // session per invocation. initBridgeCore reads bridge-pointer.json
           // (the same crash-recovery file #20735 added) and reuses its
@@ -169,7 +169,7 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
             perpetual = isAssistantMode();
           }
 
-          // When a user message arrives from dxa.dev/deimos, inject it into the REPL.
+          // When a user message arrives from github.com/dxiv/dxa-deimos, inject it into the REPL.
           // Preserves the original UUID so that when the message is forwarded
           // back to CCR, it matches the original — avoiding duplicate messages.
           //
@@ -502,7 +502,9 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
             clearTimeout(failureTimeoutRef.current);
             setAppState(prev_13 => ({
               ...prev_13,
-              replBridgeError: prev_13.replBridgeError ?? 'check debug logs for details'
+              replBridgeError:
+                prev_13.replBridgeError ??
+                'Bridge could not start. Check login/session, network, and /config (you can disable the bridge there).',
             }));
             failureTimeoutRef.current = setTimeout(() => {
               if (cancelled) return;

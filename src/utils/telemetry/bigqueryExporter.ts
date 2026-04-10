@@ -16,6 +16,7 @@ import { logForDebugging } from '../debug.js'
 import { errorMessage, toError } from '../errors.js'
 import { getAuthHeaders } from '../http.js'
 import { logError } from '../log.js'
+import { getAPIProvider } from '../model/providers.js'
 import { jsonStringify } from '../slowOperations.js'
 import { getDeimosUserAgent } from '../userAgent.js'
 
@@ -44,18 +45,10 @@ export class BigQueryMetricsExporter implements PushMetricExporter {
   private isShutdown = false
 
   constructor(options: { timeout?: number } = {}) {
-    const defaultEndpoint = 'https://api.anthropic.com/api/deimos/metrics'
+    const configured = process.env.DEIMOS_METRICS_ENDPOINT?.replace(/\/$/, '')
+    const defaultEndpoint = configured ? `${configured}/api/deimos/metrics` : ''
 
-    if (
-      process.env.USER_TYPE === 'ant' &&
-      process.env.ANT_DEIMOS_METRICS_ENDPOINT
-    ) {
-      this.endpoint =
-        process.env.ANT_DEIMOS_METRICS_ENDPOINT +
-        '/api/deimos/metrics'
-    } else {
-      this.endpoint = defaultEndpoint
-    }
+    this.endpoint = defaultEndpoint
 
     this.timeout = options.timeout || 5000
   }
@@ -89,6 +82,17 @@ export class BigQueryMetricsExporter implements PushMetricExporter {
     resultCallback: (result: ExportResult) => void,
   ): Promise<void> {
     try {
+      // Default: do not export metrics unless using the first-party provider
+      // or the deployment explicitly configured a metrics endpoint.
+      if (getAPIProvider() !== 'firstParty' && !process.env.DEIMOS_METRICS_ENDPOINT) {
+        resultCallback({ code: ExportResultCode.SUCCESS })
+        return
+      }
+      if (!this.endpoint) {
+        resultCallback({ code: ExportResultCode.SUCCESS })
+        return
+      }
+
       // Skip if trust not established in interactive mode
       // This prevents triggering apiKeyHelper before trust dialog
       const hasTrust =
@@ -171,7 +175,7 @@ export class BigQueryMetricsExporter implements PushMetricExporter {
 
     // Add customer type and subscription type
     if (isDeimosCloudSubscriber()) {
-      resourceAttributes['user.customer_type'] = 'claude_ai'
+      resourceAttributes['user.customer_type'] = 'deimos_cloud'
       const subscriptionType = getSubscriptionType()
       if (subscriptionType) {
         resourceAttributes['user.subscription_type'] = subscriptionType

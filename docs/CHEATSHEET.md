@@ -1,8 +1,8 @@
 # Deimos — terminal cheatsheet
 
-**[Deimos](https://dxa.dev/deimos/)** · **[DXA](https://dxa.dev)** · terminal-native agent
+**[Deimos](https://github.com/dxiv/dxa-deimos/)** · terminal-native agent
 
-Quick reference for the interactive `deimos` CLI. Install and first-run: **[README.md](../README.md)** (Quick start → Install).
+Quick reference for the interactive `deimos` CLI. **Install:** [README.md](../README.md) (Quick start). **First session:** [first-run.md](first-run.md). **Doc index:** [docs/README.md](README.md). **When something breaks:** [troubleshooting.md](troubleshooting.md).
 
 ---
 
@@ -49,6 +49,8 @@ Use **`/permissions`** when you need stricter or looser tool access, or when the
 
 Use **`/mcp`** to connect external tools and data sources. Configure servers through the guided UI; keep credentials in environment variables or your OS secret store, not in chat logs.
 
+**XAA IdP (SEP-990):** CLI `deimos mcp xaa login --stdin` reads a JWT from **stdin** (pipe), avoiding `--id-token` in shell history. Setup: `deimos mcp xaa setup --issuer … --client-id …`.
+
 ---
 
 ## Updating
@@ -59,4 +61,4 @@ Use **`/mcp`** to connect external tools and data sources. Configure servers thr
 
 ---
 
-**Deimos** · [dxa.dev/deimos/](https://dxa.dev/deimos/) · [Documentation index](README.md) · npm [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli)
+**Deimos** · [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) · [Documentation index](README.md) · npm [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli)

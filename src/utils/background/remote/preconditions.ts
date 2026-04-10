@@ -16,7 +16,7 @@ import { getOAuthHeaders } from '../../teleport/api.js'
 import { fetchEnvironments } from '../../teleport/environments.js'
 
 /**
- * Checks if user needs to log in with dxa.dev/deimos
+ * Checks if user needs to log in with github.com/dxiv/dxa-deimos
  * Extracted from getTeleportErrors() in TeleportError.tsx
  * @returns true if login is required, false otherwise
  */

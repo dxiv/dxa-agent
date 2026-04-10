@@ -341,10 +341,7 @@ export function resolveProviderRequest(options?: {
 }
 
 export function getAdditionalModelOptionsCacheScope(): string | null {
-  if (
-    !isEnvTruthy(process.env.DEIMOS_USE_OPENAI) &&
-    !isEnvTruthy(process.env.DEIMOS_USE_OPENAI)
-  ) {
+  if (!isEnvTruthy(process.env.DEIMOS_USE_OPENAI)) {
     if (!isEnvTruthy(process.env.DEIMOS_USE_GEMINI) &&
         !isEnvTruthy(process.env.DEIMOS_USE_GITHUB) &&
         !isEnvTruthy(process.env.DEIMOS_USE_BEDROCK) &&

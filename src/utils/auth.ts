@@ -1344,7 +1344,7 @@ async function invalidateOAuthCacheIfDiskChanged(): Promise<void> {
   }
 }
 
-// In-flight dedup: when N dxa.dev/deimos proxy connectors hit 401 with the same
+// In-flight dedup: when N github.com/dxiv/dxa-deimos proxy connectors hit 401 with the same
 // token simultaneously (common at startup — #20930), only one should clear
 // caches and re-read the keychain. Without this, each call's clearOAuthTokenCache()
 // nukes readInFlight in macOsKeychainStorage and triggers a fresh spawn —
@@ -1539,7 +1539,7 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
 
     logEvent('tengu_oauth_token_refresh_starting', {})
     const refreshedTokens = await refreshOAuthToken(lockedTokens.refreshToken, {
-      // For dxa.dev/deimos subscribers, omit scopes so the default
+      // For github.com/dxiv/dxa-deimos subscribers, omit scopes so the default
       // DEIMOS_CLOUD_OAUTH_SCOPES applies — this allows scope expansion
       // (e.g. adding user:file_upload) on refresh without re-login.
       scopes: shouldUseDeimosCloudAuth(lockedTokens.scopes)
@@ -1595,7 +1595,7 @@ export function hasProfileScope(): boolean {
 
 export function is1PApiCustomer(): boolean {
   // 1P API customers are users who are NOT:
-  // 1. dxa.dev/deimos subscribers (Max, Pro, Enterprise, Team)
+  // 1. github.com/dxiv/dxa-deimos subscribers (Max, Pro, Enterprise, Team)
   // 2. Vertex AI users
   // 3. AWS Bedrock users
   // 4. Foundry users
@@ -1609,7 +1609,7 @@ export function is1PApiCustomer(): boolean {
     return false
   }
 
-  // Exclude dxa.dev/deimos subscribers
+  // Exclude github.com/dxiv/dxa-deimos subscribers
   if (isDeimosCloudSubscriber()) {
     return false
   }
@@ -1979,7 +1979,7 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
         `This machine requires organization ${requiredOrgUuid} but the profile could not be fetched.\n` +
         `This may be a network error, or the token may lack the user:profile scope required for\n` +
         `verification (tokens from 'claude setup-token' do not include this scope).\n` +
-        `Try again, or obtain a full-scope token via 'claude auth login'.`,
+        `Try again, or obtain a full-scope token via /login.`,
     }
   }
 
@@ -1990,7 +1990,7 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
       message:
         `Unable to verify organization for the current authentication token.\n` +
         `This machine requires organization ${requiredOrgUuid} but the profile response did not include an organization.\n` +
-        `Try again, or obtain a full-scope token via 'claude auth login'.`,
+        `Try again, or obtain a full-scope token via /login.`,
     }
   }
   if (tokenOrgUuid === requiredOrgUuid) {
@@ -2018,7 +2018,7 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
     message:
       `Your authentication token belongs to organization ${tokenOrgUuid},\n` +
       `but this machine requires organization ${requiredOrgUuid}.\n\n` +
-      `Please log in with the correct organization: claude auth login`,
+      `Please log in with the correct organization: /login`,
   }
 }
 

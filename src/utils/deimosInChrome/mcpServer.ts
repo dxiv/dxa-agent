@@ -20,7 +20,7 @@ import { isEnvTruthy } from '../envUtils.js'
 import { sideQuery } from '../sideQuery.js'
 import { getAllSocketPaths, getSecureSocketPath } from './common.js'
 
-const EXTENSION_DOWNLOAD_URL = 'https://dxa.dev/deimos/chrome'
+const EXTENSION_DOWNLOAD_URL = 'https://github.com/dxiv/dxa-deimos/chrome'
 const BUG_REPORT_URL =
   'https://github.com/anthropics/deimos/issues/new?labels=bug,claude-in-chrome'
 
@@ -108,11 +108,11 @@ export function createChromeContext(
     clientTypeId: 'deimos',
     onAuthenticationError: () => {
       logger.warn(
-        'Authentication error occurred. Please ensure you are logged into the Deimos browser extension with the same dxa.dev/deimos account as Deimos.',
+        'Authentication error occurred. Please ensure you are logged into the browser extension with the same account as Deimos.',
       )
     },
     onToolCallDisconnected: () => {
-      return `Browser extension is not connected. Please ensure the Deimos browser extension is installed and running (${EXTENSION_DOWNLOAD_URL}), and that you are logged into dxa.dev/deimos with the same account as Deimos. If this is your first time connecting to Chrome, you may need to restart Chrome for the installation to take effect. If you continue to experience issues, please report a bug: ${BUG_REPORT_URL}`
+      return `Browser extension is not connected. Please ensure the browser extension is installed and running (${EXTENSION_DOWNLOAD_URL}). If this is your first time connecting to Chrome, you may need to restart Chrome for the installation to take effect. If you continue to experience issues, please report a bug: ${BUG_REPORT_URL}`
     },
     onExtensionPaired: (deviceId: string, name: string) => {
       saveGlobalConfig(config => {

@@ -7,7 +7,7 @@
  *
  * Eligibility:
  * - Console users (API key): All eligible
- * - OAuth users (dxa.dev/deimos): Only Enterprise/C4E and Team subscribers are eligible
+ * - OAuth users (github.com/dxiv/dxa-deimos): Only Enterprise/C4E and Team subscribers are eligible
  * - API fails open (non-blocking) - if fetch fails, continues without remote settings
  * - API returns empty settings for users without managed settings
  */
@@ -185,7 +185,7 @@ function getRemoteSettingsAuthHeaders(): {
     // No API key available - continue to check OAuth
   }
 
-  // Fall back to OAuth tokens (for dxa.dev/deimos users)
+  // Fall back to OAuth tokens (for github.com/dxiv/dxa-deimos users)
   const oauthTokens = getDeimosCloudOAuthTokens()
   if (oauthTokens?.accessToken) {
     return {

@@ -66,6 +66,27 @@ export function startsWithApiErrorPrefix(text: string): boolean {
     text.startsWith(INTERACTIVE_AUTH_API_ERROR_PREFIX)
   )
 }
+
+/** Sub-kind for stream `max_output_tokens` / context exceeded assistant rows. */
+export type MaxOutputTokensUiKind =
+  | 'per_turn_output'
+  | 'model_context_window'
+
+export function classifyMaxOutputTokensErrorText(
+  text: string,
+): MaxOutputTokensUiKind | null {
+  if (!startsWithApiErrorPrefix(text)) {
+    return null
+  }
+  if (text.includes('output token maximum')) {
+    return 'per_turn_output'
+  }
+  if (text.includes('context window limit')) {
+    return 'model_context_window'
+  }
+  return null
+}
+
 export const PROMPT_TOO_LONG_ERROR_MESSAGE = 'Prompt is too long'
 
 export function isPromptTooLongMessage(msg: AssistantMessage): boolean {
@@ -562,7 +583,7 @@ export function getAssistantMessageFromError(
     // (e.g. 1M context without Extra Usage) and infra capacity 429s land here.
     if (error.message.includes('Extra usage is required for long context')) {
       const hint = getIsNonInteractiveSession()
-        ? 'enable extra usage at dxa.dev/deimos/settings/usage, or use --model to switch to standard context'
+        ? 'enable extra usage at github.com/dxiv/dxa-deimos/settings/usage, or use --model to switch to standard context'
         : 'run /extra-usage to enable, or /model to switch to standard context'
       return createAssistantAPIErrorMessage({
         content: `${API_ERROR_MESSAGE_PREFIX}: Extra usage is required for 1M context · ${hint}`,
@@ -594,6 +615,7 @@ export function getAssistantMessageFromError(
       content: PROMPT_TOO_LONG_ERROR_MESSAGE,
       error: 'invalid_request',
       errorDetails: error.message,
+      promptTooLongSource: 'api',
     })
   }
 

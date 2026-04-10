@@ -13,11 +13,7 @@ export type APIProvider =
   | 'codex'
 
 function isUsingOpenAICompatProvider(): boolean {
-  // Rebrand: DEIMOS_* is preferred, but keep legacy DEIMOS_* for compatibility.
-  return (
-    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
-    isEnvTruthy(process.env.DEIMOS_USE_OPENAI)
-  )
+  return isEnvTruthy(process.env.DEIMOS_USE_OPENAI)
 }
 
 export function getAPIProvider(): APIProvider {

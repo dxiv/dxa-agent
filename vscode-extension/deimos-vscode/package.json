@@ -1,11 +1,11 @@
 {
   "name": "deimos-vscode",
   "displayName": "deimos",
-  "description": "VS Code companion for deimos: project-aware launch and Control Center. https://dxa.dev/deimos/",
+  "description": "VS Code companion for deimos: project-aware launch and Control Center. https://github.com/dxiv/dxa-deimos/",
   "version": "0.2.8",
   "publisher": "devnull-bootloader",
   "engines": {
-    "vscode": "^1.95.0"
+    "vscode": "^1.115.0"
   },
   "categories": [
     "Themes",

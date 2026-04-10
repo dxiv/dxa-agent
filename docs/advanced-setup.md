@@ -1,12 +1,12 @@
 # Deimos advanced setup
 
-**[Deimos](https://dxa.dev/deimos/)** · clone: [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)
+**[Deimos](https://github.com/dxiv/dxa-deimos/)** · clone: [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)
 
 **Who this is for:** Developers and power users who want to **clone this repo**, use **Bun**, run **`bun run build`**, use **profile launchers** (`profile:init`, `dev:profile`), **`doctor:*` diagnostics**, or copy-paste **many provider examples**.
 
 **If you only want the published CLI:** follow [Non-technical setup](non-technical-setup.md) or the OS guides — [Windows](quick-start-windows.md) · [macOS / Linux](quick-start-mac-linux.md). **When something breaks:** [Troubleshooting](troubleshooting.md). **After the REPL starts:** [First run](first-run.md).
 
-**Environment variable names:** Use the **`DEIMOS_*`** prefix in examples (for example `DEIMOS_USE_OPENAI=1`).
+**Environment variables:** Mode switches often use the **`DEIMOS_*`** prefix (for example `DEIMOS_USE_OPENAI=1`, `DEIMOS_USE_GEMINI=1`). Provider endpoints and keys usually follow each vendor’s names (`OPENAI_*`, `GEMINI_*`, `CODEX_*`, `ANTHROPIC_*`, AWS/GCP vars, etc.). **`.env.example`** in the repo lists every supported path.
 
 ---
 
@@ -53,6 +53,60 @@ export OPENAI_API_KEY=sk-...
 export OPENAI_MODEL=gpt-4o
 ```
 
+### Google Gemini (native SDK)
+
+This is **not** the OpenRouter/OpenAI-compat route below. Uses the Gemini client in-tree.
+
+```bash
+export DEIMOS_USE_GEMINI=1
+export GEMINI_API_KEY=your-key
+export GEMINI_MODEL=gemini-2.0-flash
+```
+
+Optional: `GEMINI_BASE_URL` if you use a custom endpoint (see `.env.example`).
+
+### GitHub Models
+
+```bash
+export DEIMOS_USE_GITHUB=1
+export GITHUB_TOKEN=ghp_...
+# Or GH_TOKEN. Default model if unset is often openai/gpt-4.1 — override if needed:
+export OPENAI_MODEL=openai/gpt-4.1
+```
+
+Use **`/onboard-github`** in `deimos` when you want the guided flow.
+
+### AWS Bedrock
+
+```bash
+export DEIMOS_USE_BEDROCK=1
+export AWS_REGION=us-east-1
+export AWS_BEARER_TOKEN_BEDROCK=...
+# Optional: ANTHROPIC_BEDROCK_BASE_URL=...
+export ANTHROPIC_MODEL=claude-sonnet-4-20250514
+```
+
+### Google Vertex AI
+
+```bash
+export DEIMOS_USE_VERTEX=1
+export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project
+export GOOGLE_CLOUD_PROJECT=your-gcp-project
+export CLOUD_ML_REGION=us-east5
+export ANTHROPIC_MODEL=claude-sonnet-4-20250514
+```
+
+### Microsoft Foundry (Azure AI)
+
+```bash
+export DEIMOS_USE_FOUNDRY=1
+export ANTHROPIC_FOUNDRY_RESOURCE=your-azure-resource-name
+export ANTHROPIC_FOUNDRY_API_KEY=your-key
+export ANTHROPIC_MODEL=claude-sonnet-4-20250514
+```
+
+See **`src/services/api/client.ts`** for `ANTHROPIC_FOUNDRY_BASE_URL` and auth edge cases.
+
 ### Codex via ChatGPT auth
 
 `codexplan` maps to GPT-5.4 on the Codex backend with high reasoning.
@@ -79,7 +133,9 @@ export OPENAI_BASE_URL=https://api.deepseek.com/v1
 export OPENAI_MODEL=deepseek-chat
 ```
 
-### Google Gemini via OpenRouter
+### Google Gemini via OpenRouter (OpenAI-compatible)
+
+Uses **`DEIMOS_USE_OPENAI=1`**, not `DEIMOS_USE_GEMINI`.
 
 ```bash
 export DEIMOS_USE_OPENAI=1
@@ -101,6 +157,8 @@ export OPENAI_MODEL=llama3.3:70b
 ```
 
 ### Atomic Chat (local, Apple Silicon)
+
+Atomic Chat is aimed at **macOS on Apple Silicon**. On **Windows or Linux**, use **Ollama** or **LM Studio** (OpenAI-compatible sections above) for local models.
 
 ```bash
 export DEIMOS_USE_OPENAI=1
@@ -270,6 +328,26 @@ Use `profile:codex` or `--provider codex` when you want the ChatGPT Codex backen
 For `dev:ollama`, make sure Ollama is running locally before launch.
 
 For `dev:atomic-chat`, make sure Atomic Chat is running with a model loaded before launch.
+
+## Long sessions, context, and token limits
+
+Models enforce a **maximum input size** (context window). Deimos estimates tokens to drive **warnings**, **auto-compact**, and **blocking** before you hit a hard API error. Those estimates are approximate; the provider response is authoritative.
+
+**You cannot raise the real context above what the model supports.** Settings below only change how Deimos plans compaction and surfaces limits. If you set a window **larger** than the model allows, you will still get `prompt is too long` (or similar) from the API.
+
+| Variable | Role |
+| --- | --- |
+| `DEIMOS_MAX_CONTEXT_TOKENS` | Effective context for Deimos-only math (warnings, blocking, compact thresholds). Integer, clamped between **4096** and **2_000_000**. Overrides `[1m]` suffix and built-in tables when set. Must be ≤ your model’s actual window. |
+| `DEIMOS_AUTO_COMPACT_WINDOW` | Caps the window used for auto-compact (compact **earlier** when lower than the resolved window). |
+| `DEIMOS_BLOCKING_LIMIT_OVERRIDE` | Token usage at which the app blocks sending until `/compact` (default derives from effective window). |
+| `DEIMOS_MAX_OUTPUT_TOKENS` | Upper bound on **assistant output** per turn; still clamped to provider limits. |
+| `DEIMOS_FILE_READ_MAX_OUTPUT_TOKENS` | Max tokens injected from a single **file read** (truncation beyond this). |
+| `MAX_MCP_OUTPUT_TOKENS` | Max tokens from a single **MCP tool** result. |
+| `DEIMOS_DISABLE_1M_CONTEXT` | When truthy, Deimos does not treat models as 1M-capable for budgeting (stricter, compliance-friendly). |
+
+**Continuous work** in long threads: keep **auto-compact** on (default), run **`/compact`** when warned, or start a new session for a clean slate. For OpenAI-shim models missing from `src/utils/model/openaiContextWindows.ts`, Deimos uses a **conservative 8k** window until you add the model — that triggers compact very early; extend the table or set `DEIMOS_MAX_CONTEXT_TOKENS` to match the vendor doc.
+
+Copy-paste names and short comments also live under **OPTIONAL TUNING** in [`.env.example`](../.env.example).
 
 ## Optional Python utilities (`python/`)
 

@@ -130,6 +130,7 @@ import {
   runPreToolUseHooks,
 } from './toolHooks.js'
 import { stat } from 'node:fs/promises'
+import { WEB_SEARCH_TOOL_NAME } from '../../tools/WebSearchTool/prompt.js'
 
 function isStopHookTimingAttachment(
   att: unknown,
@@ -308,7 +309,7 @@ function findMcpServerConnection(
   }
 
   // mcpInfo.serverName is normalized (e.g., "claude_ai_Slack"), but client.name
-  // is the original name (e.g., "dxa.dev/deimos Slack"). Normalize both for comparison.
+  // is the original name (e.g., "github.com/dxiv/dxa-deimos Slack"). Normalize both for comparison.
   return mcpClients.find(
     client => normalizeNameForMCP(client.name) === mcpInfo.serverName,
   )
@@ -484,7 +485,7 @@ export async function* runToolUse(
     logError(error)
     const errorMessage = error instanceof Error ? error.message : String(error)
     const toolInfo = tool ? ` (${tool.name})` : ''
-    const detailedError = `Error calling tool${toolInfo}: ${errorMessage}`
+    const detailedError = `Error calling tool${toolInfo}: ${errorMessage} · If this persists, run /doctor or deimos doctor`
 
     yield {
       message: createUserMessage({
@@ -691,6 +692,81 @@ async function checkPermissionsAndCallTool(
         }),
       },
     ]
+  }
+
+  function getLastUserText(messages: Message[]): string | null {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i]
+      if (m?.type !== 'user') continue
+      const c = m.message.content
+      if (typeof c === 'string' && c.trim()) return c
+      if (Array.isArray(c)) {
+        const text = c
+          .filter(
+            (b): b is { type: 'text'; text: string } =>
+              typeof b === 'object' && b !== null && 'type' in b && b.type === 'text' && 'text' in b,
+          )
+          .map(b => b.text)
+          .join('\n')
+          .trim()
+        if (text) return text
+      }
+    }
+    return null
+  }
+
+  function inferPathFromDirectoryRequest(text: string): string | null {
+    // Keep this conservative: only pick up obvious absolute paths.
+    const unix = text.match(/(^|\s)(\/[^\s"'`]+)(\s|$)/)
+    if (unix?.[2]) return unix[2]
+    const win = text.match(/(^|\s)([A-Za-z]:\\[^\s"'`]+)(\s|$)/)
+    if (win?.[2]) return win[2]
+    return null
+  }
+
+  // -------------------------------------------------------------------------
+  // Local-model resiliency: models sometimes use WebSearch for "list directory"
+  // style requests. Rewrite to a local directory listing instead.
+  // -------------------------------------------------------------------------
+  if (
+    tool.name === WEB_SEARCH_TOOL_NAME &&
+    parsedInput.success &&
+    typeof (parsedInput.data as Record<string, unknown>).query === 'string'
+  ) {
+    const q = ((parsedInput.data as { query: string }).query ?? '').toLowerCase()
+    const lastUser = (getLastUserText(toolUseContext.messages) ?? '').toLowerCase()
+    const looksLikeLocalListing =
+      /\b(list|show|print)\b/.test(q) && /\b(dir|directory|folder|files)\b/.test(q) ||
+      /\b(list|show|print)\b/.test(lastUser) && /\b(dir|directory|folder|files)\b/.test(lastUser) ||
+      /\bcurrent directory\b/.test(q) ||
+      /\bcurrent directory\b/.test(lastUser)
+
+    if (looksLikeLocalListing) {
+      const isWin = process.platform === 'win32'
+      const altToolName = isWin ? POWERSHELL_TOOL_NAME : BASH_TOOL_NAME
+      const altTool = findToolByName(toolUseContext.options.tools, altToolName)
+      if (altTool) {
+        const raw = (parsedInput.data as { query: string }).query
+        const inferredPath = inferPathFromDirectoryRequest(raw) ?? inferPathFromDirectoryRequest(lastUser)
+        const target = inferredPath ?? '.'
+        const bashQuoted = `'${target.replace(/'/g, `'\\''`)}'`
+        const psQuoted = `'${target.replace(/'/g, `''`)}'`
+        const altInput =
+          isWin
+            ? ({ command: `Get-ChildItem -Force -LiteralPath ${psQuoted}` } satisfies Record<string, unknown>)
+            : ({ command: `ls -la ${bashQuoted}` } satisfies Record<string, unknown>)
+
+        const altParsed = altTool.inputSchema.safeParse(altInput)
+        if (altParsed.success) {
+          logEvent('tengu_tool_call_rewrite_websearch_directory', {
+            fromTool: sanitizeToolNameForAnalytics(tool.name),
+            toTool: sanitizeToolNameForAnalytics(altTool.name),
+          })
+          tool = altTool
+          parsedInput = altParsed
+        }
+      }
+    }
   }
 
   // -------------------------------------------------------------------------

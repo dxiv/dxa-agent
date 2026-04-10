@@ -342,7 +342,7 @@ function getBigQueryExportingReader() {
 
 function isBigQueryMetricsEnabled() {
   // BigQuery metrics are enabled for:
-  // 1. API customers (excluding dxa.dev/deimos subscribers and Bedrock/Vertex)
+  // 1. API customers (excluding github.com/dxiv/dxa-deimos subscribers and Bedrock/Vertex)
   // 2. Deimos for Enterprise (C4E) users
   // 3. Deimos for Teams users
   const subscriptionType = getSubscriptionType()

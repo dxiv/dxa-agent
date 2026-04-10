@@ -1,12 +1,12 @@
 # Deimos — notes for maintainers
 
-**Product:** [dxa.dev/deimos/](https://dxa.dev/deimos/) · **Package:** [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli)
+**Product:** [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) · **Package:** [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli)
 
 ## CI overview
 
 | Workflow | Purpose |
 | --- | --- |
-| [pr-checks.yml](../.github/workflows/pr-checks.yml) | **Typecheck** (blocking), **smoke** (`build` + CLI `--version` / `--help`), **`verify:privacy`**, tests (`--max-concurrency=1`), provider tests, PR intent scan, **coverage** + **Codecov** (OIDC), **typecheck log** artifact on failure |
+| [pr-checks.yml](../.github/workflows/pr-checks.yml) | **Typecheck** (blocking), **smoke**, **`verify:privacy`**, full Bun tests on **Ubuntu** and **Windows**, provider tests, PR intent scan, **Python** `pytest` on `python/tests`, **coverage** + **Codecov** (OIDC), **typecheck log** artifact on failure |
 | [codeql.yml](../.github/workflows/codeql.yml) | **CodeQL Advanced** — Actions, JavaScript/TypeScript, Python on `main`, PRs, and weekly schedule |
 | [dependabot-bun-lock.yml](../.github/workflows/dependabot-bun-lock.yml) | Refreshes `bun.lock` on Dependabot PRs when needed |
 | [release-artifacts.yml](../.github/workflows/release-artifacts.yml) | Tagged release artifacts |
@@ -14,7 +14,7 @@
 
 **Codecov:** the coverage job uses **`use_oidc: true`** (see [Codecov GitHub OIDC](https://docs.codecov.com/docs/github-oidc)). Enable the Codecov GitHub app or connect the repo in Codecov’s UI if uploads do not appear. If OIDC is not an option, switch the step to a repository secret **`CODECOV_TOKEN`** and drop `use_oidc`.
 
-**Typecheck:** `tsc --noEmit` is **informational** in CI (`continue-on-error`) because the full tree still has many errors unrelated to day-to-day PRs. The Ubuntu job uploads **`typecheck-log`** when the compiler fails. Long-term goal: shrink errors until typecheck can **block** merges.
+**Typecheck:** `tsc --noEmit` **blocks** the Ubuntu PR job on failure; the workflow uploads a **`typecheck-log`** artifact when compilation fails so reviewers can inspect the full output.
 
 **TypeScript 6:** root **`tsconfig.json`** sets **`"ignoreDeprecations": "6.0"`** so the compiler does not stop on the deprecated **`baseUrl`** option (see [TS 6 migration](https://aka.ms/ts6)); the full project typecheck then runs and reports the existing backlog. Fixing that backlog is incremental work—prefer tightening types in files you touch rather than broad `as` casts.
 

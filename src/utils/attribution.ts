@@ -77,7 +77,7 @@ export function getAttributionTexts(): AttributionTexts {
   const defaultAttribution =
     '🤖 Generated with [Deimos](https://github.com/dxiv/dxa-deimos)'
   const coAuthorDomain =
-    getAPIProvider() === 'firstParty' ? 'anthropic.com' : 'dxa.dev'
+    getAPIProvider() === 'firstParty' ? 'anthropic.com' : 'users.noreply.github.com'
   const defaultCommit = isEnvTruthy(
     process.env.DEIMOS_DISABLE_CO_AUTHORED_BY,
   )

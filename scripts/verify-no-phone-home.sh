@@ -1,4 +1,7 @@
 #!/bin/bash
+# Prefer the TypeScript checker (cross-platform):  bun run verify:privacy
+# or:  bun run scripts/verify-no-phone-home.ts
+# This shell script is for Unix-like environments only (Git Bash, WSL, macOS, Linux).
 
 set -euo pipefail
 

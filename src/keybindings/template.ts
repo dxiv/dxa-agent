@@ -44,7 +44,7 @@ export function generateKeybindingsTemplate(): string {
   // Format as object wrapper with bindings array
   const config = {
     $schema: 'https://www.schemastore.org/deimos-keybindings.json',
-    $docs: 'https://dxa.dev/deimos/docs/en/keybindings',
+    $docs: 'https://github.com/dxiv/dxa-deimos/docs/en/keybindings',
     bindings,
   }
 

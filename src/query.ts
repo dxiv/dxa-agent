@@ -42,6 +42,10 @@ import {
   PROMPT_TOO_LONG_ERROR_MESSAGE,
   isPromptTooLongMessage,
 } from './services/api/errors.js'
+import {
+  formatInternalDeimosAssistantError,
+  formatToolSkippedAfterDeimosFailure,
+} from './services/api/errorUtils.js'
 import { logAntError, logForDebugging } from './utils/debug.js'
 import {
   createUserMessage,
@@ -662,6 +666,7 @@ async function* queryLoop(
         yield createAssistantAPIErrorMessage({
           content: PROMPT_TOO_LONG_ERROR_MESSAGE,
           error: 'invalid_request',
+          promptTooLongSource: 'client',
         })
         return { reason: 'blocking_limit' }
       }
@@ -924,7 +929,7 @@ async function* queryLoop(
             // Clear assistant messages since we'll retry the entire request
             yield* yieldMissingToolResultBlocks(
               assistantMessages,
-              'Model fallback triggered',
+              'Model unavailable — Deimos is retrying with a fallback model; pending tool calls were cleared for this retry.',
             )
             assistantMessages.length = 0
             toolResults.length = 0
@@ -976,8 +981,6 @@ async function* queryLoop(
       }
     } catch (error) {
       logError(error)
-      const errorMessage =
-        error instanceof Error ? error.message : String(error)
       logEvent('tengu_query_error', {
         assistantMessages: assistantMessages.length,
         toolUses: assistantMessages.flatMap(_ =>
@@ -1003,14 +1006,17 @@ async function* queryLoop(
       // yield them as synthetic assistant messages. However if it does throw
       // due to a bug, we may end up in a state where we have already emitted
       // a tool_use block but will stop before emitting the tool_result.
-      yield* yieldMissingToolResultBlocks(assistantMessages, errorMessage)
+      yield* yieldMissingToolResultBlocks(
+        assistantMessages,
+        formatToolSkippedAfterDeimosFailure(error),
+      )
 
       // Surface the real error instead of a misleading "[Request interrupted
       // by user]" — this path is a model/runtime failure, not a user action.
       // SDK consumers were seeing phantom interrupts on e.g. Node 18's missing
       // Array.prototype.with(), masking the actual cause.
       yield createAssistantAPIErrorMessage({
-        content: errorMessage,
+        content: formatInternalDeimosAssistantError(error),
       })
 
       // To help track down bugs, log loudly for ants

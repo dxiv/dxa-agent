@@ -598,7 +598,7 @@ export function useManageMCPConnections(
                     gate.kind === 'disabled'
                       ? 'Channels are not currently available'
                       : gate.kind === 'auth'
-                        ? 'Channels require dxa.dev/deimos authentication · run /login'
+                        ? 'Channels require github.com/dxiv/dxa-deimos authentication · run /login'
                         : gate.kind === 'policy'
                           ? 'Channels are not enabled for your org · have an administrator set channelsEnabled: true in managed settings'
                           : gate.reason
@@ -767,7 +767,7 @@ export function useManageMCPConnections(
   // Re-runs on session change (/clear) and on /reload-plugins (pluginReconnectKey).
   // On plugin reload, also disconnects stale plugin MCP servers (scope 'dynamic')
   // that no longer appear in configs — prevents ghost tools from disabled plugins.
-  // Skip dxa.dev/deimos dedup here to avoid blocking on the network fetch; the connect
+  // Skip github.com/dxiv/dxa-deimos dedup here to avoid blocking on the network fetch; the connect
   // useEffect below runs immediately after and dedups before connecting.
   const sessionId = getSessionId()
   useEffect(() => {
@@ -855,12 +855,12 @@ export function useManageMCPConnections(
   ])
 
   // Load MCP configs and connect to servers
-  // Two-phase loading: Deimos configs first (fast), then dxa.dev/deimos configs (may be slow)
+  // Two-phase loading: Deimos configs first (fast), then github.com/dxiv/dxa-deimos configs (may be slow)
   useEffect(() => {
     let cancelled = false
 
     async function loadAndConnectMcpConfigs() {
-      // Clear dxa.dev/deimos MCP cache so we fetch fresh configs with current auth
+      // Clear github.com/dxiv/dxa-deimos MCP cache so we fetch fresh configs with current auth
       // state. This is important when authVersion changes (e.g., after login/
       // logout). Kick off the fetch now so it overlaps with loadAllPlugins()
       // inside getDeimosMcpConfigs; it's awaited only at the dedup step.
@@ -874,7 +874,7 @@ export function useManageMCPConnections(
       }
 
       // Phase 1: Load Deimos configs. Plugin MCP servers that duplicate a
-      // --mcp-config entry or a dxa.dev/deimos connector are suppressed here so they
+      // --mcp-config entry or a github.com/dxiv/dxa-deimos connector are suppressed here so they
       // don't connect alongside the connector in Phase 2.
       const { servers: claudeCodeConfigs, errors: mcpErrors } =
         isStrictMcpConfig
@@ -902,7 +902,7 @@ export function useManageMCPConnections(
         )
       })
 
-      // Phase 2: Await dxa.dev/deimos configs (started above; memoized — no second fetch)
+      // Phase 2: Await github.com/dxiv/dxa-deimos configs (started above; memoized — no second fetch)
       let deimoscloudConfigs: Record<string, ScopedMcpServerConfig> = {}
       if (!isStrictMcpConfig) {
         deimoscloudConfigs = filterMcpServersByPolicy(
@@ -910,8 +910,8 @@ export function useManageMCPConnections(
         ).allowed
         if (cancelled) return
 
-        // Suppress dxa.dev/deimos connectors that duplicate an enabled manual server.
-        // Keys never collide (`slack` vs `dxa.dev/deimos Slack`) so the merge below
+        // Suppress github.com/dxiv/dxa-deimos connectors that duplicate an enabled manual server.
+        // Keys never collide (`slack` vs `github.com/dxiv/dxa-deimos Slack`) so the merge below
         // won't catch this — need content-based dedup by URL signature.
         if (Object.keys(deimoscloudConfigs).length > 0) {
           const { servers: dedupedDeimosCloudMcp } = dedupDeimosCloudMcpServers(
@@ -922,7 +922,7 @@ export function useManageMCPConnections(
         }
 
         if (Object.keys(deimoscloudConfigs).length > 0) {
-          // Add dxa.dev/deimos servers as pending immediately so they show up in UI
+          // Add github.com/dxiv/dxa-deimos servers as pending immediately so they show up in UI
           setAppState(prevState => {
             const existingServerNames = new Set(
               prevState.mcp.clients.map(c => c.name),
@@ -958,7 +958,7 @@ export function useManageMCPConnections(
           ).catch(error => {
             logMCPError(
               'useManageMcpConnections',
-              `Failed to get dxa.dev/deimos MCP resources: ${errorMessage(error)}`,
+              `Failed to get github.com/dxiv/dxa-deimos MCP resources: ${errorMessage(error)}`,
             )
           })
         }

@@ -8,6 +8,7 @@ import { logError } from '../../utils/log.js'
 import { memoizeWithTTLAsync } from '../../utils/memoize.js'
 import { isEssentialTrafficOnly } from '../../utils/privacyLevel.js'
 import { getDeimosUserAgent } from '../../utils/userAgent.js'
+import { getAPIProvider } from '../../utils/model/providers.js'
 
 type MetricsEnabledResponse = {
   metrics_logging_enabled: boolean
@@ -23,7 +24,7 @@ const CACHE_TTL_MS = 60 * 60 * 1000
 
 // Disk TTL — org settings rarely change. When disk cache is fresher than this,
 // we skip the network entirely (no background refresh). This is what collapses
-// N `claude -p` invocations into ~1 API call/day.
+// N `deimos -p` invocations into ~1 API call/day.
 const DISK_CACHE_TTL_MS = 24 * 60 * 60 * 1000
 
 /**
@@ -42,7 +43,9 @@ async function _fetchMetricsEnabled(): Promise<MetricsEnabledResponse> {
     ...authResult.headers,
   }
 
-  const endpoint = `https://api.anthropic.com/api/deimos/organizations/metrics_enabled`
+  const endpoint =
+    process.env.DEIMOS_METRICS_ENABLED_ENDPOINT ??
+    'https://api.anthropic.com/api/deimos/organizations/metrics_enabled'
   const response = await axios.get<MetricsEnabledResponse>(endpoint, {
     headers,
     timeout: 5000,
@@ -126,6 +129,15 @@ async function refreshMetricsStatus(): Promise<MetricsStatus> {
  * an extra one during the 24h window is acceptable.
  */
 export async function checkMetricsEnabled(): Promise<MetricsStatus> {
+  // Deimos should not call Anthropic endpoints unless the first-party provider is active,
+  // or the deployment explicitly opts in via DEIMOS_METRICS_ENABLED_ENDPOINT.
+  if (
+    getAPIProvider() !== 'firstParty' &&
+    !process.env.DEIMOS_METRICS_ENABLED_ENDPOINT
+  ) {
+    return { enabled: false, hasError: false }
+  }
+
   // Service key OAuth sessions lack user:profile scope → would 403.
   // API key users (non-subscribers) fall through and use x-api-key auth.
   // This check runs before the disk read so we never persist auth-state-derived

@@ -158,5 +158,15 @@ export function getShellType(): string {
   if (shellPath.includes('zsh')) return 'zsh'
   if (shellPath.includes('bash')) return 'bash'
   if (shellPath.includes('fish')) return 'fish'
+  if (process.platform === 'win32') {
+    const comspec = process.env.ComSpec || ''
+    if (comspec.toLowerCase().includes('cmd')) return 'cmd'
+    if (
+      process.env.PSModulePath ||
+      /\b(pwsh|powershell)\b/i.test(comspec)
+    ) {
+      return 'powershell'
+    }
+  }
   return 'unknown'
 }

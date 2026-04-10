@@ -350,7 +350,7 @@ function handleRemoteAuthFailure(
   const label: Record<typeof transportType, string> = {
     sse: 'SSE',
     http: 'HTTP',
-    'deimos-proxy': 'dxa.dev/deimos proxy',
+    'deimos-proxy': 'github.com/dxiv/dxa-deimos proxy',
   }
   logMCPDebug(
     name,
@@ -361,12 +361,12 @@ function handleRemoteAuthFailure(
 }
 
 /**
- * Fetch wrapper for dxa.dev/deimos proxy connections. Attaches the OAuth bearer
+ * Fetch wrapper for github.com/dxiv/dxa-deimos proxy connections. Attaches the OAuth bearer
  * token and retries once on 401 via handleOAuth401Error (force-refresh).
  *
  * The Anthropic API path has this retry (withRetry.ts, grove.ts) to handle
  * memoize-cache staleness and clock drift. Without the same here, a single
- * stale token mass-401s every dxa.dev/deimos connector and sticks them all in the
+ * stale token mass-401s every github.com/dxiv/dxa-deimos connector and sticks them all in the
  * 15-min needs-auth cache.
  */
 export function createDeimosCloudProxyFetch(innerFetch: FetchLike): FetchLike {
@@ -375,7 +375,7 @@ export function createDeimosCloudProxyFetch(innerFetch: FetchLike): FetchLike {
       await checkAndRefreshOAuthTokenIfNeeded()
       const currentTokens = getDeimosCloudOAuthTokens()
       if (!currentTokens) {
-        throw new Error('No dxa.dev/deimos OAuth token available')
+        throw new Error('No github.com/dxiv/dxa-deimos OAuth token available')
       }
       // eslint-disable-next-line eslint-plugin-n/no-unsupported-features/node-builtins
       const headers = new Headers(init?.headers)
@@ -882,18 +882,18 @@ export const connectToServer = memoize(
       } else if (serverRef.type === 'deimos-proxy') {
         logMCPDebug(
           name,
-          `Initializing dxa.dev/deimos proxy transport for server ${serverRef.id}`,
+          `Initializing github.com/dxiv/dxa-deimos proxy transport for server ${serverRef.id}`,
         )
 
         const tokens = getDeimosCloudOAuthTokens()
         if (!tokens) {
-          throw new Error('No dxa.dev/deimos OAuth token found')
+          throw new Error('No github.com/dxiv/dxa-deimos OAuth token found')
         }
 
         const oauthConfig = getOauthConfig()
         const proxyUrl = `${oauthConfig.MCP_PROXY_URL}${oauthConfig.MCP_PROXY_PATH.replace('{server_id}', serverRef.id)}`
 
-        logMCPDebug(name, `Using dxa.dev/deimos proxy at ${proxyUrl}`)
+        logMCPDebug(name, `Using github.com/dxiv/dxa-deimos proxy at ${proxyUrl}`)
 
         // eslint-disable-next-line eslint-plugin-n/no-unsupported-features/node-builtins
         const fetchWithAuth = createDeimosCloudProxyFetch(globalThis.fetch)
@@ -915,7 +915,7 @@ export const connectToServer = memoize(
           new URL(proxyUrl),
           transportOptions,
         )
-        logMCPDebug(name, `dxa.dev/deimos proxy transport created successfully`)
+        logMCPDebug(name, `github.com/dxiv/dxa-deimos proxy transport created successfully`)
       } else if (
         (serverRef.type === 'stdio' || !serverRef.type) &&
         isDeimosInChromeMCPServer(name)
@@ -1143,7 +1143,7 @@ export const connectToServer = memoize(
         ) {
           logMCPDebug(
             name,
-            `dxa.dev/deimos proxy connection failed after ${elapsed}ms: ${error.message}`,
+            `github.com/dxiv/dxa-deimos proxy connection failed after ${elapsed}ms: ${error.message}`,
           )
           logMCPError(name, error)
 

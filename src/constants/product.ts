@@ -1,8 +1,13 @@
-export const PRODUCT_URL = 'https://dxa.dev/deimos/'
+// Public project homepage. Avoid hard-coding deployment-specific web origins.
+export const PRODUCT_URL = 'https://github.com/dxiv/dxa-deimos'
 
-// Remote session web base URLs (still point at Anthropic / dxa.dev/deimos routing)
-export const DEIMOS_CLOUD_WEB_BASE_URL = 'https://dxa.dev/deimos'
-export const DEIMOS_CLOUD_WEB_STAGING_BASE_URL = 'https://claude-ai.staging.ant.dev'
+// Optional cloud/web portal base URLs. If you run your own portal, set
+// DEIMOS_CLOUD_WEB_BASE_URL to that origin (e.g. https://your.domain).
+export const DEIMOS_CLOUD_WEB_BASE_URL =
+  process.env.DEIMOS_CLOUD_WEB_BASE_URL?.replace(/\/$/, '') ?? PRODUCT_URL
+export const DEIMOS_CLOUD_WEB_STAGING_BASE_URL =
+  process.env.DEIMOS_CLOUD_WEB_STAGING_BASE_URL?.replace(/\/$/, '') ??
+  DEIMOS_CLOUD_WEB_BASE_URL
 export const DEIMOS_CLOUD_WEB_LOCAL_BASE_URL = 'http://localhost:4000'
 
 /**
@@ -54,7 +59,7 @@ export function getDeimosCloudPortalBaseUrl(
  *
  * The cse_→session_ translation is a temporary shim gated by
  * tengu_bridge_repl_v2_cse_shim_enabled (see isCseShimEnabled). Worker
- * endpoints (/v1/code/sessions/{id}/worker/*) want `cse_*` but the dxa.dev/deimos
+ * endpoints (/v1/code/sessions/{id}/worker/*) want `cse_*` but the github.com/dxiv/dxa-deimos
  * frontend currently routes on `session_*` (compat/convert.go:27 validates
  * TagSession). Same UUID body, different tag prefix. Once the server tags by
  * environment_kind and the frontend accepts `cse_*` directly, flip the gate

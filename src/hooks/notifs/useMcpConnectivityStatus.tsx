@@ -45,7 +45,7 @@ export function useMcpConnectivityStatus(t0) {
         if (failedDeimosCloudClients.length > 0) {
           addNotification({
             key: "mcp-deimos-failed",
-            jsx: <><Text color="error">{failedDeimosCloudClients.length} dxa.dev/deimos{" "}{failedDeimosCloudClients.length === 1 ? "connector" : "connectors"}{" "}unavailable</Text><Text dimColor={true}> · /mcp</Text></>,
+            jsx: <><Text color="error">{failedDeimosCloudClients.length} github.com/dxiv/dxa-deimos{" "}{failedDeimosCloudClients.length === 1 ? "connector" : "connectors"}{" "}unavailable</Text><Text dimColor={true}> · /mcp</Text></>,
             priority: "medium"
           });
         }
@@ -59,7 +59,7 @@ export function useMcpConnectivityStatus(t0) {
         if (needsAuthDeimosCloudServers.length > 0) {
           addNotification({
             key: "mcp-deimos-needs-auth",
-            jsx: <><Text color="warning">{needsAuthDeimosCloudServers.length} dxa.dev/deimos{" "}{needsAuthDeimosCloudServers.length === 1 ? "connector needs" : "connectors need"}{" "}auth</Text><Text dimColor={true}> · /mcp</Text></>,
+            jsx: <><Text color="warning">{needsAuthDeimosCloudServers.length} github.com/dxiv/dxa-deimos{" "}{needsAuthDeimosCloudServers.length === 1 ? "connector needs" : "connectors need"}{" "}auth</Text><Text dimColor={true}> · /mcp</Text></>,
             priority: "medium"
           });
         }

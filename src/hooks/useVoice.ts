@@ -988,7 +988,7 @@ export function useVoice({
             '[voice] Failed to connect to voice_stream (no OAuth token?)',
           )
           onErrorRef.current?.(
-            'Voice mode requires a dxa.dev/deimos account. Please run /login to sign in.',
+            'Voice mode requires Deimos Cloud authentication. Please run /login to sign in.',
           )
           // Clear the audio buffer on failure
           audioBuffer.length = 0

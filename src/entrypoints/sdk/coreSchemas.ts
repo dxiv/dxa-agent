@@ -1341,7 +1341,7 @@ export const SDKRateLimitInfoSchema = lazySchema(() =>
       isUsingOverage: z.boolean().optional(),
       surpassedThreshold: z.number().optional(),
     })
-    .describe('Rate limit information for dxa.dev/deimos subscription users.'),
+    .describe('Rate limit information for github.com/dxiv/dxa-deimos subscription users.'),
 )
 
 export const SDKAssistantMessageSchema = lazySchema(() =>

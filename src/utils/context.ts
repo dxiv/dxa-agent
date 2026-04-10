@@ -10,6 +10,10 @@ import { getOpenAIContextWindow, getOpenAIMaxOutputTokens } from './model/openai
 // Model context window size (200k tokens for all models right now)
 export const MODEL_CONTEXT_WINDOW_DEFAULT = 200_000
 
+/** Client-side context budgeting only; the API still enforces the real model window. */
+export const DEIMOS_MAX_CONTEXT_TOKENS_CEILING = 2_000_000
+const DEIMOS_MAX_CONTEXT_TOKENS_FLOOR = 4_096
+
 // Maximum output tokens for compact operations
 export const COMPACT_MAX_OUTPUT_TOKENS = 20_000
 
@@ -54,17 +58,16 @@ export function getContextWindowForModel(
   model: string,
   betas?: string[],
 ): number {
-  // Allow override via environment variable (internal-only)
-  // This takes precedence over all other context window resolution, including 1M detection,
-  // so users can cap the effective context window for local decisions (auto-compact, etc.)
-  // while still using a 1M-capable endpoint.
-  if (
-    process.env.USER_TYPE === 'ant' &&
-    process.env.DEIMOS_MAX_CONTEXT_TOKENS
-  ) {
+  // Override effective context for Deimos-only math (warnings, auto-compact, blocking).
+  // Precedence over [1m] suffix and provider tables. Must still be ≤ the model's real limit
+  // or the API will reject oversized prompts; values are clamped to avoid absurd budgets.
+  if (process.env.DEIMOS_MAX_CONTEXT_TOKENS) {
     const override = parseInt(process.env.DEIMOS_MAX_CONTEXT_TOKENS, 10)
-    if (!isNaN(override) && override > 0) {
-      return override
+    if (
+      !isNaN(override) &&
+      override >= DEIMOS_MAX_CONTEXT_TOKENS_FLOOR
+    ) {
+      return Math.min(override, DEIMOS_MAX_CONTEXT_TOKENS_CEILING)
     }
   }
 
@@ -77,7 +80,6 @@ export function getContextWindowForModel(
   // Unknown models get a conservative 8k default so auto-compact triggers
   // before hitting a hard context_window_exceeded error.
   const isOpenAIProvider =
-    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
     isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
     isEnvTruthy(process.env.DEIMOS_USE_GEMINI) ||
     isEnvTruthy(process.env.DEIMOS_USE_GITHUB)

@@ -74,7 +74,7 @@ function MemoryCommand({
 
         <Box marginTop={1}>
           <Text dimColor>
-            Learn more: <Link url="https://dxa.dev/deimos/docs/en/memory" />
+            Learn more: <Link url="https://github.com/dxiv/dxa-deimos/docs/en/memory" />
           </Text>
         </Box>
       </Box>

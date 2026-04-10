@@ -14,7 +14,7 @@
 export const PREAPPROVED_HOSTS = new Set([
   // Anthropic
   'platform.claude.com',
-  'dxa.dev/deimos',
+  'github.com/dxiv/dxa-deimos',
   'modelcontextprotocol.io',
   'github.com/anthropics',
   'agentskills.io',

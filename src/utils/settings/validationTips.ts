@@ -23,7 +23,7 @@ type TipMatcher = {
   tip: ValidationTip
 }
 
-const DOCUMENTATION_BASE = 'https://dxa.dev/deimos/docs/en'
+const DOCUMENTATION_BASE = 'https://github.com/dxiv/dxa-deimos/docs/en'
 
 const TIP_MATCHERS: TipMatcher[] = [
   {

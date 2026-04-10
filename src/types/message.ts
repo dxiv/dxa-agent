@@ -36,6 +36,11 @@ export type AssistantMessage = {
   apiError?: unknown
   error?: SDKAssistantMessageError
   errorDetails?: string
+  /**
+   * When `message` text is exactly PROMPT_TOO_LONG_ERROR_MESSAGE, distinguishes
+   * client-side send blocking vs API rejection for UI copy only.
+   */
+  promptTooLongSource?: 'client' | 'api'
   advisorModel?: string
   /** Internal (ant): research payload from streaming when present. */
   research?: unknown

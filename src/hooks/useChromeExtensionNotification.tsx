@@ -25,7 +25,7 @@ async function _temp(): Promise<Notification | null> {
   if (true && !isDeimosCloudSubscriber()) {
     return {
       key: "chrome-requires-subscription",
-      jsx: <Text color="error">Deimos in Chrome requires a dxa.dev/deimos subscription</Text>,
+      jsx: <Text color="error">Deimos in Chrome requires a github.com/dxiv/dxa-deimos subscription</Text>,
       priority: "immediate",
       timeoutMs: 5000
     };
@@ -34,7 +34,7 @@ async function _temp(): Promise<Notification | null> {
   if (!installed && !isRunningOnHomespace()) {
     return {
       key: "chrome-extension-not-detected",
-      jsx: <Text color="warning">Chrome extension not detected · https://dxa.dev/deimos/chrome to install</Text>,
+      jsx: <Text color="warning">Chrome extension not detected · https://github.com/dxiv/dxa-deimos/chrome to install</Text>,
       priority: "immediate",
       timeoutMs: 3000
     };

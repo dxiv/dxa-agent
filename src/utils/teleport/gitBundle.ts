@@ -140,7 +140,7 @@ async function _bundleWithFallback(
   return {
     ok: false,
     error:
-      'Repo is too large to bundle. Please setup GitHub on https://dxa.dev/deimos/code',
+      'Repo is too large to bundle. Please setup GitHub on https://github.com/dxiv/dxa-deimos',
     failReason: 'too_large',
   }
 }

@@ -11,9 +11,9 @@ import { isChromeExtensionInstalled } from '../../utils/deimosInChrome/setup.js'
 import { getGlobalConfig, saveGlobalConfig } from '../../utils/config.js';
 import { env } from '../../utils/env.js';
 import { isRunningOnHomespace } from '../../utils/envUtils.js';
-const CHROME_EXTENSION_URL = 'https://dxa.dev/deimos/chrome';
-const CHROME_PERMISSIONS_URL = 'https://clau.de/chrome/permissions';
-const CHROME_RECONNECT_URL = 'https://clau.de/chrome/reconnect';
+const CHROME_EXTENSION_URL = 'https://github.com/dxiv/dxa-deimos/chrome';
+const CHROME_PERMISSIONS_URL = 'about:blank';
+const CHROME_RECONNECT_URL = 'about:blank';
 type MenuAction = 'install-extension' | 'reconnect' | 'manage-permissions' | 'toggle-default';
 type Props = {
   onDone: (result?: string) => void;
@@ -212,7 +212,7 @@ function DeimosInChromeMenu(t0) {
   }
   let t8;
   if ($[23] !== isDeimosCloudSubscriber) {
-    t8 = true && !isDeimosCloudSubscriber && <Text color="error">Deimos in Chrome requires a dxa.dev/deimos subscription.</Text>;
+    t8 = true && !isDeimosCloudSubscriber && <Text color="error">Deimos in Chrome requires a github.com/dxiv/dxa-deimos subscription.</Text>;
     $[23] = isDeimosCloudSubscriber;
     $[24] = t8;
   } else {
@@ -220,7 +220,7 @@ function DeimosInChromeMenu(t0) {
   }
   let t9;
   if ($[25] !== handleAction || $[26] !== isConnected || $[27] !== isDisabled || $[28] !== isExtensionInstalled || $[29] !== options || $[30] !== selectKey || $[31] !== showInstallHint) {
-    t9 = !isDisabled && <>{!isHomespace && <Box flexDirection="column"><Text>Status:{" "}{isConnected ? <Text color="success">Enabled</Text> : <Text color="inactive">Disabled</Text>}</Text><Text>Extension:{" "}{isExtensionInstalled ? <Text color="success">Installed</Text> : <Text color="warning">Not detected</Text>}</Text></Box>}<Select key={selectKey} options={options} onChange={handleAction} hideIndexes={true} />{showInstallHint && <Text color="warning">Once installed, select {"\"Reconnect extension\""} to connect.</Text>}<Text><Text dimColor={true}>Usage: </Text><Text>claude --chrome</Text><Text dimColor={true}> or </Text><Text>claude --no-chrome</Text></Text><Text dimColor={true}>Site-level permissions are inherited from the Chrome extension. Manage permissions in the Chrome extension settings to control which sites Deimos can browse, click, and type on.</Text></>;
+    t9 = !isDisabled && <>{!isHomespace && <Box flexDirection="column"><Text>Status:{" "}{isConnected ? <Text color="success">Enabled</Text> : <Text color="inactive">Disabled</Text>}</Text><Text>Extension:{" "}{isExtensionInstalled ? <Text color="success">Installed</Text> : <Text color="warning">Not detected</Text>}</Text></Box>}<Select key={selectKey} options={options} onChange={handleAction} hideIndexes={true} />{showInstallHint && <Text color="warning">Once installed, select {"\"Reconnect extension\""} to connect.</Text>}<Text><Text dimColor={true}>Usage: </Text><Text>deimos --chrome</Text><Text dimColor={true}> or </Text><Text>deimos --no-chrome</Text></Text><Text dimColor={true}>Site-level permissions are inherited from the Chrome extension. Manage permissions in the Chrome extension settings to control which sites Deimos can browse, click, and type on.</Text></>;
     $[25] = handleAction;
     $[26] = isConnected;
     $[27] = isDisabled;
@@ -234,7 +234,7 @@ function DeimosInChromeMenu(t0) {
   }
   let t10;
   if ($[33] === Symbol.for("react.memo_cache_sentinel")) {
-    t10 = <Text dimColor={true}>Learn more: https://dxa.dev/deimos/docs/en/chrome</Text>;
+    t10 = <Text dimColor={true}>Learn more: https://github.com/dxiv/dxa-deimos/docs/en/chrome</Text>;
     $[33] = t10;
   } else {
     t10 = $[33];

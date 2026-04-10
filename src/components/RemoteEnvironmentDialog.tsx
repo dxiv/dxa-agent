@@ -17,8 +17,9 @@ import { Byline } from './design-system/Byline.js';
 import { Dialog } from './design-system/Dialog.js';
 import { KeyboardShortcutHint } from './design-system/KeyboardShortcutHint.js';
 import { LoadingState } from './design-system/LoadingState.js';
+import { PRODUCT_URL } from '../constants/product.js';
 const DIALOG_TITLE = 'Select Remote Environment';
-const SETUP_HINT = `Configure environments at: https://dxa.dev/deimos/code`;
+const SETUP_HINT = `If you use Deimos Cloud, configure environments in your portal. See: ${PRODUCT_URL}`;
 type Props = {
   onDone: (message?: string) => void;
 };

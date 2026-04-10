@@ -8,9 +8,9 @@ import { getAPIProvider } from '../utils/model/providers.js'
 import { getWorkload } from '../utils/workloadContext.js'
 
 const DEFAULT_PREFIX =
-  `You are Deimos, a terminal coding agent (https://dxa.dev/deimos/).`
+  `You are Deimos, a terminal coding agent (https://github.com/dxiv/dxa-deimos/).`
 const AGENT_SDK_DEIMOS_PRESET_PREFIX =
-  `You are Deimos, running within the Deimos Agent SDK (https://dxa.dev/deimos/).`
+  `You are Deimos, running within the Deimos Agent SDK (https://github.com/dxiv/dxa-deimos/).`
 const AGENT_SDK_PREFIX =
   `You are a Deimos agent running in Deimos, built on the Deimos Agent SDK.`
 

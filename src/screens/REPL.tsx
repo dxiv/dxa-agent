@@ -271,6 +271,7 @@ import { DesktopUpsellStartup, shouldShowDesktopUpsellStartup } from 'src/compon
 import { usePluginInstallationStatus } from 'src/hooks/notifs/usePluginInstallationStatus.js';
 import { usePluginAutoupdateNotification } from 'src/hooks/notifs/usePluginAutoupdateNotification.js';
 import { performStartupChecks } from 'src/utils/plugins/performStartupChecks.js';
+import { shouldRunStartupChecks } from './replStartupGates.js';
 import { UserTextMessage } from 'src/components/messages/UserTextMessage.js';
 import { AwsAuthStatusBox } from '../components/AwsAuthStatusBox.js';
 import { useRateLimitWarningNotification } from 'src/hooks/notifs/useRateLimitWarningNotification.js';
@@ -683,26 +684,43 @@ export function REPL({
   useEffect(() => {
     if (!viewingAgentTaskId || !needsBootstrap) return;
     const taskId = viewingAgentTaskId;
-    void getAgentTranscript(asAgentId(taskId)).then(result => {
-      setAppState(prev => {
-        const t = prev.tasks[taskId];
-        if (!isLocalAgentTask(t) || t.diskLoaded || !t.retain) return prev;
-        const live = t.messages ?? [];
-        const liveUuids = new Set(live.map(m => m.uuid));
-        const diskOnly = result ? result.messages.filter(m => !liveUuids.has(m.uuid)) : [];
-        return {
-          ...prev,
-          tasks: {
-            ...prev.tasks,
-            [taskId]: {
-              ...t,
-              messages: [...diskOnly, ...live],
-              diskLoaded: true
-            }
-          }
-        };
+    void getAgentTranscript(asAgentId(taskId))
+      .then(result => {
+        setAppState(prev => {
+          const t = prev.tasks[taskId];
+          if (!isLocalAgentTask(t) || t.diskLoaded || !t.retain) return prev;
+          const live = t.messages ?? [];
+          const liveUuids = new Set(live.map(m => m.uuid));
+          const diskOnly = result
+            ? result.messages.filter(m => !liveUuids.has(m.uuid))
+            : [];
+          return {
+            ...prev,
+            tasks: {
+              ...prev.tasks,
+              [taskId]: {
+                ...t,
+                messages: [...diskOnly, ...live],
+                diskLoaded: true,
+              },
+            },
+          };
+        });
+      })
+      .catch(err => {
+        logError(err);
+        setAppState(prev => {
+          const t = prev.tasks[taskId];
+          if (!isLocalAgentTask(t) || t.diskLoaded || !t.retain) return prev;
+          return {
+            ...prev,
+            tasks: {
+              ...prev.tasks,
+              [taskId]: { ...t, diskLoaded: true },
+            },
+          };
+        });
       });
-    });
   }, [viewingAgentTaskId, needsBootstrap, setAppState]);
   const store = useAppStateStore();
   const terminal = useTerminalNotification();
@@ -822,6 +840,8 @@ export function REPL({
   const tasksV2 = useTasksV2WithCollapseEffect();
 
   // Start background plugin installations
+  const startupChecksStartedRef = useRef(false);
+  const [hasHadFirstSubmission, setHasHadFirstSubmission] = useState(false);
 
   // SECURITY: This code is guaranteed to run ONLY after the "trust this folder" dialog
   // has been confirmed by the user. The trust dialog is shown in cli.tsx (line ~387)
@@ -830,9 +850,15 @@ export function REPL({
   // This ensures that plugin installations from repository and user settings only
   // happen after explicit user consent to trust the current working directory.
   useEffect(() => {
-    if (isRemoteSession) return;
+    const shouldRun = shouldRunStartupChecks({
+      isRemoteSession,
+      hasStarted: startupChecksStartedRef.current,
+      hasHadFirstSubmission,
+    });
+    if (!shouldRun) return;
+    startupChecksStartedRef.current = true;
     void performStartupChecks(setAppState);
-  }, [setAppState, isRemoteSession]);
+  }, [setAppState, isRemoteSession, hasHadFirstSubmission]);
 
   // Allow Deimos in Chrome MCP to send prompts through MCP notifications
   // and sync permission mode changes to the Chrome extension
@@ -1012,9 +1038,18 @@ export function REPL({
 
   // How long after the last keystroke before deferred dialogs are shown
   const PROMPT_SUPPRESSION_MS = 1500;
+  const promptSuppressionTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   // True when user is actively typing — defers interrupt dialogs so keystrokes
   // don't accidentally dismiss or answer a permission prompt the user hasn't read yet.
   const [isPromptInputActive, setIsPromptInputActive] = React.useState(false);
+  useEffect(() => {
+    return () => {
+      if (promptSuppressionTimerRef.current) {
+        clearTimeout(promptSuppressionTimerRef.current);
+        promptSuppressionTimerRef.current = null;
+      }
+    };
+  }, []);
   const [autoUpdaterResult, setAutoUpdaterResult] = useState<AutoUpdaterResult | null>(null);
   useEffect(() => {
     if (autoUpdaterResult?.notifications) {
@@ -1402,16 +1437,19 @@ export function REPL({
     // block's `=== ''` guard — see the fresh value, not the stale render.
     inputValueRef.current = value;
     setInputValueRaw(value);
-    setIsPromptInputActive(value.trim().length > 0);
+    const nonEmpty = value.trim().length > 0;
+    setIsPromptInputActive(nonEmpty);
+    if (promptSuppressionTimerRef.current) {
+      clearTimeout(promptSuppressionTimerRef.current);
+      promptSuppressionTimerRef.current = null;
+    }
+    if (nonEmpty) {
+      promptSuppressionTimerRef.current = setTimeout(() => {
+        promptSuppressionTimerRef.current = null;
+        setIsPromptInputActive(false);
+      }, PROMPT_SUPPRESSION_MS);
+    }
   }, [setIsPromptInputActive, repinScroll, trySuggestBgPRIntercept]);
-
-  // Schedule a timeout to stop suppressing dialogs after the user stops typing.
-  // Only manages the timeout — the immediate activation is handled by setInputValue above.
-  useEffect(() => {
-    if (inputValue.trim().length === 0) return;
-    const timer = setTimeout(setIsPromptInputActive, PROMPT_SUPPRESSION_MS, false);
-    return () => clearTimeout(timer);
-  }, [inputValue]);
   const [inputMode, setInputMode] = useState<PromptInputMode>('prompt');
   const [stashedPrompt, setStashedPrompt] = useState<{
     text: string;
@@ -2310,7 +2348,7 @@ export function REPL({
 
       // When the REPL bridge is connected, also forward the sandbox
       // permission request as a can_use_tool control_request so the
-      // remote user (e.g. on dxa.dev/deimos) can approve it too.
+      // remote user (e.g. on github.com/dxiv/dxa-deimos) can approve it too.
       if (feature('BRIDGE_MODE')) {
         const bridgeCallbacks = store.getState().replBridgePermissionCallbacks;
         if (bridgeCallbacks) {
@@ -3214,6 +3252,7 @@ export function REPL({
     // Re-pin scroll to bottom on submit so the user always sees the new
     // exchange (matches OpenCode's auto-scroll behavior).
     repinScroll();
+    if (!hasHadFirstSubmission) setHasHadFirstSubmission(true);
 
     // Resume loop mode if paused
     if (feature('PROACTIVE') || feature('KAIROS')) {
@@ -3649,11 +3688,20 @@ export function REPL({
     onSubmit(command, {
       setCursorOffset: () => { },
       clearBuffer: () => { },
-      resetHistory: () => { }
+      resetHistory: () => { },
     }).catch(err => {
       logForDebugging(`Auto-run ${command} failed: ${errorMessage(err)}`);
+      addNotification({
+        key: `auto-run-${command}-failed`,
+        jsx: (
+          <Text color="error">
+            Could not run {command}: {errorMessage(err)}
+          </Text>
+        ),
+        priority: 'low',
+      });
     });
-  }, [onSubmit, autoRunIssueReason]);
+  }, [onSubmit, autoRunIssueReason, addNotification]);
   const handleCancelAutoRunIssue = useCallback(() => {
     setAutoRunIssueReason(null);
   }, []);
@@ -3664,11 +3712,22 @@ export function REPL({
     onSubmit(command, {
       setCursorOffset: () => { },
       clearBuffer: () => { },
-      resetHistory: () => { }
+      resetHistory: () => { },
     }).catch(err => {
-      logForDebugging(`Survey feedback request failed: ${err instanceof Error ? err.message : String(err)}`);
+      logForDebugging(
+        `Survey feedback request failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      addNotification({
+        key: 'survey-feedback-failed',
+        jsx: (
+          <Text color="error">
+            Could not open feedback: {errorMessage(err)}
+          </Text>
+        ),
+        priority: 'low',
+      });
     });
-  }, [onSubmit]);
+  }, [onSubmit, addNotification]);
 
   // onSubmit is unstable (deps include `messages` which changes every turn).
   // `handleOpenRateLimitOptions` is prop-drilled to every MessageRow, and each
@@ -3896,7 +3955,7 @@ export function REPL({
   useLogMessages(messages, messages.length === initialMessages?.length);
 
   // REPL Bridge: replicate user/assistant messages to the bridge session
-  // for remote access via dxa.dev/deimos. No-op in external builds or when not enabled.
+  // for remote access via github.com/dxiv/dxa-deimos. No-op in external builds or when not enabled.
   const {
     sendBridgeResult
   } = useReplBridge(messages, setMessages, abortControllerRef, commands, mainLoopModel);

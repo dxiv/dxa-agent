@@ -216,7 +216,7 @@ export async function openCurrentSessionInDesktop(): Promise<{
     return {
       success: false,
       error:
-        'Deimos Desktop is not installed. Install it from https://dxa.dev/deimos/download',
+        'Deimos Desktop is not installed. Install it from https://github.com/dxiv/dxa-deimos/download',
     }
   }
 

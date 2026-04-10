@@ -51,8 +51,8 @@ export function getPillLabel(tasks: BackgroundTaskState[]): string {
           }
         }
         return n === 1
-          ? `${DIAMOND_OPEN} 1 cloud session`
-          : `${DIAMOND_OPEN} ${n} cloud sessions`
+          ? `${DIAMOND_OPEN} 1 remote session`
+          : `${DIAMOND_OPEN} ${n} remote sessions`
       }
       case 'local_workflow':
         return n === 1 ? '1 background workflow' : `${n} background workflows`

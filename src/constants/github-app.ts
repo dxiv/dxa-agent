@@ -50,7 +50,7 @@ jobs:
 
           # Optional: Add claude_args to customize behavior and configuration
           # See https://github.com/anthropics/deimos-action/blob/main/docs/usage.md
-          # or https://dxa.dev/deimos/docs/en/cli-reference for available options
+          # or https://github.com/dxiv/dxa-deimos/docs/en/cli-reference for available options
           # claude_args: '--allowed-tools Bash(gh pr:*)'
 
 `
@@ -139,6 +139,6 @@ jobs:
           plugins: 'code-review@deimos-plugins'
           prompt: '/code-review:code-review \${{ github.repository }}/pull/\${{ github.event.pull_request.number }}'
           # See https://github.com/anthropics/deimos-action/blob/main/docs/usage.md
-          # or https://dxa.dev/deimos/docs/en/cli-reference for available options
+          # or https://github.com/dxiv/dxa-deimos/docs/en/cli-reference for available options
 
 `

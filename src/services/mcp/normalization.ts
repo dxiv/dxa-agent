@@ -4,7 +4,7 @@
  */
 
 // Web-connector MCP servers use this human-readable prefix from the API.
-const WEB_CLOUD_MCP_SERVER_NAME_PREFIX = 'dxa.dev/deimos '
+const WEB_CLOUD_MCP_SERVER_NAME_PREFIX = 'github.com/dxiv/dxa-deimos '
 
 /**
  * Normalize server names to be compatible with the API pattern ^[a-zA-Z0-9_-]{1,64}$

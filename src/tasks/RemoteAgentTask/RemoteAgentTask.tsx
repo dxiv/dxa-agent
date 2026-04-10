@@ -153,15 +153,15 @@ export async function checkRemoteAgentEligibility({
 export function formatPreconditionError(error: BackgroundRemoteSessionPrecondition): string {
   switch (error.type) {
     case 'not_logged_in':
-      return 'Please run /login and sign in with your dxa.dev/deimos account (not Console).';
+      return 'Please run /login and sign in to Deimos Cloud (if you use remote sessions).';
     case 'no_remote_environment':
-      return 'No cloud environment available. Set one up at https://dxa.dev/deimos/code/onboarding?magic=env-setup';
+      return 'No remote environment available. If you use Deimos Cloud, create an environment in your portal, then try again.';
     case 'not_in_git_repo':
       return 'Background tasks require a git repository. Initialize git or run from a git repository.';
     case 'no_git_remote':
       return 'Background tasks require a GitHub remote. Add one with `git remote add origin REPO_URL`.';
     case 'github_app_not_installed':
-      return 'The Deimos GitHub app must be installed on this repository first.\nhttps://github.com/apps/claude/installations/new';
+      return 'A GitHub App integration must be installed on this repository first (if your deployment uses one).';
     case 'policy_blocked':
       return "Remote sessions are disabled by your organization's policy. Contact your organization admin to enable them.";
   }
@@ -333,7 +333,7 @@ function extractReviewTagFromLog(log: SDKMessage[]): string | null {
  * Enqueue a remote-review completion notification. Injects the review text
  * directly into the message queue so the local model receives it on the next
  * turn — no file indirection, no mode change. Session is kept alive so the
- * dxa.dev/deimos URL stays a durable record the user can revisit; TTL handles cleanup.
+ * github.com/dxiv/dxa-deimos URL stays a durable record the user can revisit; TTL handles cleanup.
  */
 function enqueueRemoteReviewNotification(taskId: string, reviewContent: string, setAppState: SetAppState): void {
   if (!markTaskNotified(taskId, setAppState)) return;
@@ -579,7 +579,7 @@ function startRemoteSessionPolling(taskId: string, context: TaskContext): () => 
       const task = appState.tasks?.[taskId] as RemoteAgentTaskState | undefined;
       if (!task || task.status !== 'running') {
         // Task was killed externally (TaskStopTool) or already terminal.
-        // Session left alive so the dxa.dev/deimos URL stays valid — the run_hunt.sh
+        // Session left alive so the github.com/dxiv/dxa-deimos URL stays valid — the run_hunt.sh
         // post_stage() calls land as assistant events there, and the user may
         // want to revisit them after closing the terminal. TTL reaps it.
         return;
@@ -753,7 +753,7 @@ function startRemoteSessionPolling(taskId: string, context: TaskContext): () => 
         // message queue. No mode change, no file indirection — the local model
         // just sees the review appear as a task-notification on its next turn.
         // Session kept alive — run_hunt.sh's post_stage() has already written
-        // the formatted findings as an assistant event, so the dxa.dev/deimos URL
+        // the formatted findings as an assistant event, so the github.com/dxiv/dxa-deimos URL
         // stays a durable record the user can revisit. TTL handles cleanup.
         if (task.isRemoteReview) {
           // cachedReviewContent hit the tag in the delta scan. Full-log scan
@@ -825,7 +825,7 @@ function startRemoteSessionPolling(taskId: string, context: TaskContext): () => 
 }
 
 /**
- * RemoteAgentTask - Handles remote dxa.dev/deimos session execution.
+ * RemoteAgentTask - Handles remote github.com/dxiv/dxa-deimos session execution.
  *
  * Replaces the BackgroundRemoteSession implementation from:
  * - src/utils/background/remote/remoteSession.ts

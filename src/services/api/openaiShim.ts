@@ -390,10 +390,12 @@ function convertMessages(
 }
 
 /**
- * OpenAI requires every key in `properties` to also appear in `required`.
- * Anthropic schemas often mark fields as optional (omitted from `required`),
- * which causes 400 errors on OpenAI/Codex endpoints. This normalizes the
- * schema by ensuring `required` is a superset of `properties` keys.
+ * Normalize tool schemas for OpenAI-compatible providers.
+ *
+ * Some strict OpenAI-compatible providers require `additionalProperties: false`,
+ * but do NOT require every property to be marked required. Marking all fields
+ * required breaks tool calling because models correctly omit optional args and
+ * providers reject the tool call as missing required inputs.
  */
 function normalizeSchemaForOpenAI(
   schema: Record<string, unknown>,
@@ -416,11 +418,9 @@ function normalizeSchemaForOpenAI(
     record.properties = normalizedProps
 
     if (strict) {
-      // OpenAI strict mode requires every property to be listed in required[]
-      const allKeys = Object.keys(normalizedProps)
-      record.required = Array.from(new Set([...existingRequired, ...allKeys]))
-      // OpenAI strict mode requires additionalProperties: false on all object
-      // schemas — override unconditionally to ensure nested objects comply.
+      // Keep only the properties that were originally marked required in the schema.
+      record.required = existingRequired.filter(k => k in normalizedProps)
+      // Strict-mode providers often require additionalProperties: false.
       record.additionalProperties = false
     } else {
       // For Gemini: keep only existing required keys that are present in properties

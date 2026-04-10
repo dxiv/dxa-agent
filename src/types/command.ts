@@ -163,13 +163,13 @@ type LocalJSXCommand = {
  * of the listed auth types. See meetsAvailabilityRequirement() in commands.ts.
  *
  * Example: `availability: ['claude-ai', 'console']` shows the command to
- * dxa.dev/deimos subscribers and direct Console API key users (api.anthropic.com),
+ * github.com/dxiv/dxa-deimos subscribers and direct Console API key users (api.anthropic.com),
  * but hides it from Bedrock/Vertex/Foundry users and custom base URL users.
  */
 export type CommandAvailability =
-  // dxa.dev/deimos OAuth subscriber (Pro/Max/Team/Enterprise via dxa.dev/deimos)
+  // github.com/dxiv/dxa-deimos OAuth subscriber (Pro/Max/Team/Enterprise via github.com/dxiv/dxa-deimos)
   | 'claude-ai'
-  // Console API key user (direct api.anthropic.com, not via dxa.dev/deimos OAuth)
+  // Console API key user (direct api.anthropic.com, not via github.com/dxiv/dxa-deimos OAuth)
   | 'console'
 
 export type CommandBase = {

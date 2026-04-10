@@ -2,7 +2,7 @@
 
 Run Deimos on Android with **Termux** + **proot-distro** (Ubuntu). **Bun** is used to build the CLI; Bun’s Linux build runs inside Ubuntu, not on bare Termux.
 
-**Link hub:** [dxa.dev/deimos/](https://dxa.dev/deimos/) · **Desktop / npm:** the published CLI is [**`@dxa-deimos/cli`**](https://www.npmjs.com/package/@dxa-deimos/cli) — use that path on Windows, macOS, or Linux instead of this Android build when you can.
+**Link hub:** [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) · **Desktop / npm:** the published CLI is [**`@dxa-deimos/cli`**](https://www.npmjs.com/package/@dxa-deimos/cli) — use that path on Windows, macOS, or Linux instead of this Android build when you can.
 
 Third-party apps (Termux, OpenRouter, model hosts) are governed by their own terms; this guide covers only building and running Deimos in this environment.
 

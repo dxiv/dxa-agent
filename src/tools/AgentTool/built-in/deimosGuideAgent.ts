@@ -14,7 +14,7 @@ import type {
   BuiltInAgentDefinition,
 } from '../loadAgentsDir.js'
 
-const DEIMOS_PRODUCT_DOCS_URL = 'https://dxa.dev/deimos/'
+const DEIMOS_PRODUCT_DOCS_URL = 'https://github.com/dxiv/dxa-deimos/'
 const CDP_DOCS_MAP_URL = 'https://platform.claude.com/llms.txt'
 
 export const DEIMOS_GUIDE_AGENT_TYPE = 'deimos-guide'

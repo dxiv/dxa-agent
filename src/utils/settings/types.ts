@@ -10,6 +10,7 @@ import {
 import { MarketplaceSourceSchema } from '../plugins/schemas.js'
 import { DEIMOS_SETTINGS_SCHEMA_URL } from './constants.js'
 import { PermissionRuleSchema } from './permissionValidation.js'
+import { AutoFixConfigSchema } from '../../services/autoFix/autoFixConfig.js'
 
 // Re-export hook schemas and types from centralized location for backward compatibility
 export {
@@ -356,6 +357,9 @@ export const SettingsSchema = lazySchema(() =>
           'Customize attribution text for commits and PRs. ' +
             'Each field defaults to the standard Deimos attribution if not set.',
         ),
+      autoFix: AutoFixConfigSchema.optional().describe(
+        'Automatically run lint/test after AI file edits and feed failures back for self-repair.',
+      ),
       includeCoAuthoredBy: z
         .boolean()
         .optional()
@@ -902,7 +906,7 @@ export const SettingsSchema = lazySchema(() =>
               .string()
               .optional()
               .describe(
-                'Display name for the assistant, shown in the dxa.dev/deimos session list',
+                'Display name for the assistant, shown in the github.com/dxiv/dxa-deimos session list',
               ),
           }
         : {}),

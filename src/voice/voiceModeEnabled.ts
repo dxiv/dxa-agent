@@ -31,7 +31,7 @@ export function isVoiceGrowthBookEnabled(): boolean {
  */
 export function hasVoiceAuth(): boolean {
   // Voice mode requires Anthropic OAuth — it uses the voice_stream
-  // endpoint on dxa.dev/deimos which is not available with API keys,
+  // endpoint on github.com/dxiv/dxa-deimos which is not available with API keys,
   // Bedrock, Vertex, or Foundry.
   if (!isAnthropicAuthEnabled()) {
     return false

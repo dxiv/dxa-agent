@@ -3,6 +3,7 @@ import {
   logEvent,
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
 } from 'src/services/analytics/index.js'
+import { describeThrowableForUser } from '../services/api/errorUtils.js'
 import {
   toolMatchesName,
   type Tools,
@@ -1057,6 +1058,11 @@ async function maybe<A>(label: string, f: () => Promise<A[]>): Promise<A[]> {
     // For Ant users, log the full error to help with debugging
     logAntError(`Attachment error in ${label}`, e)
 
+    const detail = describeThrowableForUser(e, 220)
+    process.stderr.write(
+      `\nDeimos: could not prepare "${label}" context (${detail}). Continuing without it.\n`,
+    )
+
     return []
   }
 }
@@ -2095,11 +2101,6 @@ export async function getChangedFiles(
       const fileState = toolUseContext.readFileState.get(filePath)
       if (!fileState) return null
 
-      // TODO: Implement offset/limit support for changed files
-      if (fileState.offset !== undefined || fileState.limit !== undefined) {
-        return null
-      }
-
       const normalizedPath = expandPath(filePath)
 
       // Check if file has a deny rule configured
@@ -2113,9 +2114,18 @@ export async function getChangedFiles(
           return null
         }
 
-        const fileInput = { file_path: normalizedPath }
+        const partialRead =
+          fileState.offset !== undefined || fileState.limit !== undefined
+        const fileInput = partialRead
+          ? {
+              file_path: normalizedPath,
+              offset: fileState.offset ?? 1,
+              ...(fileState.limit !== undefined
+                ? { limit: fileState.limit }
+                : {}),
+            }
+          : { file_path: normalizedPath }
 
-        // Validate file path is valid
         const isValid = await FileReadTool.validateInput(
           fileInput,
           toolUseContext,
@@ -2125,18 +2135,31 @@ export async function getChangedFiles(
         }
 
         const result = await FileReadTool.call(fileInput, toolUseContext)
-        // Extract only the changed section
+
         if (result.data.type === 'text') {
           const snippet = getSnippetForTwoFileDiff(
             fileState.content,
             result.data.file.content,
           )
-
-          // File was touched but not modified
           if (snippet === '') {
             return null
           }
+          return {
+            type: 'edited_text_file' as const,
+            filename: normalizedPath,
+            snippet,
+          }
+        }
 
+        if (result.data.type === 'notebook') {
+          const newCellsJson = jsonStringify(result.data.file.cells)
+          const snippet = getSnippetForTwoFileDiff(
+            fileState.content,
+            newCellsJson,
+          )
+          if (snippet === '') {
+            return null
+          }
           return {
             type: 'edited_text_file' as const,
             filename: normalizedPath,
@@ -2645,7 +2668,7 @@ export function resetSentSkillNames(): void {
  * on --resume when a skill_listing attachment already exists in the
  * transcript.
  *
- * `sentSkillNames` is module-scope — process-local. Each `claude -p` spawn
+ * `sentSkillNames` is module-scope — process-local. Each `deimos -p` spawn
  * starts with an empty Map, so without this every resume re-injects the
  * full ~600-token listing even though it's already in the conversation from
  * the prior process. Shows up on every --resume; particularly loud for

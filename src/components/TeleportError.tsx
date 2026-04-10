@@ -145,7 +145,7 @@ export function TeleportError(t0) {
         }
         let t9;
         if ($[16] === Symbol.for("react.memo_cache_sentinel")) {
-          t9 = <Box flexDirection="column"><Text dimColor={true}>Teleport requires a dxa.dev/deimos account.</Text><Text dimColor={true}>Your Deimos Pro/Max subscription will be used by Deimos.</Text></Box>;
+          t9 = <Box flexDirection="column"><Text dimColor={true}>Teleport requires Deimos Cloud authentication.</Text><Text dimColor={true}>If you have a Deimos Cloud subscription, it will be used for remote sessions.</Text></Box>;
           $[16] = t9;
         } else {
           t9 = $[16];

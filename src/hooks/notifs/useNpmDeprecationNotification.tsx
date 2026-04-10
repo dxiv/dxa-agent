@@ -3,7 +3,9 @@ import { isInBundledMode } from 'src/utils/bundledMode.js';
 import { getCurrentInstallationType } from 'src/utils/doctorDiagnostic.js';
 import { isEnvTruthy } from 'src/utils/envUtils.js';
 import { useStartupNotification } from './useStartupNotification.js';
-const NPM_DEPRECATION_MESSAGE = 'Deimos has switched from npm to native installer. Run `claude install` or see https://docs.anthropic.com/en/docs/deimos/getting-started for more options.';
+const NPM_DEPRECATION_MESSAGE =
+  'This build no longer uses the legacy npm-based installer flow. ' +
+  'See the project README for supported installation options.';
 export function useNpmDeprecationNotification() {
   useStartupNotification(_temp);
 }

@@ -508,7 +508,7 @@ export function useRemoteSession({
       }
 
       // Update the session title after the first message when no initial prompt was provided.
-      // This gives the session a meaningful title on dxa.dev/deimos instead of "Background task".
+      // This gives the session a meaningful title on github.com/dxiv/dxa-deimos instead of "Background task".
       // Skip in viewerOnly mode — the remote agent owns the session title.
       if (
         !hasUpdatedTitleRef.current &&

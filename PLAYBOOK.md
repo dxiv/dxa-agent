@@ -1,6 +1,6 @@
 # Deimos — local agent playbook
 
-**[dxa.dev/deimos/](https://dxa.dev/deimos/)** · [Documentation index](docs/README.md) · [Cheatsheet](docs/CHEATSHEET.md)
+**[github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/)** · [Documentation index](docs/README.md) · [Cheatsheet](docs/CHEATSHEET.md)
 
 Operational guide for running Deimos against a **local model** (for example Ollama), keeping sessions clean, and getting consistent results from a **source checkout**. For the published CLI only, use the [README](README.md) quick start; this playbook assumes a **git clone** with Bun available.
 

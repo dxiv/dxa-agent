@@ -23,6 +23,10 @@ import { sanitizeToolNameForAnalytics } from 'src/services/analytics/metadata.js
 import type { AgentId } from 'src/types/ids.js'
 import { companionIntroText } from '../buddy/prompt.js'
 import { NO_CONTENT_MESSAGE } from '../constants/messages.js'
+import {
+  MCP_SERVER_INSTRUCTIONS_PREAMBLE,
+  SKILL_DISCOVERY_HEADER,
+} from '../constants/reminderCopy.js'
 import { OUTPUT_STYLE_CONFIG } from '../constants/outputStyles.js'
 import { isAutoMemoryEnabled } from '../memdir/paths.js'
 import {
@@ -359,6 +363,7 @@ function baseCreateAssistantMessage({
   apiError,
   error,
   errorDetails,
+  promptTooLongSource,
   isVirtual,
   usage = {
     input_tokens: 0,
@@ -381,6 +386,7 @@ function baseCreateAssistantMessage({
   apiError?: AssistantMessage['apiError']
   error?: SDKAssistantMessageError
   errorDetails?: string
+  promptTooLongSource?: AssistantMessage['promptTooLongSource']
   isVirtual?: true
   usage?: Usage
 }): AssistantMessage {
@@ -405,6 +411,7 @@ function baseCreateAssistantMessage({
     apiError,
     error,
     errorDetails,
+    promptTooLongSource,
     isApiErrorMessage,
     isVirtual,
   }
@@ -439,11 +446,13 @@ export function createAssistantAPIErrorMessage({
   apiError,
   error,
   errorDetails,
+  promptTooLongSource,
 }: {
   content: string
   apiError?: AssistantMessage['apiError']
   error?: SDKAssistantMessageError
   errorDetails?: string
+  promptTooLongSource?: AssistantMessage['promptTooLongSource']
 }): AssistantMessage {
   return baseCreateAssistantMessage({
     content: [
@@ -456,6 +465,7 @@ export function createAssistantAPIErrorMessage({
     apiError,
     error,
     errorDetails,
+    promptTooLongSource,
   })
 }
 
@@ -3544,7 +3554,7 @@ Read the team config to discover your teammates' names. Check the task list peri
       return wrapMessagesInSystemReminder([
         createUserMessage({
           content:
-            `Skills relevant to your task:\n\n${lines.join('\n')}\n\n` +
+            `${SKILL_DISCOVERY_HEADER}\n\n${lines.join('\n')}\n\n` +
             `These skills encode project-specific conventions. ` +
             `Invoke via Skill("<name>") for complete instructions.`,
           isMeta: true,
@@ -4255,7 +4265,7 @@ You have exited auto mode. The user may now want to interact more directly. You 
       const parts: string[] = []
       if (attachment.addedBlocks.length > 0) {
         parts.push(
-          `# MCP Server Instructions\n\nThe following MCP servers have provided instructions for how to use their tools and resources:\n\n${attachment.addedBlocks.join('\n\n')}`,
+          `${MCP_SERVER_INSTRUCTIONS_PREAMBLE}${attachment.addedBlocks.join('\n\n')}`,
         )
       }
       if (attachment.removedNames.length > 0) {

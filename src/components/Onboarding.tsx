@@ -95,7 +95,7 @@ export function Onboarding({
             <Text dimColor wrap="wrap">
               For more details see:
               <Newline />
-              <Link url="https://dxa.dev/deimos/docs/en/security" />
+              <Link url="https://github.com/dxiv/dxa-deimos/docs/en/security" />
             </Text>
           </OrderedList.Item>
           <OrderedList.Item>

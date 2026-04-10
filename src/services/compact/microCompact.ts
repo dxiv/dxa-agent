@@ -1,5 +1,4 @@
 import { feature } from 'bun:bundle'
-import type { ToolResultBlockParam } from '@anthropic-ai/sdk/resources/index.mjs'
 import type { QuerySource } from '../../constants/querySource.js'
 import type { ToolUseContext } from '../../Tool.js'
 import { FILE_EDIT_TOOL_NAME } from '../../tools/FileEditTool/constants.js'
@@ -13,13 +12,15 @@ import type { Message } from '../../types/message.js'
 import { logForDebugging } from '../../utils/debug.js'
 import { getMainLoopModel } from '../../utils/model/model.js'
 import { SHELL_TOOL_NAMES } from '../../utils/shell/shellToolUtils.js'
-import { jsonStringify } from '../../utils/slowOperations.js'
 import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,
 } from '../analytics/index.js'
 import { notifyCacheDeletion } from '../api/promptCacheBreakDetection.js'
-import { roughTokenCountEstimation } from '../tokenEstimation.js'
+import {
+  roughTokenCountEstimationForBlock,
+  roughTokenEstimateForToolResultBlock,
+} from '../tokenEstimation.js'
 import {
   clearCompactWarningSuppression,
   suppressCompactWarning,
@@ -34,8 +35,6 @@ import {
 // circular-deps loop back through this file via promptCacheBreakDetection.
 // Drift is caught by a test asserting equality with the source-of-truth.
 export const TIME_BASED_MC_CLEARED_MESSAGE = '[Old tool result content cleared]'
-
-const IMAGE_MAX_TOKEN_SIZE = 2000
 
 // Only compact these built-in tools (MCP tools are also compactable via prefix match)
 const COMPACTABLE_TOOLS = new Set<string>([
@@ -140,28 +139,6 @@ export function resetMicrocompactState(): void {
   pendingCacheEdits = null
 }
 
-// Helper to calculate tool result tokens
-function calculateToolResultTokens(block: ToolResultBlockParam): number {
-  if (!block.content) {
-    return 0
-  }
-
-  if (typeof block.content === 'string') {
-    return roughTokenCountEstimation(block.content)
-  }
-
-  // Array of TextBlockParam | ImageBlockParam | DocumentBlockParam
-  return block.content.reduce((sum, item) => {
-    if (item.type === 'text') {
-      return sum + roughTokenCountEstimation(item.text)
-    } else if (item.type === 'image' || item.type === 'document') {
-      // Images/documents are approximately 2000 tokens regardless of format
-      return sum + IMAGE_MAX_TOKEN_SIZE
-    }
-    return sum
-  }, 0)
-}
-
 /**
  * Estimate token count for messages by extracting text content
  * Used for rough token estimation when we don't have accurate API counts
@@ -180,28 +157,13 @@ export function estimateMessageTokens(messages: Message[]): number {
     }
 
     for (const block of message.message.content) {
-      if (block.type === 'text') {
-        totalTokens += roughTokenCountEstimation(block.text)
-      } else if (block.type === 'tool_result') {
-        totalTokens += calculateToolResultTokens(block)
-      } else if (block.type === 'image' || block.type === 'document') {
-        totalTokens += IMAGE_MAX_TOKEN_SIZE
-      } else if (block.type === 'thinking') {
-        // Match roughTokenCountEstimationForBlock: count only the thinking
-        // text, not the JSON wrapper or signature (signature is metadata,
-        // not model-tokenized content).
-        totalTokens += roughTokenCountEstimation(block.thinking)
-      } else if (block.type === 'redacted_thinking') {
-        totalTokens += roughTokenCountEstimation(block.data)
-      } else if (block.type === 'tool_use') {
-        // Match roughTokenCountEstimationForBlock: count name + input,
-        // not the JSON wrapper or id field.
-        totalTokens += roughTokenCountEstimation(
-          block.name + jsonStringify(block.input ?? {}),
-        )
+      if (block.type === 'tool_result') {
+        totalTokens += roughTokenEstimateForToolResultBlock(block)
       } else {
-        // server_tool_use, web_search_tool_result, etc.
-        totalTokens += roughTokenCountEstimation(jsonStringify(block))
+        // Message content can include beta-typed blocks; estimator accepts the stable API shapes.
+        totalTokens += roughTokenCountEstimationForBlock(
+          block as Parameters<typeof roughTokenCountEstimationForBlock>[0],
+        )
       }
     }
   }
@@ -484,7 +446,7 @@ function maybeTimeBasedMicrocompact(
         clearSet.has(block.tool_use_id) &&
         block.content !== TIME_BASED_MC_CLEARED_MESSAGE
       ) {
-        tokensSaved += calculateToolResultTokens(block)
+        tokensSaved += roughTokenEstimateForToolResultBlock(block)
         touched = true
         return { ...block, content: TIME_BASED_MC_CLEARED_MESSAGE }
       }

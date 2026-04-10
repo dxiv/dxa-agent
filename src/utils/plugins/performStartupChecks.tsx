@@ -2,6 +2,8 @@ import { performBackgroundPluginInstallations } from '../../services/plugins/Plu
 import type { AppState } from '../../state/AppState.js';
 import { checkHasTrustDialogAccepted } from '../config.js';
 import { logForDebugging } from '../debug.js';
+import { enqueuePendingNotification } from '../messageQueueManager.js';
+import { wrapInSystemReminder } from '../messages.js';
 import { clearMarketplacesCache, registerSeedMarketplaces } from './marketplaceManager.js';
 import { clearPluginCache } from './pluginLoader.js';
 type SetAppState = (f: (prevState: AppState) => AppState) => void;
@@ -65,5 +67,12 @@ export async function performStartupChecks(setAppState: SetAppState): Promise<vo
   } catch (error) {
     // Even if something fails here, don't block startup
     logForDebugging(`Error initiating background plugin installations: ${error}`);
+    enqueuePendingNotification({
+      value: wrapInSystemReminder(
+        'Plugin marketplace startup hit an error — background installs may be incomplete. Try /reload-plugins, /doctor, or deimos doctor; use --debug or DEIMOS_DEBUG=1 for logs.',
+      ),
+      mode: 'task-notification',
+      priority: 'next',
+    });
   }
 }

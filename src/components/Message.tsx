@@ -56,7 +56,7 @@ export type Props = {
   latestBashOutputUUID?: string | null;
 };
 function MessageImpl(t0) {
-  const $ = _c(94);
+  const $ = _c(96);
   const {
     message,
     lookups,
@@ -99,10 +99,10 @@ function MessageImpl(t0) {
       {
         const t2 = containerWidth ?? "100%";
         let t3;
-        if ($[5] !== addMargin || $[6] !== commands || $[7] !== inProgressToolUseIDs || $[8] !== isTranscriptMode || $[9] !== lastThinkingBlockId || $[10] !== lookups || $[11] !== message.advisorModel || $[12] !== message.message.content || $[13] !== message.uuid || $[14] !== onOpenRateLimitOptions || $[15] !== progressMessagesForMessage || $[16] !== shouldAnimate || $[17] !== shouldShowDot || $[18] !== tools || $[19] !== verbose || $[20] !== width) {
+        if ($[5] !== addMargin || $[6] !== commands || $[7] !== inProgressToolUseIDs || $[8] !== isTranscriptMode || $[9] !== lastThinkingBlockId || $[10] !== lookups || $[11] !== message.advisorModel || $[12] !== message.message.content || $[13] !== message.uuid || $[14] !== onOpenRateLimitOptions || $[15] !== progressMessagesForMessage || $[16] !== shouldAnimate || $[17] !== shouldShowDot || $[18] !== tools || $[19] !== verbose || $[20] !== width || $[94] !== message.promptTooLongSource || $[95] !== message.error) {
           let t4;
-          if ($[22] !== addMargin || $[23] !== commands || $[24] !== inProgressToolUseIDs || $[25] !== isTranscriptMode || $[26] !== lastThinkingBlockId || $[27] !== lookups || $[28] !== message.advisorModel || $[29] !== message.uuid || $[30] !== onOpenRateLimitOptions || $[31] !== progressMessagesForMessage || $[32] !== shouldAnimate || $[33] !== shouldShowDot || $[34] !== tools || $[35] !== verbose || $[36] !== width) {
-            t4 = (_, index_0) => <AssistantMessageBlock key={index_0} param={_} addMargin={addMargin} tools={tools} commands={commands} verbose={verbose} inProgressToolUseIDs={inProgressToolUseIDs} progressMessagesForMessage={progressMessagesForMessage} shouldAnimate={shouldAnimate} shouldShowDot={shouldShowDot} width={width} inProgressToolCallCount={inProgressToolUseIDs.size} isTranscriptMode={isTranscriptMode} lookups={lookups} onOpenRateLimitOptions={onOpenRateLimitOptions} thinkingBlockId={`${message.uuid}:${index_0}`} lastThinkingBlockId={lastThinkingBlockId} advisorModel={message.advisorModel} />;
+          if ($[22] !== addMargin || $[23] !== commands || $[24] !== inProgressToolUseIDs || $[25] !== isTranscriptMode || $[26] !== lastThinkingBlockId || $[27] !== lookups || $[28] !== message.advisorModel || $[29] !== message.uuid || $[30] !== onOpenRateLimitOptions || $[31] !== progressMessagesForMessage || $[32] !== shouldAnimate || $[33] !== shouldShowDot || $[34] !== tools || $[35] !== verbose || $[36] !== width || $[94] !== message.promptTooLongSource || $[95] !== message.error) {
+            t4 = (_, index_0) => <AssistantMessageBlock key={index_0} param={_} assistantMessage={message} addMargin={addMargin} tools={tools} commands={commands} verbose={verbose} inProgressToolUseIDs={inProgressToolUseIDs} progressMessagesForMessage={progressMessagesForMessage} shouldAnimate={shouldAnimate} shouldShowDot={shouldShowDot} width={width} inProgressToolCallCount={inProgressToolUseIDs.size} isTranscriptMode={isTranscriptMode} lookups={lookups} onOpenRateLimitOptions={onOpenRateLimitOptions} thinkingBlockId={`${message.uuid}:${index_0}`} lastThinkingBlockId={lastThinkingBlockId} advisorModel={message.advisorModel} />;
             $[22] = addMargin;
             $[23] = commands;
             $[24] = inProgressToolUseIDs;
@@ -118,6 +118,8 @@ function MessageImpl(t0) {
             $[34] = tools;
             $[35] = verbose;
             $[36] = width;
+            $[94] = message.promptTooLongSource;
+            $[95] = message.error;
             $[37] = t4;
           } else {
             t4 = $[37];
@@ -139,6 +141,8 @@ function MessageImpl(t0) {
           $[18] = tools;
           $[19] = verbose;
           $[20] = width;
+          $[94] = message.promptTooLongSource;
+          $[95] = message.error;
           $[21] = t3;
         } else {
           t3 = $[21];
@@ -431,9 +435,10 @@ function UserMessage(t0) {
   }
 }
 function AssistantMessageBlock(t0) {
-  const $ = _c(45);
+  const $ = _c(47);
   const {
     param,
+    assistantMessage,
     addMargin,
     tools,
     commands,
@@ -451,6 +456,13 @@ function AssistantMessageBlock(t0) {
     lastThinkingBlockId,
     advisorModel
   } = t0;
+  const assistantDisplayContext = assistantMessage
+    ? {
+        promptTooLongSource: assistantMessage.promptTooLongSource,
+        error: assistantMessage.error,
+        apiError: assistantMessage.apiError,
+      }
+    : undefined;
   if (feature("CONNECTOR_TEXT")) {
     if (isConnectorTextBlock(param)) {
       let t1;
@@ -465,14 +477,16 @@ function AssistantMessageBlock(t0) {
         t1 = $[1];
       }
       let t2;
-      if ($[2] !== addMargin || $[3] !== onOpenRateLimitOptions || $[4] !== shouldShowDot || $[5] !== t1 || $[6] !== verbose || $[7] !== width) {
-        t2 = <AssistantTextMessage param={t1} addMargin={addMargin} shouldShowDot={shouldShowDot} verbose={verbose} width={width} onOpenRateLimitOptions={onOpenRateLimitOptions} />;
+      if ($[2] !== addMargin || $[3] !== onOpenRateLimitOptions || $[4] !== shouldShowDot || $[5] !== t1 || $[6] !== verbose || $[7] !== width || $[45] !== assistantDisplayContext?.promptTooLongSource || $[46] !== assistantDisplayContext?.error) {
+        t2 = <AssistantTextMessage param={t1} addMargin={addMargin} shouldShowDot={shouldShowDot} verbose={verbose} width={width} onOpenRateLimitOptions={onOpenRateLimitOptions} assistantDisplayContext={assistantDisplayContext} />;
         $[2] = addMargin;
         $[3] = onOpenRateLimitOptions;
         $[4] = shouldShowDot;
         $[5] = t1;
         $[6] = verbose;
         $[7] = width;
+        $[45] = assistantDisplayContext?.promptTooLongSource;
+        $[46] = assistantDisplayContext?.error;
         $[8] = t2;
       } else {
         t2 = $[8];
@@ -507,14 +521,16 @@ function AssistantMessageBlock(t0) {
     case "text":
       {
         let t1;
-        if ($[22] !== addMargin || $[23] !== onOpenRateLimitOptions || $[24] !== param || $[25] !== shouldShowDot || $[26] !== verbose || $[27] !== width) {
-          t1 = <AssistantTextMessage param={param} addMargin={addMargin} shouldShowDot={shouldShowDot} verbose={verbose} width={width} onOpenRateLimitOptions={onOpenRateLimitOptions} />;
+        if ($[22] !== addMargin || $[23] !== onOpenRateLimitOptions || $[24] !== param || $[25] !== shouldShowDot || $[26] !== verbose || $[27] !== width || $[45] !== assistantDisplayContext?.promptTooLongSource || $[46] !== assistantDisplayContext?.error) {
+          t1 = <AssistantTextMessage param={param} addMargin={addMargin} shouldShowDot={shouldShowDot} verbose={verbose} width={width} onOpenRateLimitOptions={onOpenRateLimitOptions} assistantDisplayContext={assistantDisplayContext} />;
           $[22] = addMargin;
           $[23] = onOpenRateLimitOptions;
           $[24] = param;
           $[25] = shouldShowDot;
           $[26] = verbose;
           $[27] = width;
+          $[45] = assistantDisplayContext?.promptTooLongSource;
+          $[46] = assistantDisplayContext?.error;
           $[28] = t1;
         } else {
           t1 = $[28];
@@ -620,6 +636,14 @@ export function areMessagePropsEqual(prev: Props, next: Props): boolean {
   // containerWidth is an absolute number in the no-metadata path (wrapper
   // Box is skipped). Static messages must re-render on terminal resize.
   if (prev.containerWidth !== next.containerWidth) return false;
+  if (prev.message.type === 'assistant' && next.message.type === 'assistant') {
+    if (prev.message.promptTooLongSource !== next.message.promptTooLongSource) {
+      return false;
+    }
+    if (prev.message.error !== next.message.error) {
+      return false;
+    }
+  }
   if (prev.isStatic && next.isStatic) return true;
   return false;
 }

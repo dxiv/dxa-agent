@@ -344,7 +344,7 @@ export async function processSlashCommand(inputString: string, precedingInputBlo
       logEvent('tengu_input_slash_invalid', {
         input: commandName as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
-      const unknownMessage = `Unknown skill: ${commandName}`;
+      const unknownMessage = `Unknown command: ${commandName}. Run /help to see available commands. If a command you expect is missing, try /reload-plugins or /doctor.`;
       return {
         messages: [createSyntheticUserCaveatMessage(), ...attachmentMessages, createUserMessage({
           content: prepareUserContent({
@@ -354,7 +354,7 @@ export async function processSlashCommand(inputString: string, precedingInputBlo
         }),
         // gh-32591: preserve args so the user can copy/resubmit without
         // retyping. System warning is UI-only (filtered before API).
-        ...(parsedArgs ? [createSystemMessage(`Args from unknown skill: ${parsedArgs}`, 'warning')] : [])],
+        ...(parsedArgs ? [createSystemMessage(`Arguments were not run (command not found): ${parsedArgs}`, 'warning')] : [])],
         shouldQuery: false,
         resultText: unknownMessage
       };

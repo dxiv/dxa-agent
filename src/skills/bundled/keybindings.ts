@@ -113,7 +113,7 @@ function generateReservedShortcuts(): string {
 
 const FILE_FORMAT_EXAMPLE: KeybindingsSchemaType = {
   $schema: 'https://www.schemastore.org/deimos-keybindings.json',
-  $docs: 'https://dxa.dev/deimos/docs/en/keybindings',
+  $docs: 'https://github.com/dxiv/dxa-deimos/docs/en/keybindings',
   bindings: [
     {
       context: 'Chat',

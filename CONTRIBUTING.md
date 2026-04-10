@@ -1,6 +1,6 @@
 # Contributing to Deimos
 
-**[Deimos](https://dxa.dev/deimos/)** · [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos) · npm [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli)
+**[Deimos](https://github.com/dxiv/dxa-deimos/)** · [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos) · npm [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli)
 
 Contributions are welcome. Patches are easiest to merge when they are **small, tested, and scoped to one concern**.
 
@@ -93,7 +93,7 @@ Use this when you want your branch to match what CI runs on GitHub:
 3. **`bun run build`** and **`bun run smoke`**.
 4. **`bun test --max-concurrency=1`** — same as the Linux job in [`.github/workflows/pr-checks.yml`](.github/workflows/pr-checks.yml).
 5. For larger or security-sensitive diffs: **`bun run security:pr-scan -- --base origin/main`** (adjust `--base` if your default branch differs).
-6. **`bun run typecheck`** — optional signal today (CI treats it as informational); fix new errors in files you touch when practical.
+6. **`bun run typecheck`** — **required** in CI; fix new errors in files you touch (and keep the tree clean when practical).
 7. Describe what you changed, why, and which commands you ran in the PR body.
 
 ## Pull Requests

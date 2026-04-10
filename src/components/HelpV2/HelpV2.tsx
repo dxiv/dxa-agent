@@ -146,7 +146,7 @@ export function HelpV2(t0) {
   }
   let t7;
   if ($[33] === Symbol.for("react.memo_cache_sentinel")) {
-    t7 = <Box marginTop={1}><Text>For more help:{" "}<Link url="https://dxa.dev/deimos/docs/en/overview" /></Text></Box>;
+    t7 = <Box marginTop={1}><Text>For more help:{" "}<Link url="https://github.com/dxiv/dxa-deimos/docs/en/overview" /></Text></Box>;
     $[33] = t7;
   } else {
     t7 = $[33];

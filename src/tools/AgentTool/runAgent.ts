@@ -2,6 +2,7 @@ import { feature } from 'bun:bundle'
 import type { UUID } from 'crypto'
 import { randomUUID } from 'crypto'
 import uniqBy from 'lodash-es/uniqBy.js'
+import pMap from 'p-map'
 import { logForDebugging } from 'src/utils/debug.js'
 import { getProjectRoot, getSessionId } from '../../bootstrap/state.js'
 import { getCommand, getSkillToolCommands, hasCommand } from '../../commands.js'
@@ -41,7 +42,7 @@ import type {
   UserMessage,
 } from '../../types/message.js'
 import { createAttachmentMessage } from '../../utils/attachments.js'
-import { AbortError } from '../../utils/errors.js'
+import { AbortError, errorMessage } from '../../utils/errors.js'
 import { getDisplayPath } from '../../utils/file.js'
 import {
   cloneFileStateCache,
@@ -83,6 +84,9 @@ import type { ContentReplacementState } from '../../utils/toolResultStorage.js'
 import { createAgentId } from '../../utils/uuid.js'
 import { resolveAgentTools } from './agentToolUtils.js'
 import { type AgentDefinition, isBuiltInAgent } from './loadAgentsDir.js'
+
+/** Bounded parallel MCP connects for agent frontmatter (stdio-friendly cap). */
+const AGENT_MCP_CONNECT_CONCURRENCY = 4
 
 /**
  * Initialize agent-specific MCP servers
@@ -134,6 +138,13 @@ async function initializeAgentMcpServers(
   const newlyCreatedClients: MCPServerConnection[] = []
   const agentTools: Tool[] = []
 
+  type AgentMcpWorkItem = {
+    name: string
+    config: ScopedMcpServerConfig
+    isNewlyCreated: boolean
+  }
+  const work: AgentMcpWorkItem[] = []
+
   for (const spec of agentDefinition.mcpServers) {
     let config: ScopedMcpServerConfig | null = null
     let name: string
@@ -171,25 +182,56 @@ async function initializeAgentMcpServers(
       isNewlyCreated = true
     }
 
-    // Connect to the server
-    const client = await connectToServer(name, config)
-    agentClients.push(client)
-    if (isNewlyCreated) {
-      newlyCreatedClients.push(client)
-    }
+    work.push({ name, config, isNewlyCreated })
+  }
 
-    // Fetch tools if connected
-    if (client.type === 'connected') {
-      const tools = await fetchToolsForClient(client)
-      agentTools.push(...tools)
-      logForDebugging(
-        `[Agent: ${agentDefinition.agentType}] Connected to MCP server '${name}' with ${tools.length} tools`,
-      )
-    } else {
-      logForDebugging(
-        `[Agent: ${agentDefinition.agentType}] Failed to connect to MCP server '${name}': ${client.type}`,
-        { level: 'warn' },
-      )
+  const processed = await pMap(
+    work,
+    async ({ name, config, isNewlyCreated }) => {
+      try {
+        const client = await connectToServer(name, config)
+        const tools: Tool[] = []
+        if (client.type === 'connected') {
+          try {
+            tools.push(...(await fetchToolsForClient(client)))
+            logForDebugging(
+              `[Agent: ${agentDefinition.agentType}] Connected to MCP server '${name}' with ${tools.length} tools`,
+            )
+          } catch (fetchErr) {
+            logForDebugging(
+              `[Agent: ${agentDefinition.agentType}] Failed to list tools from '${name}': ${errorMessage(fetchErr)}`,
+              { level: 'warn' },
+            )
+          }
+        } else {
+          logForDebugging(
+            `[Agent: ${agentDefinition.agentType}] Failed to connect to MCP server '${name}': ${client.type}`,
+            { level: 'warn' },
+          )
+        }
+        return { client, tools, isNewlyCreated }
+      } catch (err) {
+        logForDebugging(
+          `[Agent: ${agentDefinition.agentType}] MCP server '${name}' error: ${errorMessage(err)}`,
+          { level: 'warn' },
+        )
+        return {
+          client: null as MCPServerConnection | null,
+          tools: [] as Tool[],
+          isNewlyCreated,
+        }
+      }
+    },
+    { concurrency: AGENT_MCP_CONNECT_CONCURRENCY },
+  )
+
+  for (const p of processed) {
+    if (p.client) {
+      agentClients.push(p.client)
+      if (p.isNewlyCreated) {
+        newlyCreatedClients.push(p.client)
+      }
+      agentTools.push(...p.tools)
     }
   }
 

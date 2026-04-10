@@ -1,6 +1,7 @@
 // biome-ignore-all assist/source/organizeImports: internal-only import markers must not be reordered
 import addDir from './commands/add-dir/index.js'
 import autofixPr from './commands/autofix-pr/index.js'
+import autoFix from './commands/auto-fix.js'
 import backfillSessions from './commands/backfill-sessions/index.js'
 import btw from './commands/btw/index.js'
 import goodDeimos from './commands/good-deimos/index.js'
@@ -157,6 +158,8 @@ import advisor from './commands/advisor.js'
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
 import { logForDebugging } from './utils/debug.js'
+import { enqueuePendingNotification } from './utils/messageQueueManager.js'
+import { wrapInSystemReminder } from './utils/messages.js'
 import {
   getSkillDirCommands,
   clearSkillCaches,
@@ -261,6 +264,7 @@ export const INTERNAL_ONLY_COMMANDS = [
 // since underlying functions read from config, which can't be read at module initialization time
 const COMMANDS = memoize((): Command[] => [
   addDir,
+  autoFix,
   advisor,
   agents,
   branch,
@@ -429,7 +433,7 @@ export function meetsAvailabilityRequirement(cmd: Command): boolean {
         if (isDeimosCloudSubscriber()) return true
         break
       case 'console':
-        // Console API key user = direct 1P API customer (not 3P, not dxa.dev/deimos).
+        // Console API key user = direct 1P API customer (not 3P, not github.com/dxiv/dxa-deimos).
         // Excludes 3P (Bedrock/Vertex/Foundry) who don't set ANTHROPIC_BASE_URL
         // and gateway users who proxy through a custom base URL.
         if (
@@ -609,6 +613,13 @@ export const getSlashCommandToolSkills = memoize(
       // Return empty array rather than throwing - skills are non-critical
       // This prevents skill loading failures from breaking the entire system
       logForDebugging('Returning empty skills array due to load failure')
+      enqueuePendingNotification({
+        value: wrapInSystemReminder(
+          'Skill catalog failed to load — plugin and user skills may be unavailable this session. Try /doctor, /reload-plugins, or check debug logs.',
+        ),
+        mode: 'task-notification',
+        priority: 'next',
+      })
       return []
     }
   },

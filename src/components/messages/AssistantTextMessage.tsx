@@ -5,7 +5,8 @@ import { ERROR_MESSAGE_USER_ABORT } from 'src/services/compact/compact.js';
 import { isRateLimitErrorMessage } from 'src/services/rateLimitMessages.js';
 import { BLACK_CIRCLE } from '../../constants/figures.js';
 import { Box, NoSelect, Text } from '../../ink.js';
-import { API_ERROR_MESSAGE_PREFIX, API_TIMEOUT_ERROR_MESSAGE, CREDIT_BALANCE_TOO_LOW_ERROR_MESSAGE, CUSTOM_OFF_SWITCH_MESSAGE, INVALID_API_KEY_ERROR_MESSAGE, INVALID_API_KEY_ERROR_MESSAGE_EXTERNAL, ORG_DISABLED_ERROR_MESSAGE_ENV_KEY, ORG_DISABLED_ERROR_MESSAGE_ENV_KEY_WITH_OAUTH, PROMPT_TOO_LONG_ERROR_MESSAGE, startsWithApiErrorPrefix, TOKEN_REVOKED_ERROR_MESSAGE } from '../../services/api/errors.js';
+import { API_ERROR_MESSAGE_PREFIX, API_TIMEOUT_ERROR_MESSAGE, classifyMaxOutputTokensErrorText, CREDIT_BALANCE_TOO_LOW_ERROR_MESSAGE, CUSTOM_OFF_SWITCH_MESSAGE, INVALID_API_KEY_ERROR_MESSAGE, INVALID_API_KEY_ERROR_MESSAGE_EXTERNAL, ORG_DISABLED_ERROR_MESSAGE_ENV_KEY, ORG_DISABLED_ERROR_MESSAGE_ENV_KEY_WITH_OAUTH, PROMPT_TOO_LONG_ERROR_MESSAGE, startsWithApiErrorPrefix, TOKEN_REVOKED_ERROR_MESSAGE } from '../../services/api/errors.js';
+import type { AssistantMessage } from '../../types/message.js';
 import { isEmptyMessageText, NO_RESPONSE_REQUESTED } from '../../utils/messages.js';
 import { getUpgradeMessage } from '../../utils/model/contextWindowUpgradeCheck.js';
 import { getDefaultSonnetModel, renderModelName } from '../../utils/model/model.js';
@@ -24,6 +25,10 @@ type Props = {
   verbose: boolean;
   width?: number | string;
   onOpenRateLimitOptions?: () => void;
+  assistantDisplayContext?: Pick<
+    AssistantMessage,
+    'promptTooLongSource' | 'error' | 'apiError'
+  >;
 };
 function InvalidApiKeyMessage() {
   const $ = _c(2);
@@ -45,13 +50,14 @@ function InvalidApiKeyMessage() {
   return t1;
 }
 export function AssistantTextMessage(t0) {
-  const $ = _c(34);
+  const $ = _c(38);
   const {
     param: t1,
     addMargin,
     shouldShowDot,
     verbose,
-    onOpenRateLimitOptions
+    onOpenRateLimitOptions,
+    assistantDisplayContext
   } = t0;
   const {
     text
@@ -59,6 +65,22 @@ export function AssistantTextMessage(t0) {
   const isSelected = useContext(MessageActionsSelectedContext);
   if (isEmptyMessageText(text)) {
     return null;
+  }
+  const maxTokKind = classifyMaxOutputTokensErrorText(text);
+  if (maxTokKind !== null) {
+    let t2;
+    if ($[34] !== maxTokKind) {
+      const body =
+        maxTokKind === 'per_turn_output'
+          ? 'Output limit: assistant hit the per-turn maximum · Raise DEIMOS_MAX_OUTPUT_TOKENS or ask for a shorter reply'
+          : 'Context limit: model window full during this reply · /compact or start a fresh session';
+      t2 = <MessageResponse height={1}><Text color="error">{body}</Text></MessageResponse>;
+      $[34] = maxTokKind;
+      $[35] = t2;
+    } else {
+      t2 = $[35];
+    }
+    return t2;
   }
   if (isRateLimitErrorMessage(text)) {
     let t2;
@@ -87,12 +109,19 @@ export function AssistantTextMessage(t0) {
           t2 = $[3];
         }
         const upgradeHint = t2;
+        const ptlSource = assistantDisplayContext?.promptTooLongSource;
         let t3;
-        if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
-          t3 = <MessageResponse height={1}><Text color="error">Context limit reached · /compact or /clear to continue{upgradeHint ? ` · ${upgradeHint}` : ""}</Text></MessageResponse>;
-          $[4] = t3;
+        if ($[4] !== upgradeHint || $[36] !== ptlSource) {
+          const lead =
+            ptlSource === 'api'
+              ? 'Input limit: the API rejected this request (conversation or attachments may exceed the model window)'
+              : 'Conversation limit: Deimos blocked sending until you reduce input context';
+          t3 = <MessageResponse height={1}><Text color="error">{lead} · /compact or /clear to continue{upgradeHint ? ` · ${upgradeHint}` : ""}</Text></MessageResponse>;
+          $[4] = upgradeHint;
+          $[36] = ptlSource;
+          $[37] = t3;
         } else {
-          t3 = $[4];
+          t3 = $[37];
         }
         return t3;
       }

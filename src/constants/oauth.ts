@@ -41,7 +41,7 @@ export const CONSOLE_OAUTH_SCOPES = [
   DEIMOS_CLOUD_PROFILE_SCOPE,
 ] as const
 
-// Anthropic web (dxa.dev/deimos) subscriber OAuth scopes — string values are server-defined.
+// Anthropic web (github.com/dxiv/dxa-deimos) subscriber OAuth scopes — string values are server-defined.
 export const DEIMOS_CLOUD_OAUTH_SCOPES = [
   DEIMOS_CLOUD_PROFILE_SCOPE,
   DEIMOS_CLOUD_INFERENCE_SCOPE,
@@ -51,7 +51,7 @@ export const DEIMOS_CLOUD_OAUTH_SCOPES = [
 ] as const
 
 // All OAuth scopes - union of all scopes used by the CLI
-// When logging in, request all scopes in order to handle both Console -> dxa.dev/deimos redirect
+// When logging in, request all scopes in order to handle both Console -> github.com/dxiv/dxa-deimos redirect
 // Ensure that `OAuthConsentPage` in apps repo is kept in sync with this list.
 export const ALL_OAUTH_SCOPES = Array.from(
   new Set([...CONSOLE_OAUTH_SCOPES, ...DEIMOS_CLOUD_OAUTH_SCOPES]),
@@ -62,7 +62,7 @@ type OauthConfig = {
   CONSOLE_AUTHORIZE_URL: string
   DEIMOS_CLOUD_AUTHORIZE_URL: string
   /**
-   * Web origin for subscriber account (e.g. dxa.dev/deimos). Separate from authorize URL
+   * Web origin for subscriber account (e.g. github.com/dxiv/dxa-deimos). Separate from authorize URL
    * when that URL routes through claude.com for attribution.
    */
   DEIMOS_CLOUD_WEB_ORIGIN: string
@@ -83,9 +83,9 @@ const PROD_OAUTH_CONFIG = {
   BASE_API_URL: 'https://api.anthropic.com',
   CONSOLE_AUTHORIZE_URL: 'https://platform.claude.com/oauth/authorize',
   // Bounces through claude.com/cai/* so CLI sign-ins connect to claude.com
-  // visits for attribution. 307s to dxa.dev/deimos/oauth/authorize in two hops.
+  // visits for attribution. 307s to github.com/dxiv/dxa-deimos/oauth/authorize in two hops.
   DEIMOS_CLOUD_AUTHORIZE_URL: 'https://claude.com/cai/oauth/authorize',
-  DEIMOS_CLOUD_WEB_ORIGIN: 'https://dxa.dev/deimos',
+  DEIMOS_CLOUD_WEB_ORIGIN: 'https://github.com/dxiv/dxa-deimos',
   TOKEN_URL: 'https://platform.claude.com/v1/oauth/token',
   API_KEY_URL: 'https://api.anthropic.com/api/oauth/claude_cli/create_api_key',
   ROLES_URL: 'https://api.anthropic.com/api/oauth/claude_cli/roles',
@@ -109,7 +109,7 @@ const PROD_OAUTH_CONFIG = {
  * See: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document-00
  */
 export const MCP_CLIENT_METADATA_URL =
-  'https://dxa.dev/deimos/oauth/deimos-client-metadata'
+  undefined
 
 // Staging OAuth configuration - only included in ant builds with staging flag
 // Uses literal check for dead code elimination

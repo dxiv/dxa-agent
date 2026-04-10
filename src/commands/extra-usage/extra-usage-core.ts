@@ -102,8 +102,8 @@ export async function runExtraUsage(): Promise<ExtraUsageResult> {
   }
 
   const url = isTeamOrEnterprise
-    ? 'https://dxa.dev/deimos/admin-settings/usage'
-    : 'https://dxa.dev/deimos/settings/usage'
+    ? 'https://github.com/dxiv/dxa-deimos/admin-settings/usage'
+    : 'https://github.com/dxiv/dxa-deimos/settings/usage'
 
   try {
     const opened = await openBrowser(url)

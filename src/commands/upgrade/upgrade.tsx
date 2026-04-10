@@ -23,7 +23,7 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
         return null;
       }
     }
-    const url = 'https://dxa.dev/deimos/upgrade/max';
+    const url = 'https://github.com/dxiv/dxa-deimos/upgrade/max';
     await openBrowser(url);
     return <Login startingMessage={'Starting new login following /upgrade. Exit with Ctrl-C to use existing account.'} onDone={success => {
       context.onChangeAPIKey();
@@ -31,7 +31,7 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
     }} />;
   } catch (error) {
     logError(error as Error);
-    setTimeout(onDone, 0, 'Failed to open browser. Please visit https://dxa.dev/deimos/upgrade/max to upgrade.');
+    setTimeout(onDone, 0, 'Failed to open browser. Please visit https://github.com/dxiv/dxa-deimos/upgrade/max to upgrade.');
   }
   return null;
 }

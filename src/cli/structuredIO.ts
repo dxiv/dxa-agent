@@ -22,6 +22,7 @@ import type {
 import type { CanUseToolFn } from 'src/hooks/useCanUseTool.js'
 import type { Tool, ToolUseContext } from 'src/Tool.js'
 import { type HookCallback, hookJSONOutputSchema } from 'src/types/hooks.js'
+import { capUserFacingDetail } from 'src/services/api/errorUtils.js'
 import { logForDebugging } from 'src/utils/debug.js'
 import { logForDiagnosticsNoPII } from 'src/utils/diagLogs.js'
 import { AbortError } from 'src/utils/errors.js'
@@ -274,7 +275,7 @@ export class StructuredIO {
 
   /**
    * Inject a control_response message to resolve a pending permission request.
-   * Used by the bridge to feed permission responses from dxa.dev/deimos into the
+   * Used by the bridge to feed permission responses from github.com/dxiv/dxa-deimos into the
    * SDK permission flow.
    *
    * Also sends a control_cancel_request to the SDK consumer so its canUseTool
@@ -311,7 +312,7 @@ export class StructuredIO {
   /**
    * Register a callback invoked whenever a can_use_tool control_request
    * is written to stdout. Used by the bridge to forward permission
-   * requests to dxa.dev/deimos.
+   * requests to github.com/dxiv/dxa-deimos.
    */
   setOnControlRequestSent(
     callback: ((request: SDKControlRequest) => void) | undefined,
@@ -322,7 +323,7 @@ export class StructuredIO {
   /**
    * Register a callback invoked when a can_use_tool control_response arrives
    * from the SDK consumer (via stdin). Used by the bridge to cancel the
-   * stale permission prompt on dxa.dev/deimos when the SDK consumer wins the race.
+   * stale permission prompt on github.com/dxiv/dxa-deimos when the SDK consumer wins the race.
    */
   setOnControlRequestResolved(
     callback: ((requestId: string) => void) | undefined,
@@ -400,7 +401,7 @@ export class StructuredIO {
         this.trackResolvedToolUseId(request.request)
         this.pendingRequests.delete(message.response.request_id)
         // Notify the bridge when the SDK consumer resolves a can_use_tool
-        // request, so it can cancel the stale permission prompt on dxa.dev/deimos.
+        // request, so it can cancel the stale permission prompt on github.com/dxiv/dxa-deimos.
         if (
           request.request.request.subtype === 'can_use_tool' &&
           this.onControlRequestResolved
@@ -464,8 +465,16 @@ export class StructuredIO {
       }
       return message
     } catch (error) {
+      const linePreview =
+        line.length > 120 ? `${line.slice(0, 120)}…` : line
+      const errDetail = capUserFacingDetail(
+        error instanceof Error ? error.message : String(error),
+        200,
+      )
       // biome-ignore lint/suspicious/noConsole:: intentional console output
-      console.error(`Error parsing streaming input line: ${line}: ${error}`)
+      console.error(
+        `Error parsing streaming stdin (expected one NDJSON object per line: user, assistant, system, control_request). ${errDetail} · Line preview: ${linePreview} · Run with --debug for more detail.`,
+      )
       // eslint-disable-next-line custom-rules/no-process-exit
       process.exit(1)
     }

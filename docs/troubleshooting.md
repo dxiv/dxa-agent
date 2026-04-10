@@ -1,6 +1,6 @@
 # Troubleshooting — Deimos
 
-**Product:** [dxa.dev/deimos/](https://dxa.dev/deimos/) · **Package:** [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli) · **Docs index:** [README.md](README.md)
+**Product:** [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) · **Package:** [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli) · **Docs index:** [README.md](README.md)
 
 ## `deimos` command not found after `npm install -g`
 
@@ -29,7 +29,7 @@ Deimos expects **`rg`** on your `PATH`. Install [ripgrep](https://github.com/Bur
 
 ## Windows: Git Bash (`bash.exe`)
 
-If the CLI says it cannot find bash, install [Git for Windows](https://git-scm.com/downloads/win) and ensure `bash.exe` is available. If Git is installed but not on `PATH`, set:
+If the CLI says it cannot find bash, install [Git for Windows](https://git-scm.com/download/win) and ensure `bash.exe` is available. If Git is installed but not on `PATH`, set:
 
 `DEIMOS_GIT_BASH_PATH` → full path to `bash.exe` (for example `C:\Program Files\Git\bin\bash.exe`).
 
@@ -70,6 +70,41 @@ Run `bun run build` from the repository root, or use `bun run dev` for developme
 ## VS Code extension shows “command not found”
 
 Install the CLI globally (`npm install -g @dxa-deimos/cli` — [npm package](https://www.npmjs.com/package/@dxa-deimos/cli)) **or** ensure the `deimos` you built is on the **same PATH** VS Code’s integrated terminal uses. See [extension README](../vscode-extension/deimos-vscode/README.md).
+
+## Clone + local models + profiles
+
+If you are developing from a clone, see **[PLAYBOOK.md](../PLAYBOOK.md)** for Ollama, saved profiles, and Bun workflows.
+
+## Debug logging: `DEIMOS_DEBUG` vs `--debug`
+
+- **`deimos --debug`** (or **`-d`**) turns on Deimos’s own verbose logging (and related flags like **`--debug-file`** where supported). This is usually what you want when an error message says to “run with `--debug`”.
+- **`DEIMOS_DEBUG=1`** in the environment is used in a few places (for example Node internal warnings and some diagnostics). It is **not** a full substitute for **`--debug`** everywhere.
+- **`DEIMOS_DEBUG_LOG_LEVEL`** (when debug logging is active) sets the minimum severity written to the debug log file: **`verbose`**, **`debug`**, **`info`**, **`warn`**, or **`error`** (case-insensitive). Default is **`debug`**, which filters out the noisiest **`verbose`** lines (for example full status-line payloads). Use **`verbose`** only when you need that volume.
+- **`DEIMOS_DEBUG_LOGS_DIR`** overrides the default debug log **file** path when **`--debug-file`** is not set. Despite the name, it is read as a **full path to a log file** (see **`getDebugLogPath()`** in `src/utils/debug.ts`), not a directory that Deimos appends a session id to. **`--debug-file`** wins when present.
+- For a full list of tunables and comments, see **[`.env.example`](../.env.example)** in the repo and **[advanced setup — long sessions & limits](advanced-setup.md#long-sessions-context-and-token-limits)**.
+
+## Diagnostics: `/doctor`, `deimos doctor`, and scripts
+
+1. **In the REPL:** run **`/doctor`** for trust checks, MCP stdio hints, and related guidance.
+2. **From a shell:** run **`deimos doctor`** (same idea for non-interactive use).
+3. **From a clone:** **`bun run doctor:runtime`** and **`bun run doctor:report`** validate environment and produce a report (see [advanced setup](advanced-setup.md)).
+4. For MCP-specific config, **`deimos mcp doctor`** (or your usual MCP subcommands) can help when tools fail to load.
+
+## “Something went wrong inside Deimos” / generic API Error lines
+
+If the UI shows an internal failure (often with hints to **`/doctor`**, **`deimos doctor`**, or **`DEIMOS_DEBUG=1`**):
+
+- Run **`/doctor`** or **`deimos doctor`** first.
+- Re-run with **`deimos --debug`** and reproduce once; keep the log snippet (redact keys and private paths).
+- See also **[`.env.example`](../.env.example)** for optional env knobs.
+
+## MCP / huge tool results
+
+If tool output looks **truncated** or MCP responses are **cut off**, the limit may be **`MAX_MCP_OUTPUT_TOKENS`** (see [advanced setup](advanced-setup.md) and **`.env.example`**). For connection or server issues, use **`/doctor`** / **`deimos mcp doctor`** as appropriate.
+
+## Attachment / context preparation (stderr)
+
+If the terminal prints a line like **could not prepare “…” context** and **Continuing without it**, Deimos skipped part of the automatic context for that turn (permissions, unreadable paths, or an internal error). Check file access and project layout; use **`--debug`** to see the underlying error in logs.
 
 ## Still stuck?
 

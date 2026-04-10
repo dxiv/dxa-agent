@@ -25,7 +25,7 @@ type SessionEvent = {
 /**
  * Create a session on a bridge environment via POST /v1/sessions.
  *
- * Used by both `claude remote-control` (empty session so the user has somewhere to
+ * Used by both `deimos remote-control` (empty session so the user has somewhere to
  * type immediately) and `/remote-control` (session pre-populated with conversation
  * history).
  *
@@ -247,7 +247,7 @@ export async function getBridgeSession(
  * Archive a bridge session via POST /v1/sessions/{id}/archive.
  *
  * The CCR server never auto-archives sessions — archival is always an
- * explicit client action. Both `claude remote-control` (standalone bridge) and the
+ * explicit client action. Both `deimos remote-control` (standalone bridge) and the
  * always-on `/remote-control` REPL bridge call this during shutdown to archive any
  * sessions that are still alive.
  *
@@ -320,7 +320,7 @@ export async function archiveBridgeSession(
  * Update the title of a bridge session via PATCH /v1/sessions/{id}.
  *
  * Called when the user renames a session via /rename while a bridge
- * connection is active, so the title stays in sync on dxa.dev/deimos/code.
+ * connection is active, so the title stays in sync on github.com/dxiv/dxa-deimos.
  *
  * Errors are swallowed — title sync is best-effort.
  */

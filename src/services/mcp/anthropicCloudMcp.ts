@@ -32,8 +32,8 @@ const FETCH_TIMEOUT_MS = 5000
 const MCP_SERVERS_BETA_HEADER = 'mcp-servers-2025-12-04'
 
 /**
- * Fetches MCP server configurations from dxa.dev/deimos org configs.
- * These servers are managed by the organization via dxa.dev/deimos.
+ * Fetches MCP server configurations from github.com/dxiv/dxa-deimos org configs.
+ * These servers are managed by the organization via github.com/dxiv/dxa-deimos.
  *
  * Results are memoized for the session lifetime (fetch once per CLI session).
  */
@@ -72,7 +72,7 @@ export const fetchDeimosCloudMcpConfigsIfEligible = memoize(
       // In non-interactive mode, isDeimosCloudSubscriber() returns false when ANTHROPIC_API_KEY
       // is set (even with valid OAuth tokens) because preferThirdPartyAuthentication() causes
       // isAnthropicAuthEnabled() to return false. Checking the scope directly allows users
-      // with both API keys and OAuth tokens to access dxa.dev/deimos MCPs in print mode.
+      // with both API keys and OAuth tokens to access github.com/dxiv/dxa-deimos MCPs in print mode.
       if (!tokens.scopes?.includes('user:mcp_servers')) {
         logForDebugging(
           `[deimos-mcp] Missing user:mcp_servers scope (scopes=${tokens.scopes?.join(',') || 'none'})`,
@@ -107,7 +107,7 @@ export const fetchDeimosCloudMcpConfigsIfEligible = memoize(
       const usedNormalizedNames = new Set<string>()
 
       for (const server of response.data.data) {
-        const baseName = `dxa.dev/deimos ${server.display_name}`
+        const baseName = `github.com/dxiv/dxa-deimos ${server.display_name}`
 
         // Try without suffix first, then increment until we find an unused normalized name
         let finalName = baseName
@@ -154,7 +154,7 @@ export function clearDeimosCloudMcpConfigsCache(): void {
 }
 
 /**
- * Record that a dxa.dev/deimos connector successfully connected. Idempotent.
+ * Record that a github.com/dxiv/dxa-deimos connector successfully connected. Idempotent.
  *
  * Gates the "N connectors unavailable/need auth" startup notifications: a
  * connector that was working yesterday and is now failed is a state change

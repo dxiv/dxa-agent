@@ -1,6 +1,6 @@
 # Deimos setup for new users
 
-**[Deimos](https://dxa.dev/deimos/)** — terminal coding agent from **[DXA](https://dxa.dev)**. Install the published CLI [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli); no clone required for this path.
+**[Deimos](https://github.com/dxiv/dxa-deimos/)** — terminal coding agent. Install the published CLI [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli); no clone required for this path.
 
 This page is for you if you want Deimos running **without** cloning the repo or touching the source code. You will use **Node.js** (to run the installer), a **terminal** (a text window where you type commands), and an account or app from an **AI provider** (OpenAI, Ollama, etc.).
 
@@ -74,6 +74,8 @@ Deimos needs three pieces of information for the common **OpenAI-compatible** pa
 | `DEIMOS_USE_OPENAI=1` | “Use the OpenAI-style connection path” (this is how Deimos talks to many providers, not only OpenAI). |
 | `OPENAI_API_KEY` | Your **secret key** from the provider (or leave unset for some local setups). |
 | `OPENAI_MODEL` | Which model name to request (for example `gpt-4o` or an Ollama model name). |
+
+**Other AI backends:** Default Anthropic, native **Gemini**, **GitHub Models**, **AWS Bedrock**, **Vertex**, or **Microsoft Foundry** use different variables. After `deimos` starts, run **`/provider`** for guided setup, or copy the matching block from **`.env.example`** in the [GitHub repo](https://github.com/dxiv/dxa-deimos).
 
 **Important:** In the guides below, settings you type with `export` (Mac/Linux) or `$env:...=` (Windows) usually last **only until you close that terminal**. That is normal. The OS quick starts include an optional **“keep these for every session”** section if you want them saved.
 

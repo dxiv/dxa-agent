@@ -1,10 +1,10 @@
 # <img width="335" height="89" alt="image" src="https://github.com/user-attachments/assets/833f9e93-c7f6-4a2c-91fd-1285699bcf0b" />
 
-> **[dxa.dev/deimos/](https://dxa.dev/deimos/)** · **[npm `@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli)** · **[Source @ dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)**
+> **[github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/)** · **[npm `@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli)** · **[Source @ dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos)**
 
-**Deimos** takes its name from Mars’s outer moon—small, fast, and locked in orbit at the edge of the light. From **[DXA](https://dxa.dev)** it is a **terminal-native** coding agent: one `deimos` command, **multi-model routing** across pluggable backends (Anthropic, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), a full **tool** surface, **MCP**, slash commands, **agent orchestration**, and streaming sessions built for depth work. This repository ships the **CLI**, a **VS Code extension**, and a **dark terminal theme** forged for long runs in the shell.
+**Deimos** takes its name from Mars’s outer moon—small, fast, and locked in orbit at the edge of the light. It is a **terminal-native** coding agent: one `deimos` command, **multi-model routing** across pluggable backends (Anthropic, OpenAI-compatible APIs, Gemini, GitHub Models, Ollama, Atomic Chat, and others), a full **tool** surface, **MCP**, slash commands, **agent orchestration**, and streaming sessions built for depth work. This repository ships the **CLI**, a **VS Code extension**, and a **dark terminal theme** forged for long runs in the shell.
 
-**Link hub:** **[dxa.dev/deimos/](https://dxa.dev/deimos/)** is the canonical entry—npm, GitHub, and related surfaces in one place.
+**Link hub:** **[github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/)** is the canonical entry—npm, GitHub, and related surfaces in one place.
 
 **License & marks:** [MIT](LICENSE). Third-party names and APIs appear only for interoperability and factual description. **[LEGAL.md](LEGAL.md)** sets out attribution, trademarks, and how to report concerns.
 
@@ -24,7 +24,7 @@
 [![npm](https://img.shields.io/npm/v/@dxa-deimos/cli?label=npm&color=cb3837)](https://www.npmjs.com/package/@dxa-deimos/cli)
 [![GitHub Packages](https://img.shields.io/badge/GitHub%20Packages-dxa--dev-24292f?logo=github)](https://github.com/orgs/dxa-dev/packages/npm/package/cli)
 
-[Quick start](#quick-start) · [Setup](#setup-guides) · [Playbook](#local-agent-playbook-clone-developers) · [Providers](#supported-providers) · [Source build](#source-build-and-local-development) · [Repo layout](#repository-structure) · [VS Code](#vs-code-extension) · [Cheatsheet](docs/CHEATSHEET.md) · [Demo script](docs/DEMO.md) · [Contributing](#contributing) · [Security](#security) · [Privacy](#privacy--local-first) · [Community](#community)
+[Quick start](#quick-start) · [How Deimos fits in](#how-deimos-fits-in) · [Setup](#setup-guides) · [Playbook](#local-agent-playbook-clone-developers) · [Providers](#supported-providers) · [Source build](#source-build-and-local-development) · [Repo layout](#repository-structure) · [VS Code](#vs-code-extension) · [Cheatsheet](docs/CHEATSHEET.md) · [Demo script](docs/DEMO.md) · [Contributing](#contributing) · [Security](#security) · [Privacy](#privacy--local-first) · [Community](#community)
 
 **New to terminals or npm?** **[docs/non-technical-setup.md](docs/non-technical-setup.md)** → [Windows](docs/quick-start-windows.md) or [macOS / Linux](docs/quick-start-mac-linux.md) → **[checklist](docs/setup-checklist.md)** → **[first run](docs/first-run.md)**.
 **All docs:** [docs/README.md](docs/README.md).
@@ -41,6 +41,18 @@
 - **`/provider`** for guided setup, saved profiles, and reproducible environment
 - **Bash**, file tools, **grep**/**glob**, **agents**, **tasks**, **MCP**, and web helpers—built for real repos, not demos
 - **VS Code** integration and terminal theme from this repo when you want the editor and shell aligned
+
+## How Deimos fits in
+
+Deimos is **model-agnostic middleware**: one terminal workflow, tool surface, and MCP integration across **[supported providers](#supported-providers)**—change the backend without changing how you work in the repo.
+
+| If you… | Deimos emphasizes… |
+|--------|-------------------|
+| Want **one CLI** for cloud APIs and **local** models (Ollama, LM Studio, etc.) | **Multi-model routing** and **`/provider`** profiles instead of a separate tool per vendor |
+| Use **MCP**, skills, slash commands, or **automation** | **MCP**, skills, tasks, and **gRPC** headless mode in the **same** open codebase you can audit |
+| Care about **defaults and transparency** | **Local credentials**, documented telemetry controls, and an automated **`verify:privacy`** check on shipped bundles ([Privacy](#privacy--local-first)) |
+
+Other coding agents and IDEs can be excellent; this table is only to clarify **where Deimos optimizes**—portable, inspectable terminal depth work without locking daily use to a single vendor SDK.
 
 ---
 
@@ -477,7 +489,7 @@ Telemetry-related environment variables include `DISABLE_TELEMETRY` and `DEIMOS_
 
 | Resource | URL |
 | --- | --- |
-| **Product page (link hub)** | [dxa.dev/deimos/](https://dxa.dev/deimos/) |
+| **Product page (link hub)** | [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) |
 | **This package (npm)** | [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli) |
 | **This package (GitHub Packages)** | [dxa-dev / cli](https://github.com/orgs/dxa-dev/packages/npm/package/cli) |
 | **This repository** | [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos) |

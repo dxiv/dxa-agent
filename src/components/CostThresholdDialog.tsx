@@ -37,7 +37,7 @@ export function CostThresholdDialog({ onDone }: Props): React.ReactNode {
     >
       <Box flexDirection="column">
         <Text>Learn more about how to monitor your spending:</Text>
-        <Link url="https://dxa.dev/deimos/docs/en/costs" />
+        <Link url="https://github.com/dxiv/dxa-deimos/docs/en/costs" />
       </Box>
       <Select
         options={[

@@ -112,7 +112,7 @@ export const McpSdkServerConfigSchema = lazySchema(() =>
   }),
 )
 
-// Config type for dxa.dev/deimos proxy servers
+// Config type for github.com/dxiv/dxa-deimos proxy servers
 export const McpDeimosCloudProxyServerConfigSchema = lazySchema(() =>
   z.object({
     type: z.literal('deimos-proxy'),
