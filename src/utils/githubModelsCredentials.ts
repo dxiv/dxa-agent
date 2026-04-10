@@ -4,7 +4,7 @@ import { getSecureStorage } from './secureStorage/index.js'
 /** JSON key in the shared Deimos secure storage blob. */
 export const GITHUB_MODELS_STORAGE_KEY = 'githubModels' as const
 export const GITHUB_MODELS_HYDRATED_ENV_MARKER =
-  'CLAUDE_CODE_GITHUB_TOKEN_HYDRATED' as const
+  'DEIMOS_GITHUB_TOKEN_HYDRATED' as const
 
 export type GithubModelsCredentialBlob = {
   accessToken: string
@@ -28,7 +28,7 @@ export function readGithubModelsToken(): string | undefined {
  * stored token into process.env so the OpenAI shim and validation see it.
  */
 export function hydrateGithubModelsTokenFromSecureStorage(): void {
-  if (!isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)) {
+  if (!isEnvTruthy(process.env.DEIMOS_USE_GITHUB)) {
     delete process.env[GITHUB_MODELS_HYDRATED_ENV_MARKER]
     return
   }

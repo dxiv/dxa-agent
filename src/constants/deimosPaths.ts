@@ -1,5 +1,5 @@
 /**
- * Canonical on-disk paths for Deimos (no legacy Claude paths).
+ * Canonical on-disk paths for Deimos (no legacy Deimos paths).
  */
 
 /** Project-local config: settings, skills, agents, hooks, … */

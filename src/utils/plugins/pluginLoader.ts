@@ -671,7 +671,7 @@ async function installFromGitHub(
     )
   }
   // Use HTTPS for CCR (no SSH keys), SSH for normal CLI
-  const gitUrl = isEnvTruthy(process.env.CLAUDE_CODE_REMOTE)
+  const gitUrl = isEnvTruthy(process.env.DEIMOS_REMOTE)
     ? `https://github.com/${repo}.git`
     : `git@github.com:${repo}.git`
   return installFromGit(gitUrl, targetPath, ref, sha)
@@ -680,12 +680,12 @@ async function installFromGitHub(
 /**
  * Resolve a git-subdir `url` field to a clonable git URL.
  * Accepts GitHub owner/repo shorthand (converted to ssh or https depending on
- * CLAUDE_CODE_REMOTE) or any URL that passes validateGitUrl (https, http,
+ * DEIMOS_REMOTE) or any URL that passes validateGitUrl (https, http,
  * file, git@ ssh).
  */
 function resolveGitSubdirUrl(url: string): string {
   if (/^[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+$/.test(url)) {
-    return isEnvTruthy(process.env.CLAUDE_CODE_REMOTE)
+    return isEnvTruthy(process.env.DEIMOS_REMOTE)
       ? `https://github.com/${url}.git`
       : `git@github.com:${url}.git`
   }
@@ -3159,7 +3159,7 @@ export const loadAllPlugins = memoize(async (): Promise<PluginLoadResult> => {
  * plugins. Use loadAllPlugins() in explicit refresh paths (/plugins,
  * refresh.ts, headlessPluginInstall) where fresh source is the intent.
  *
- * CLAUDE_CODE_SYNC_PLUGIN_INSTALL=1 delegates to the full loader — that
+ * DEIMOS_SYNC_PLUGIN_INSTALL=1 delegates to the full loader — that
  * mode explicitly opts into blocking install before first query, and
  * main.tsx's getDeimosMcpConfigs()/getInitialSettings().agent run
  * BEFORE runHeadless() can warm this cache. First-run CCR/headless has
@@ -3175,7 +3175,7 @@ export const loadAllPlugins = memoize(async (): Promise<PluginLoadResult> => {
  */
 export const loadAllPluginsCacheOnly = memoize(
   async (): Promise<PluginLoadResult> => {
-    if (isEnvTruthy(process.env.CLAUDE_CODE_SYNC_PLUGIN_INSTALL)) {
+    if (isEnvTruthy(process.env.DEIMOS_SYNC_PLUGIN_INSTALL)) {
       return loadAllPlugins()
     }
     return assemblePluginLoadResult(() =>

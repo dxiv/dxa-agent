@@ -163,7 +163,7 @@ function InstallGitHubApp(props: {
         setState(prev_2 => ({
           ...prev_2,
           step: 'error',
-          error: 'A Claude workflow file already exists in this repository.',
+          error: 'A Deimos workflow file already exists in this repository.',
           errorReason: 'Workflow file conflict',
           errorInstructions: ['The file .github/workflows/claude.yml already exists', 'You can either:', '  1. Delete the existing file and run this command again', '  2. Update the existing file manually using the template from:', `     ${GITHUB_ACTION_SETUP_DOCS_URL}`]
         }));
@@ -462,10 +462,10 @@ function InstallGitHubApp(props: {
       ...prev_23,
       apiKeyOrOAuthToken: token,
       useExistingKey: false,
-      secretName: 'CLAUDE_CODE_OAUTH_TOKEN',
+      secretName: 'DEIMOS_OAUTH_TOKEN',
       authType: 'oauth_token'
     }));
-    void runSetupGitHubActions(token, 'CLAUDE_CODE_OAUTH_TOKEN');
+    void runSetupGitHubActions(token, 'DEIMOS_OAUTH_TOKEN');
   }, [runSetupGitHubActions]);
   const handleOAuthCancel = useCallback(() => {
     setState(prev_24 => ({

@@ -11,7 +11,7 @@
  *   - GrowthBook remote feature flags (api.anthropic.com)
  *   - Datadog event intake
  *   - 1P event logging (api.anthropic.com/api/event_logging/batch)
- *   - BigQuery metrics exporter (api.anthropic.com/api/claude_code/metrics)
+ *   - BigQuery metrics exporter (api.anthropic.com/api/deimos/metrics)
  *   - Perfetto / OpenTelemetry session tracing
  *   - Auto-updater (storage.googleapis.com, npm registry)
  *   - Plugin fetch telemetry

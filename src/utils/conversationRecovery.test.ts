@@ -9,7 +9,7 @@ import {
 } from './conversationRecovery.js'
 
 const tempDirs: string[] = []
-const originalSimple = process.env.CLAUDE_CODE_SIMPLE
+const originalSimple = process.env.DEIMOS_SIMPLE
 const sessionId = '00000000-0000-4000-8000-000000001999'
 const ts = '2026-04-02T00:00:00.000Z'
 
@@ -45,12 +45,12 @@ async function writeJsonl(entry: unknown): Promise<string> {
 }
 
 afterEach(async () => {
-  process.env.CLAUDE_CODE_SIMPLE = originalSimple
+  process.env.DEIMOS_SIMPLE = originalSimple
   await Promise.all(tempDirs.splice(0).map(dir => rm(dir, { recursive: true, force: true })))
 })
 
 test('loadConversationForResume accepts a small transcript from jsonl path', async () => {
-  process.env.CLAUDE_CODE_SIMPLE = '1'
+  process.env.DEIMOS_SIMPLE = '1'
   const path = await writeJsonl(user(id(1), 'hello'))
 
   const result = await loadConversationForResume('fixture', path)
@@ -60,7 +60,7 @@ test('loadConversationForResume accepts a small transcript from jsonl path', asy
 })
 
 test('loadConversationForResume rejects oversized reconstructed transcripts', async () => {
-  process.env.CLAUDE_CODE_SIMPLE = '1'
+  process.env.DEIMOS_SIMPLE = '1'
   const hugeContent = 'x'.repeat(8 * 1024 * 1024 + 32 * 1024)
   const path = await writeJsonl(user(id(2), hugeContent))
 

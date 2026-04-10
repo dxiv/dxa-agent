@@ -97,7 +97,7 @@ type VoiceStreamMessage =
 
 export function isVoiceStreamAvailable(): boolean {
   // voice_stream uses the same OAuth as Deimos — available when the
-  // user is authenticated with Anthropic (Claude.ai subscriber or has
+  // user is authenticated with Anthropic (dxa.dev/deimos subscriber or has
   // valid OAuth tokens).
   if (!isAnthropicAuthEnabled()) {
     return false
@@ -123,11 +123,11 @@ export async function connectVoiceStream(
 
   // voice_stream is a private_api route, but /api/ws/ is also exposed on
   // the api.anthropic.com listener (service_definitions.yaml private-api:
-  // visibility.external: true). We target that host instead of claude.ai
-  // because the claude.ai CF zone uses TLS fingerprinting and challenges
-  // non-browser clients (anthropics/claude-code#34094). Same private-api
+  // visibility.external: true). We target that host instead of dxa.dev/deimos
+  // because the dxa.dev/deimos CF zone uses TLS fingerprinting and challenges
+  // non-browser clients (anthropics/deimos#34094). Same private-api
   // pod, same OAuth Bearer auth — just a CF zone that doesn't block us.
-  // Desktop dictation still uses claude.ai (Swift URLSession has a
+  // Desktop dictation still uses dxa.dev/deimos (Swift URLSession has a
   // browser-class JA3 fingerprint, so CF lets it through).
   const wsBaseUrl =
     process.env.VOICE_STREAM_BASE_URL ||
@@ -511,7 +511,7 @@ export async function connectVoiceStream(
   ws.on('unexpected-response', (req: ClientRequest, res: IncomingMessage) => {
     const status = res.statusCode ?? 0
     // Bun's ws implementation on Windows can fire this event for a
-    // successful 101 Switching Protocols response (anthropics/claude-code#40510).
+    // successful 101 Switching Protocols response (anthropics/deimos#40510).
     // 101 is never a rejection — bail before we destroy a working upgrade.
     if (status === 101) {
       logForDebugging(

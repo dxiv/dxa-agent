@@ -12,20 +12,28 @@ export type APIProvider =
   | 'github'
   | 'codex'
 
+function isUsingOpenAICompatProvider(): boolean {
+  // Rebrand: DEIMOS_* is preferred, but keep legacy DEIMOS_* for compatibility.
+  return (
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI)
+  )
+}
+
 export function getAPIProvider(): APIProvider {
-  return isEnvTruthy(process.env.CLAUDE_CODE_USE_GEMINI)
+  return isEnvTruthy(process.env.DEIMOS_USE_GEMINI)
     ? 'gemini'
-    : isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+    : isEnvTruthy(process.env.DEIMOS_USE_GITHUB)
       ? 'github'
-      : isEnvTruthy(process.env.CLAUDE_CODE_USE_OPENAI)
+      : isUsingOpenAICompatProvider()
         ? isCodexModel()
           ? 'codex'
           : 'openai'
-        : isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK)
+        : isEnvTruthy(process.env.DEIMOS_USE_BEDROCK)
           ? 'bedrock'
-          : isEnvTruthy(process.env.CLAUDE_CODE_USE_VERTEX)
+          : isEnvTruthy(process.env.DEIMOS_USE_VERTEX)
             ? 'vertex'
-            : isEnvTruthy(process.env.CLAUDE_CODE_USE_FOUNDRY)
+            : isEnvTruthy(process.env.DEIMOS_USE_FOUNDRY)
               ? 'foundry'
               : 'firstParty'
 }

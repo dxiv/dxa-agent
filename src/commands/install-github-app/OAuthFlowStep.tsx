@@ -112,7 +112,7 @@ export function OAuthFlowStep({
         timersRef.current.add(timer_0);
       }, {
         loginWithDeimosCloud: true,
-        // Always use Claude AI for subscription tokens
+        // Always use Deimos AI for subscription tokens
         inferenceOnly: true,
         expiresIn: 365 * 24 * 60 * 60 // 1 year
       });
@@ -207,7 +207,7 @@ export function OAuthFlowStep({
             {!showPastePrompt && <Box>
                 <Spinner />
                 <Text>
-                  Opening browser to sign in with your Claude account…
+                  Opening browser to sign in with your Deimos account…
                 </Text>
               </Box>}
 

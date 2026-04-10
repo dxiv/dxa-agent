@@ -20,9 +20,9 @@ import { isEnvTruthy } from '../envUtils.js'
 import { sideQuery } from '../sideQuery.js'
 import { getAllSocketPaths, getSecureSocketPath } from './common.js'
 
-const EXTENSION_DOWNLOAD_URL = 'https://claude.ai/chrome'
+const EXTENSION_DOWNLOAD_URL = 'https://dxa.dev/deimos/chrome'
 const BUG_REPORT_URL =
-  'https://github.com/anthropics/claude-code/issues/new?labels=bug,claude-in-chrome'
+  'https://github.com/anthropics/deimos/issues/new?labels=bug,claude-in-chrome'
 
 // String metadata keys safe to forward to analytics. Keys like error_message
 // are excluded because they could contain page content or user data.
@@ -101,18 +101,18 @@ export function createChromeContext(
     }
   }
   return {
-    serverName: 'Claude in Chrome',
+    serverName: 'Deimos in Chrome',
     logger,
     socketPath: getSecureSocketPath(),
     getSocketPaths: getAllSocketPaths,
     clientTypeId: 'deimos',
     onAuthenticationError: () => {
       logger.warn(
-        'Authentication error occurred. Please ensure you are logged into the Claude browser extension with the same claude.ai account as Deimos.',
+        'Authentication error occurred. Please ensure you are logged into the Deimos browser extension with the same dxa.dev/deimos account as Deimos.',
       )
     },
     onToolCallDisconnected: () => {
-      return `Browser extension is not connected. Please ensure the Claude browser extension is installed and running (${EXTENSION_DOWNLOAD_URL}), and that you are logged into claude.ai with the same account as Deimos. If this is your first time connecting to Chrome, you may need to restart Chrome for the installation to take effect. If you continue to experience issues, please report a bug: ${BUG_REPORT_URL}`
+      return `Browser extension is not connected. Please ensure the Deimos browser extension is installed and running (${EXTENSION_DOWNLOAD_URL}), and that you are logged into dxa.dev/deimos with the same account as Deimos. If this is your first time connecting to Chrome, you may need to restart Chrome for the installation to take effect. If you continue to experience issues, please report a bug: ${BUG_REPORT_URL}`
     },
     onExtensionPaired: (deviceId: string, name: string) => {
       saveGlobalConfig(config => {
@@ -267,9 +267,9 @@ export async function runDeimosInChromeMcpServer(): Promise<void> {
   process.stdin.on('end', () => void shutdownAndExit())
   process.stdin.on('error', () => void shutdownAndExit())
 
-  logForDebugging('[Claude in Chrome] Starting MCP server')
+  logForDebugging('[Deimos in Chrome] Starting MCP server')
   await server.connect(transport)
-  logForDebugging('[Claude in Chrome] MCP server started')
+  logForDebugging('[Deimos in Chrome] MCP server started')
 }
 
 class DebugLogger {

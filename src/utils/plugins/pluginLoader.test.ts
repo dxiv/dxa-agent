@@ -28,7 +28,7 @@ describe('mergePluginSources', () => {
     )
     const disabledLegacy = marketplacePlugin(
       'frontend-design',
-      'claude-code-plugins',
+      'deimos-plugins',
       false,
     )
 
@@ -45,7 +45,7 @@ describe('mergePluginSources', () => {
   test('keeps the later copy when duplicate marketplace plugins are both enabled', () => {
     const legacy = marketplacePlugin(
       'frontend-design',
-      'claude-code-plugins',
+      'deimos-plugins',
       true,
     )
     const official = marketplacePlugin(

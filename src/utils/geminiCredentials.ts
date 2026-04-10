@@ -22,7 +22,7 @@ export function readGeminiAccessToken(): string | undefined {
 }
 
 export function hydrateGeminiAccessTokenFromSecureStorage(): void {
-  if (!isEnvTruthy(process.env.CLAUDE_CODE_USE_GEMINI)) {
+  if (!isEnvTruthy(process.env.DEIMOS_USE_GEMINI)) {
     return
   }
   const authMode = getGeminiAuthMode(process.env)

@@ -4,9 +4,9 @@ import { afterEach, beforeEach, expect, mock, test } from 'bun:test'
 const require = createRequire(import.meta.url)
 
 const originalEnv = {
-  CLAUDE_CODE_USE_OPENAI: process.env.CLAUDE_CODE_USE_OPENAI,
-  CLAUDE_CODE_USE_GITHUB: process.env.CLAUDE_CODE_USE_GITHUB,
-  CLAUDE_CODE_USE_GEMINI: process.env.CLAUDE_CODE_USE_GEMINI,
+  DEIMOS_USE_OPENAI: process.env.DEIMOS_USE_OPENAI,
+  DEIMOS_USE_GITHUB: process.env.DEIMOS_USE_GITHUB,
+  DEIMOS_USE_GEMINI: process.env.DEIMOS_USE_GEMINI,
   OPENAI_BASE_URL: process.env.OPENAI_BASE_URL,
   OPENAI_API_BASE: process.env.OPENAI_API_BASE,
   OPENAI_MODEL: process.env.OPENAI_MODEL,
@@ -53,9 +53,9 @@ afterEach(() => {
 })
 
 test('opens the model picker without awaiting local model discovery refresh', async () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  delete process.env.CLAUDE_CODE_USE_GITHUB
-  delete process.env.CLAUDE_CODE_USE_GEMINI
+  process.env.DEIMOS_USE_OPENAI = '1'
+  delete process.env.DEIMOS_USE_GITHUB
+  delete process.env.DEIMOS_USE_GEMINI
   process.env.OPENAI_BASE_URL = 'http://127.0.0.1:8080/v1'
   delete process.env.OPENAI_API_BASE
   process.env.OPENAI_MODEL = 'qwen2.5-coder-7b-instruct'

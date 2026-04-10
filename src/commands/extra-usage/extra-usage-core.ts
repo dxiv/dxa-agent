@@ -102,8 +102,8 @@ export async function runExtraUsage(): Promise<ExtraUsageResult> {
   }
 
   const url = isTeamOrEnterprise
-    ? 'https://claude.ai/admin-settings/usage'
-    : 'https://claude.ai/settings/usage'
+    ? 'https://dxa.dev/deimos/admin-settings/usage'
+    : 'https://dxa.dev/deimos/settings/usage'
 
   try {
     const opened = await openBrowser(url)

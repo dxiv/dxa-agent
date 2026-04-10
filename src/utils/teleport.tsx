@@ -78,13 +78,13 @@ You should keep it short and simple, ideally no more than 6 words. Avoid using j
 Use sentence case for the title (capitalize only the first word and proper nouns), not Title Case.
 
 The branch name should be clear, concise, and accurately reflect the content of the coding task.
-You should keep it short and simple, ideally no more than 4 words. The branch should always start with "claude/" and should be all lower case, with words separated by dashes.
+You should keep it short and simple, ideally no more than 4 words. The branch should always start with "deimos/" and should be all lower case, with words separated by dashes.
 
 Return a JSON object with "title" and "branch" fields.
 
-Example 1: {"title": "Fix login button not working on mobile", "branch": "claude/fix-mobile-login-button"}
-Example 2: {"title": "Update README with installation instructions", "branch": "claude/update-readme"}
-Example 3: {"title": "Improve performance of data processing script", "branch": "claude/improve-data-processing"}
+Example 1: {"title": "Fix login button not working on mobile", "branch": "deimos/fix-mobile-login-button"}
+Example 2: {"title": "Update README with installation instructions", "branch": "deimos/update-readme"}
+Example 3: {"title": "Improve performance of data processing script", "branch": "deimos/improve-data-processing"}
 
 Here is the session description:
 <description>{description}</description>
@@ -95,13 +95,13 @@ type TitleAndBranch = {
 };
 
 /**
- * Generates a title and branch name for a coding session using Claude Haiku
+ * Generates a title and branch name for a coding session using Anthropic Claude Haiku
  * @param description The description/prompt for the session
  * @returns Promise<TitleAndBranch> The generated title and branch name
  */
 async function generateTitleAndBranch(description: string, signal: AbortSignal): Promise<TitleAndBranch> {
   const fallbackTitle = truncateToWidth(description, 75);
-  const fallbackBranch = 'claude/task';
+  const fallbackBranch = 'deimos/task';
   try {
     const userPrompt = SESSION_TITLE_AND_BRANCH_PROMPT.replace('{description}', description);
     const response = await queryHaiku({
@@ -438,7 +438,7 @@ export async function teleportResumeCodeSession(sessionId: string, onProgress?: 
       logEvent('tengu_teleport_resume_error', {
         error_type: 'no_access_token' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
-      throw new Error('Deimos web sessions require authentication with a Claude.ai account. API key authentication is not sufficient. Please run /login to authenticate, or check your authentication status with /status.');
+      throw new Error('Deimos web sessions require authentication with a dxa.dev/deimos account. API key authentication is not sufficient. Please run /login to authenticate, or check your authentication status with /status.');
     }
 
     // Get organization UUID
@@ -533,7 +533,7 @@ async function handleTeleportPrerequisites(root: Root, errorsToIgnore?: Set<Tele
 }
 
 /**
- * Creates a remote Claude.ai session with error handling and UI feedback.
+ * Creates a remote dxa.dev/deimos session with error handling and UI feedback.
  * Shows prerequisite error dialog in the existing root if needed.
  * @param root The existing Ink root to render dialogs into
  * @param description The description/prompt for the new session (null for no initial prompt)
@@ -715,7 +715,7 @@ export async function pollRemoteSessionEvents(sessionId: string, afterId: string
 }
 
 /**
- * Creates a remote Claude.ai session using the Sessions API.
+ * Creates a remote dxa.dev/deimos session using the Sessions API.
  *
  * Two source modes:
  * - GitHub (default): backend clones from the repo's origin URL. Requires a
@@ -751,7 +751,7 @@ export async function teleportToRemote(options: {
   /**
    * Per-session env vars merged into session_context.environment_variables.
    * Write-only at the API layer (stripped from Get/List responses). When
-   * environmentId is set, CLAUDE_CODE_OAUTH_TOKEN is auto-injected from the
+   * environmentId is set, DEIMOS_OAUTH_TOKEN is auto-injected from the
    * caller's accessToken so the container's hook can hit inference (the
    * server only passes through what the caller sends; bughunter.go mints
    * its own, user sessions don't get one automatically).
@@ -778,7 +778,7 @@ export async function teleportToRemote(options: {
   skipBundle?: boolean;
   /**
    * When set, reuses this branch as the outcome branch instead of generating
-   * a new claude/ branch. Sets allow_unrestricted_git_push on the source and
+   * a new deimos/ branch. Sets allow_unrestricted_git_push on the source and
    * reuse_outcome_branches on the session context so the remote pushes to the
    * caller's branch directly.
    */
@@ -826,7 +826,7 @@ export async function teleportToRemote(options: {
         'x-organization-uuid': orgUUID
       };
       const envVars = {
-        CLAUDE_CODE_OAUTH_TOKEN: accessToken,
+        DEIMOS_OAUTH_TOKEN: accessToken,
         ...(options.environmentVariables ?? {})
       };
 
@@ -1010,7 +1010,7 @@ export async function teleportToRemote(options: {
       if (!bundle.success) {
         logError(new Error(`Bundle upload failed: ${bundle.error}`));
         // Only steer users to GitHub setup when there's a remote to clone from.
-        const setup = repoInfo ? '. Please setup GitHub on https://claude.ai/code' : '';
+        const setup = repoInfo ? '. Please setup GitHub on https://dxa.dev/deimos/code' : '';
         let msg: string;
         switch (bundle.failReason) {
           case 'empty_repo':

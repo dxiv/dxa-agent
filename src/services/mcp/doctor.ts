@@ -41,7 +41,7 @@ export type McpDoctorDefinition = {
     | 'enterprise'
     | 'managed'
     | 'plugin'
-    | 'claudeai'
+    | 'deimos'
     | 'dynamic'
     | 'internal'
   sourcePath?: string
@@ -221,8 +221,8 @@ function splitValidationFindings(validationFindings: McpDoctorFinding[]): {
 }
 
 function getSourceType(config: ScopedMcpServerConfig): McpDoctorDefinition['sourceType'] {
-  if (config.scope === 'claudeai') {
-    return 'claudeai'
+  if (config.scope === 'deimos') {
+    return 'deimos'
   }
   if (config.scope === 'dynamic') {
     return config.pluginSource ? 'plugin' : 'dynamic'
@@ -242,7 +242,7 @@ function getConfigSignature(config: ScopedMcpServerConfig): string {
     case 'sse':
     case 'http':
     case 'ws':
-    case 'claudeai-proxy':
+    case 'deimos-proxy':
       return `${config.scope}:${config.type}:${config.url}`
     case 'sdk':
       return `${config.scope}:${config.type}:${config.name}`
@@ -338,7 +338,7 @@ function buildObservedDefinition(
     sourcePath:
       getSourceType(activeConfig) === 'plugin'
         ? `plugin:${activeConfig.pluginSource ?? 'unknown'}`
-        : getSourceType(activeConfig) === 'claudeai'
+        : getSourceType(activeConfig) === 'deimos'
           ? 'deimos-cloud'
           : activeConfig.scope,
     transport: getTransport(activeConfig),
@@ -357,7 +357,7 @@ function hasDefinitionForRuntimeSource(
   const runtimeSourcePath =
     runtimeSourceType === 'plugin'
       ? `plugin:${runtimeConfig.pluginSource ?? 'unknown'}`
-      : runtimeSourceType === 'claudeai'
+      : runtimeSourceType === 'deimos'
         ? 'deimos-cloud'
         : deps.describeMcpConfigFilePath(runtimeConfig.scope)
 

@@ -7,7 +7,7 @@
  *
  * Eligibility:
  * - Console users (API key): All eligible
- * - OAuth users (Claude.ai): Only Team and Enterprise/C4E subscribers are eligible
+ * - OAuth users (dxa.dev/deimos): Only Team and Enterprise/C4E subscribers are eligible
  * - API fails open (non-blocking) - if fetch fails, continues without restrictions
  * - API returns empty restrictions for users without policy limits
  */
@@ -124,7 +124,7 @@ function getCachePath(): string {
  * Get the policy limits API endpoint
  */
 function getPolicyLimitsEndpoint(): string {
-  return `${getOauthConfig().BASE_API_URL}/api/claude_code/policy_limits`
+  return `${getOauthConfig().BASE_API_URL}/api/deimos/policy_limits`
 }
 
 /**
@@ -187,13 +187,13 @@ export function isPolicyLimitsEligible(): boolean {
     // No API key available - continue to check OAuth
   }
 
-  // For OAuth users, check if they have Claude.ai tokens
+  // For OAuth users, check if they have dxa.dev/deimos tokens
   const tokens = getDeimosCloudOAuthTokens()
   if (!tokens?.accessToken) {
     return false
   }
 
-  // Must have Claude.ai inference scope
+  // Must have dxa.dev/deimos inference scope
   if (!tokens.scopes?.includes(DEIMOS_CLOUD_INFERENCE_SCOPE)) {
     return false
   }
@@ -244,7 +244,7 @@ function getAuthHeaders(): {
     // No API key available - continue to check OAuth
   }
 
-  // Fall back to OAuth tokens (for Claude.ai users)
+  // Fall back to OAuth tokens (for dxa.dev/deimos users)
   const oauthTokens = getDeimosCloudOAuthTokens()
   if (oauthTokens?.accessToken) {
     return {

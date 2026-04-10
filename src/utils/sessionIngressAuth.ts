@@ -22,7 +22,7 @@ function getTokenFromFileDescriptor(): string | null {
     return cachedToken
   }
 
-  const fdEnv = process.env.CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR
+  const fdEnv = process.env.DEIMOS_WEBSOCKET_AUTH_FILE_DESCRIPTOR
   if (!fdEnv) {
     // No FD env var — either we're not in CCR, or we're a subprocess whose
     // parent stripped the (useless) FD env var. Try the well-known file.
@@ -37,7 +37,7 @@ function getTokenFromFileDescriptor(): string | null {
   const fd = parseInt(fdEnv, 10)
   if (Number.isNaN(fd)) {
     logForDebugging(
-      `CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR must be a valid file descriptor number, got: ${fdEnv}`,
+      `DEIMOS_WEBSOCKET_AUTH_FILE_DESCRIPTOR must be a valid file descriptor number, got: ${fdEnv}`,
       { level: 'error' },
     )
     setSessionIngressToken(null)
@@ -89,10 +89,10 @@ function getTokenFromFileDescriptor(): string | null {
  * Get session ingress authentication token.
  *
  * Priority order:
- *  1. Environment variable (CLAUDE_CODE_SESSION_ACCESS_TOKEN) — set at spawn time,
+ *  1. Environment variable (DEIMOS_SESSION_ACCESS_TOKEN) — set at spawn time,
  *     updated in-process via updateSessionIngressAuthToken or
  *     update_environment_variables stdin message from the parent bridge process.
- *  2. File descriptor (legacy path) — CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR,
+ *  2. File descriptor (legacy path) — DEIMOS_WEBSOCKET_AUTH_FILE_DESCRIPTOR,
  *     read once and cached.
  *  3. Well-known file — CLAUDE_SESSION_INGRESS_TOKEN_FILE env var path, or
  *     /home/claude/.claude/remote/.session_ingress_token. Covers subprocesses
@@ -100,7 +100,7 @@ function getTokenFromFileDescriptor(): string | null {
  */
 export function getSessionIngressAuthToken(): string | null {
   // 1. Check environment variable
-  const envToken = process.env.CLAUDE_CODE_SESSION_ACCESS_TOKEN
+  const envToken = process.env.DEIMOS_SESSION_ACCESS_TOKEN
   if (envToken) {
     return envToken
   }
@@ -121,7 +121,7 @@ export function getSessionIngressAuthHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
       Cookie: `sessionKey=${token}`,
     }
-    const orgUuid = process.env.CLAUDE_CODE_ORGANIZATION_UUID
+    const orgUuid = process.env.DEIMOS_ORGANIZATION_UUID
     if (orgUuid) {
       headers['X-Organization-Uuid'] = orgUuid
     }
@@ -136,5 +136,5 @@ export function getSessionIngressAuthHeaders(): Record<string, string> {
  * without restarting the process.
  */
 export function updateSessionIngressAuthToken(token: string): void {
-  process.env.CLAUDE_CODE_SESSION_ACCESS_TOKEN = token
+  process.env.DEIMOS_SESSION_ACCESS_TOKEN = token
 }

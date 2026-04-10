@@ -155,7 +155,7 @@ Advanced / source build:
 
 | Provider | Setup Path | Notes |
 | --- | --- | --- |
-| Anthropic (Claude models) | `/provider` or env vars | Cloud default path; set `ANTHROPIC_API_KEY` in **`.env`** (layout in [.env.example](.env.example)) |
+| Anthropic (Deimos models) | `/provider` or env vars | Cloud default path; set `ANTHROPIC_API_KEY` in **`.env`** (layout in [.env.example](.env.example)) |
 | OpenAI-compatible | `/provider` or env vars | OpenAI, OpenRouter, DeepSeek, Groq, Mistral, Together, Qwen (DashScope), Perplexity, LM Studio, Moonshot, and other `/v1`-compatible hosts |
 | Gemini | `/provider` or env vars | Supports API key, access token, or local ADC workflow on current `main` |
 | GitHub Models | `/onboard-github` | Interactive onboarding with saved credentials |

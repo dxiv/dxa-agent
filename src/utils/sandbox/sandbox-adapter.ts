@@ -1,6 +1,6 @@
 /**
- * Adapter layer that wraps @anthropic-ai/sandbox-runtime with Claude CLI-specific integrations.
- * This file provides the bridge between the external sandbox-runtime package and Claude CLI's
+ * Adapter layer that wraps @anthropic-ai/sandbox-runtime with Deimos CLI-specific integrations.
+ * This file provides the bridge between the external sandbox-runtime package and Deimos CLI's
  * settings system, tool integration, and additional features.
  */
 
@@ -247,7 +247,7 @@ export function convertToSandboxRuntimeConfig(
   // Block writes to .claude/skills in both original and current working directories.
   // The sandbox-runtime's getDangerousDirectories() protects .claude/commands and
   // .claude/agents but not .claude/skills. Skills have the same privilege level
-  // (auto-discovered, auto-loaded, full Claude capabilities) so they need the
+  // (auto-discovered, auto-loaded, full Deimos capabilities) so they need the
   // same OS-level sandbox protection.
   denyWrite.push(resolve(originalCwd, '.deimos', 'skills'))
   if (cwd !== originalCwd) {
@@ -256,7 +256,7 @@ export function convertToSandboxRuntimeConfig(
 
   // SECURITY: Git's is_git_directory() treats cwd as a bare repo if it has
   // HEAD + objects/ + refs/. An attacker planting these (plus a config with
-  // core.fsmonitor) escapes the sandbox when Claude's unsandboxed git runs.
+  // core.fsmonitor) escapes the sandbox when Deimos's unsandboxed git runs.
   //
   // Unconditionally denying these paths makes sandbox-runtime mount
   // /dev/null at non-existent ones, which (a) leaves a 0-byte HEAD stub on
@@ -381,7 +381,7 @@ export function convertToSandboxRuntimeConfig(
 }
 
 // ============================================================================
-// Claude CLI-specific state
+// Deimos CLI-specific state
 // ============================================================================
 
 let initializationPromise: Promise<void> | undefined
@@ -393,13 +393,13 @@ let settingsSubscriptionCleanup: (() => void) | undefined
 let worktreeMainRepoPath: string | null | undefined
 
 // Bare-repo files at cwd that didn't exist at config time and should be
-// scrubbed if they appear after a sandboxed command. See anthropics/claude-code#29316.
+// scrubbed if they appear after a sandboxed command. See anthropics/deimos#29316.
 const bareGitRepoScrubPaths: string[] = []
 
 /**
  * Delete bare-repo files planted at cwd during a sandboxed command, before
- * Claude's unsandboxed git calls can see them. See the SECURITY block above
- * bareGitRepoFiles. anthropics/claude-code#29316.
+ * Deimos's unsandboxed git calls can see them. See the SECURITY block above
+ * bareGitRepoFiles. anthropics/deimos#29316.
  */
 function scrubBareGitRepoFiles(): void {
   for (const p of bareGitRepoScrubPaths) {
@@ -823,7 +823,7 @@ async function reset(): Promise<void> {
 
 /**
  * Add a command to the excluded commands list (commands that should not be sandboxed)
- * This is a Claude CLI-specific function that updates local settings.
+ * This is a Deimos CLI-specific function that updates local settings.
  */
 export function addToExcludedCommands(
   command: string,
@@ -922,7 +922,7 @@ export interface ISandboxManager {
 }
 
 /**
- * Claude CLI sandbox manager - wraps sandbox-runtime with Claude-specific features
+ * Deimos CLI sandbox manager - wraps sandbox-runtime with Deimos-specific features
  */
 export const SandboxManager: ISandboxManager = {
   // Custom implementations

@@ -30,7 +30,7 @@ export type HTTPServerInfo = ServerInfoBase & {
 }
 
 export type DeimosCloudServerInfo = ServerInfoBase & {
-  transport: 'claudeai-proxy'
+  transport: 'deimos-proxy'
   config: McpDeimosCloudProxyServerConfig
 }
 

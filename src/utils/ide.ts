@@ -667,8 +667,8 @@ export async function detectIDEs(
   const detectedIDEs: DetectedIDEInfo[] = []
 
   try {
-    // Get the CLAUDE_CODE_SSE_PORT if set
-    const ssePort = process.env.CLAUDE_CODE_SSE_PORT
+    // Get the DEIMOS_SSE_PORT if set
+    const ssePort = process.env.DEIMOS_SSE_PORT
     const envPort = ssePort ? parseInt(ssePort) : null
 
     // Get the current working directory, normalized to NFC for consistent
@@ -694,7 +694,7 @@ export async function detectIDEs(
       if (!lockfileInfo) continue
 
       let isValid = false
-      if (isEnvTruthy(process.env.CLAUDE_CODE_IDE_SKIP_VALID_CHECK)) {
+      if (isEnvTruthy(process.env.DEIMOS_IDE_SKIP_VALID_CHECK)) {
         isValid = true
       } else if (lockfileInfo.port === envPort) {
         // If the port matches the environment variable, mark as valid regardless of directory
@@ -846,8 +846,8 @@ export function hasAccessToIDEExtensionDiffFeature(
 
 const EXTENSION_ID =
   process.env.USER_TYPE === 'ant'
-    ? 'anthropic.claude-code-internal'
-    : 'anthropic.claude-code'
+    ? 'anthropic.deimos-internal'
+    : 'anthropic.deimos'
 
 export async function isIDEExtensionInstalled(
   ideType: IdeType,
@@ -891,7 +891,7 @@ async function installIDEExtension(ideType: IdeType): Promise<string | null> {
         await sleep(500)
         const result = await execFileNoThrowWithCwd(
           command,
-          ['--force', '--install-extension', 'anthropic.claude-code'],
+          ['--force', '--install-extension', 'anthropic.deimos'],
           {
             env: getInstallationEnv(),
           },
@@ -941,7 +941,7 @@ async function getInstalledVSCodeExtensionVersion(
   const lines = stdout?.split('\n') || []
   for (const line of lines) {
     const [extensionId, version] = line.split('@')
-    if (extensionId === 'anthropic.claude-code' && version) {
+    if (extensionId === 'anthropic.deimos' && version) {
       return version
     }
   }
@@ -1033,7 +1033,7 @@ async function getVSCodeIDECommand(ideType: IdeType): Promise<string | null> {
   // then resolves to Code.exe via PATHEXT which opens a new editor window
   // instead of running the CLI. Asking for 'code.cmd' forces cross-spawn/which
   // to skip Code.exe. See microsoft/vscode#299416 (fixed in Insiders) and
-  // anthropics/claude-code#30975.
+  // anthropics/deimos#30975.
   const ext = getPlatform() === 'windows' ? '.cmd' : ''
   switch (ideType) {
     case 'vscode':
@@ -1298,7 +1298,7 @@ export async function initializeIdeIntegration(
 
   const shouldAutoInstall = getGlobalConfig().autoInstallIdeExtension ?? true
   if (
-    !isEnvTruthy(process.env.CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL) &&
+    !isEnvTruthy(process.env.DEIMOS_IDE_SKIP_AUTO_INSTALL) &&
     shouldAutoInstall
   ) {
     const ideType = ideToInstallExtension ?? getTerminalIdeType()
@@ -1352,8 +1352,8 @@ export async function initializeIdeIntegration(
  */
 const detectHostIP = memoize(
   async (isIdeRunningInWindows: boolean, port: number) => {
-    if (process.env.CLAUDE_CODE_IDE_HOST_OVERRIDE) {
-      return process.env.CLAUDE_CODE_IDE_HOST_OVERRIDE
+    if (process.env.DEIMOS_IDE_HOST_OVERRIDE) {
+      return process.env.DEIMOS_IDE_HOST_OVERRIDE
     }
 
     if (getPlatform() !== 'wsl' || !isIdeRunningInWindows) {
@@ -1391,7 +1391,7 @@ const detectHostIP = memoize(
 
 async function installFromArtifactory(command: string): Promise<string> {
   const artifactoryBaseUrl =
-    process.env.CLAUDE_CODE_INTERNAL_ARTIFACTORY_BASE_URL
+    process.env.DEIMOS_INTERNAL_ARTIFACTORY_BASE_URL
   if (!artifactoryBaseUrl) {
     throw new Error('Internal artifactory base URL is not configured')
   }
@@ -1423,7 +1423,7 @@ async function installFromArtifactory(command: string): Promise<string> {
   }
 
   // Fetch the version from artifactory
-  const versionUrl = `${artifactoryBaseUrl}/armorcode-claude-code-internal/claude-vscode-releases/stable`
+  const versionUrl = `${artifactoryBaseUrl}/armorcode-deimos-internal/claude-vscode-releases/stable`
 
   try {
     const versionResponse = await axios.get(versionUrl, {
@@ -1438,10 +1438,10 @@ async function installFromArtifactory(command: string): Promise<string> {
     }
 
     // Download the .vsix file from artifactory
-    const vsixUrl = `${artifactoryBaseUrl}/armorcode-claude-code-internal/claude-vscode-releases/${version}/claude-code.vsix`
+    const vsixUrl = `${artifactoryBaseUrl}/armorcode-deimos-internal/claude-vscode-releases/${version}/deimos.vsix`
     const tempVsixPath = join(
       os.tmpdir(),
-      `claude-code-${version}-${Date.now()}.vsix`,
+      `deimos-${version}-${Date.now()}.vsix`,
     )
 
     try {

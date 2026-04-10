@@ -7,7 +7,7 @@
  *
  * Eligibility:
  * - Console users (API key): All eligible
- * - OAuth users (Claude.ai): Only Enterprise/C4E and Team subscribers are eligible
+ * - OAuth users (dxa.dev/deimos): Only Enterprise/C4E and Team subscribers are eligible
  * - API fails open (non-blocking) - if fetch fails, continues without remote settings
  * - API returns empty settings for users without managed settings
  */
@@ -103,7 +103,7 @@ export function initializeRemoteManagedSettingsLoadingPromise(): void {
  * Uses the OAuth config base API URL
  */
 function getRemoteManagedSettingsEndpoint() {
-  return `${getOauthConfig().BASE_API_URL}/api/claude_code/settings`
+  return `${getOauthConfig().BASE_API_URL}/api/deimos/settings`
 }
 
 /**
@@ -185,7 +185,7 @@ function getRemoteSettingsAuthHeaders(): {
     // No API key available - continue to check OAuth
   }
 
-  // Fall back to OAuth tokens (for Claude.ai users)
+  // Fall back to OAuth tokens (for dxa.dev/deimos users)
   const oauthTokens = getDeimosCloudOAuthTokens()
   if (oauthTokens?.accessToken) {
     return {

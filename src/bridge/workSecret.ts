@@ -29,8 +29,8 @@ export function decodeWorkSecret(secret: string): WorkSecret {
     throw new Error('Invalid work secret: missing api_base_url')
   }
   const base = { ...obj } as Record<string, unknown>
-  const wireArgs = base.claude_code_args ?? base.deimos_code_args
-  delete base.claude_code_args
+  const wireArgs = base.deimos_args ?? base.deimos_code_args
+  delete base.deimos_args
   delete base.deimos_code_args
   const codeCliArgs =
     wireArgs &&

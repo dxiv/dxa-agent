@@ -81,7 +81,7 @@ import { clearToolSchemaCache } from './toolSchemaCache.js'
 const DEFAULT_API_KEY_HELPER_TTL = 5 * 60 * 1000
 
 /**
- * CCR and Claude Desktop spawn the CLI with OAuth and should never fall back
+ * CCR and Deimos Desktop spawn the CLI with OAuth and should never fall back
  * to the user's ~/.claude/settings.json API-key config (apiKeyHelper,
  * env.ANTHROPIC_API_KEY, env.ANTHROPIC_AUTH_TOKEN). Those settings exist for
  * the user's terminal CLI, not managed sessions. Without this guard, a user
@@ -90,8 +90,8 @@ const DEFAULT_API_KEY_HELPER_TTL = 5 * 60 * 1000
  */
 function isManagedOAuthContext(): boolean {
   return (
-    isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) ||
-    process.env.CLAUDE_CODE_ENTRYPOINT === 'claude-desktop'
+    isEnvTruthy(process.env.DEIMOS_REMOTE) ||
+    process.env.DEIMOS_ENTRYPOINT === 'claude-desktop'
   )
 }
 
@@ -102,23 +102,24 @@ export function isAnthropicAuthEnabled(): boolean {
   if (isBareMode()) return false
 
   // `claude ssh` remote: ANTHROPIC_UNIX_SOCKET tunnels API calls through a
-  // local auth-injecting proxy. The launcher sets CLAUDE_CODE_OAUTH_TOKEN as a
+  // local auth-injecting proxy. The launcher sets DEIMOS_OAUTH_TOKEN as a
   // placeholder iff the local side is a subscriber (so the remote includes the
   // oauth-2025 beta header to match what the proxy will inject). The remote's
   // ~/.claude settings (apiKeyHelper, settings.env.ANTHROPIC_API_KEY) MUST NOT
   // flip this — they'd cause a header mismatch with the proxy and a bogus
   // "invalid x-api-key" from the API. See src/ssh/sshAuthProxy.ts.
   if (process.env.ANTHROPIC_UNIX_SOCKET) {
-    return !!process.env.CLAUDE_CODE_OAUTH_TOKEN
+    return !!process.env.DEIMOS_OAUTH_TOKEN
   }
 
   const is3P =
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_VERTEX) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_FOUNDRY) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_OPENAI) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GEMINI) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+    isEnvTruthy(process.env.DEIMOS_USE_BEDROCK) ||
+    isEnvTruthy(process.env.DEIMOS_USE_VERTEX) ||
+    isEnvTruthy(process.env.DEIMOS_USE_FOUNDRY) ||
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_GEMINI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_GITHUB)
 
   // Check if user has configured an external API key source
   // This allows externally-provided API keys to work (without requiring proxy configuration)
@@ -127,7 +128,7 @@ export function isAnthropicAuthEnabled(): boolean {
   const hasExternalAuthToken =
     process.env.ANTHROPIC_AUTH_TOKEN ||
     apiKeyHelper ||
-    process.env.CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR
+    process.env.DEIMOS_API_KEY_FILE_DESCRIPTOR
 
   // Check if API key is from an external source (not managed by /login)
   const { source: apiKeySource } = getAnthropicApiKeyWithSource({
@@ -168,8 +169,8 @@ export function getAuthTokenSource() {
     return { source: 'ANTHROPIC_AUTH_TOKEN' as const, hasToken: true }
   }
 
-  if (process.env.CLAUDE_CODE_OAUTH_TOKEN) {
-    return { source: 'CLAUDE_CODE_OAUTH_TOKEN' as const, hasToken: true }
+  if (process.env.DEIMOS_OAUTH_TOKEN) {
+    return { source: 'DEIMOS_OAUTH_TOKEN' as const, hasToken: true }
   }
 
   // Check for OAuth token from file descriptor (or its CCR disk fallback)
@@ -181,9 +182,9 @@ export function getAuthTokenSource() {
     // doesn't exist. Call sites fall through correctly — the new source is
     // !== 'none' (cli/handlers/auth.ts → oauth_token) and not in the
     // isEnvVarToken set (auth.ts:1844 → generic re-login message).
-    if (process.env.CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR) {
+    if (process.env.DEIMOS_OAUTH_TOKEN_FILE_DESCRIPTOR) {
       return {
-        source: 'CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR' as const,
+        source: 'DEIMOS_OAUTH_TOKEN_FILE_DESCRIPTOR' as const,
         hasToken: true,
       }
     }
@@ -278,11 +279,11 @@ export function getAnthropicApiKeyWithSource(
     if (
       !isUsing3PServices() &&
       !apiKeyEnv &&
-      !process.env.CLAUDE_CODE_OAUTH_TOKEN &&
-      !process.env.CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR
+      !process.env.DEIMOS_OAUTH_TOKEN &&
+      !process.env.DEIMOS_OAUTH_TOKEN_FILE_DESCRIPTOR
     ) {
       throw new Error(
-        'ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN env var is required',
+        'ANTHROPIC_API_KEY or DEIMOS_OAUTH_TOKEN env var is required',
       )
     }
 
@@ -434,11 +435,11 @@ export function isAwsCredentialExportFromProjectSettings(): boolean {
 
 /**
  * Calculate TTL in milliseconds for the API key helper cache
- * Uses CLAUDE_CODE_API_KEY_HELPER_TTL_MS env var if set and valid,
+ * Uses DEIMOS_API_KEY_HELPER_TTL_MS env var if set and valid,
  * otherwise defaults to 5 minutes
  */
 export function calculateApiKeyHelperTTL(): number {
-  const envTtl = process.env.CLAUDE_CODE_API_KEY_HELPER_TTL_MS
+  const envTtl = process.env.DEIMOS_API_KEY_HELPER_TTL_MS
 
   if (envTtl) {
     const parsed = parseInt(envTtl, 10)
@@ -446,7 +447,7 @@ export function calculateApiKeyHelperTTL(): number {
       return parsed
     }
     logForDebugging(
-      `Found CLAUDE_CODE_API_KEY_HELPER_TTL_MS env var, but it was not a valid number. Got ${envTtl}`,
+      `Found DEIMOS_API_KEY_HELPER_TTL_MS env var, but it was not a valid number. Got ${envTtl}`,
       { level: 'error' },
     )
   }
@@ -1218,7 +1219,7 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
   try {
     const storageData = secureStorage.read() || {}
     const existingOauth =
-      storageData.deimosCloudOauth ?? storageData.claudeAiOauth
+      storageData.deimosCloudOauth ?? storageData.deimosCloudOauth
 
     storageData.deimosCloudOauth = {
       accessToken: tokens.accessToken,
@@ -1233,7 +1234,7 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
       rateLimitTier:
         tokens.rateLimitTier ?? existingOauth?.rateLimitTier ?? null,
     }
-    delete storageData.claudeAiOauth
+    delete storageData.deimosCloudOauth
 
     const updateStatus = secureStorage.update(storageData)
 
@@ -1264,10 +1265,10 @@ export const getDeimosCloudOAuthTokens = memoize((): OAuthTokens | null => {
   if (isBareMode()) return null
 
   // Check for force-set OAuth token from environment variable
-  if (process.env.CLAUDE_CODE_OAUTH_TOKEN) {
+  if (process.env.DEIMOS_OAUTH_TOKEN) {
     // Return an inference-only token (unknown refresh and expiry)
     return {
-      accessToken: process.env.CLAUDE_CODE_OAUTH_TOKEN,
+      accessToken: process.env.DEIMOS_OAUTH_TOKEN,
       refreshToken: undefined,
       expiresAt: undefined,
       scopes: ['user:inference'],
@@ -1294,7 +1295,7 @@ export const getDeimosCloudOAuthTokens = memoize((): OAuthTokens | null => {
     const secureStorage = getSecureStorage()
     const storageData = secureStorage.read()
     const oauthData =
-      storageData?.deimosCloudOauth ?? storageData?.claudeAiOauth
+      storageData?.deimosCloudOauth ?? storageData?.deimosCloudOauth
 
     if (!oauthData?.accessToken) {
       return null
@@ -1343,7 +1344,7 @@ async function invalidateOAuthCacheIfDiskChanged(): Promise<void> {
   }
 }
 
-// In-flight dedup: when N claude.ai proxy connectors hit 401 with the same
+// In-flight dedup: when N dxa.dev/deimos proxy connectors hit 401 with the same
 // token simultaneously (common at startup — #20930), only one should clear
 // caches and re-read the keychain. Without this, each call's clearOAuthTokenCache()
 // nukes readInFlight in macOsKeychainStorage and triggers a fresh spawn —
@@ -1409,7 +1410,7 @@ export async function getDeimosCloudOAuthTokensAsync(): Promise<OAuthTokens | nu
 
   // Env var and FD tokens are sync and don't hit the keychain
   if (
-    process.env.CLAUDE_CODE_OAUTH_TOKEN ||
+    process.env.DEIMOS_OAUTH_TOKEN ||
     getOAuthTokenFromFileDescriptor()
   ) {
     return getDeimosCloudOAuthTokens()
@@ -1419,7 +1420,7 @@ export async function getDeimosCloudOAuthTokensAsync(): Promise<OAuthTokens | nu
     const secureStorage = getSecureStorage()
     const storageData = await secureStorage.readAsync()
     const oauthData =
-      storageData?.deimosCloudOauth ?? storageData?.claudeAiOauth
+      storageData?.deimosCloudOauth ?? storageData?.deimosCloudOauth
     if (!oauthData?.accessToken) {
       return null
     }
@@ -1538,7 +1539,7 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
 
     logEvent('tengu_oauth_token_refresh_starting', {})
     const refreshedTokens = await refreshOAuthToken(lockedTokens.refreshToken, {
-      // For Claude.ai subscribers, omit scopes so the default
+      // For dxa.dev/deimos subscribers, omit scopes so the default
       // DEIMOS_CLOUD_OAUTH_SCOPES applies — this allows scope expansion
       // (e.g. adding user:file_upload) on refresh without re-login.
       scopes: shouldUseDeimosCloudAuth(lockedTokens.scopes)
@@ -1594,21 +1595,21 @@ export function hasProfileScope(): boolean {
 
 export function is1PApiCustomer(): boolean {
   // 1P API customers are users who are NOT:
-  // 1. Claude.ai subscribers (Max, Pro, Enterprise, Team)
+  // 1. dxa.dev/deimos subscribers (Max, Pro, Enterprise, Team)
   // 2. Vertex AI users
   // 3. AWS Bedrock users
   // 4. Foundry users
 
   // Exclude Vertex, Bedrock, and Foundry customers
   if (
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_VERTEX) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_FOUNDRY)
+    isEnvTruthy(process.env.DEIMOS_USE_BEDROCK) ||
+    isEnvTruthy(process.env.DEIMOS_USE_VERTEX) ||
+    isEnvTruthy(process.env.DEIMOS_USE_FOUNDRY)
   ) {
     return false
   }
 
-  // Exclude Claude.ai subscribers
+  // Exclude dxa.dev/deimos subscribers
   if (isDeimosCloudSubscriber()) {
     return false
   }
@@ -1633,7 +1634,7 @@ export function isOverageProvisioningAllowed(): boolean {
   const accountInfo = getOauthAccountInfo()
   const billingType = accountInfo?.billingType
 
-  // Must be a Claude subscriber with a supported subscription type
+  // Must be a Deimos subscriber with a supported subscription type
   if (!isDeimosCloudSubscriber() || !billingType) {
     return false
   }
@@ -1725,27 +1726,28 @@ export function getSubscriptionName(): string {
 
   switch (subscriptionType) {
     case 'enterprise':
-      return 'Claude Enterprise'
+      return 'Enterprise'
     case 'team':
-      return 'Claude Team'
+      return 'Team'
     case 'max':
-      return 'Claude Max'
+      return 'Max'
     case 'pro':
-      return 'Claude Pro'
+      return 'Pro'
     default:
-      return 'Claude API'
+      return 'API'
   }
 }
 
 /** Check if using third-party services (Bedrock or Vertex or Foundry or OpenAI-compatible or Gemini or GitHub Models) */
 export function isUsing3PServices(): boolean {
   return !!(
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_VERTEX) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_FOUNDRY) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_OPENAI) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GEMINI) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+    isEnvTruthy(process.env.DEIMOS_USE_BEDROCK) ||
+    isEnvTruthy(process.env.DEIMOS_USE_VERTEX) ||
+    isEnvTruthy(process.env.DEIMOS_USE_FOUNDRY) ||
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_GEMINI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_GITHUB)
   )
 }
 
@@ -1788,7 +1790,7 @@ export function getOtelHeadersFromHelper(): Record<string, string> {
 
   // Return cached headers if still valid (debounce)
   const debounceMs = parseInt(
-    process.env.CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS ||
+    process.env.DEIMOS_OTEL_HEADERS_HELPER_DEBOUNCE_MS ||
       DEFAULT_OTEL_HEADERS_DEBOUNCE_MS.toString(),
   )
   if (
@@ -1881,8 +1883,8 @@ export function getAccountInformation() {
   const { source: authTokenSource } = getAuthTokenSource()
   const accountInfo: UserAccountInfo = {}
   if (
-    authTokenSource === 'CLAUDE_CODE_OAUTH_TOKEN' ||
-    authTokenSource === 'CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR'
+    authTokenSource === 'DEIMOS_OAUTH_TOKEN' ||
+    authTokenSource === 'DEIMOS_OAUTH_TOKEN_FILE_DESCRIPTOR'
   ) {
     accountInfo.tokenSource = authTokenSource
   } else if (isDeimosCloudSubscriber()) {
@@ -1964,8 +1966,8 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
   // in ~/.claude.json is user-writable and cannot be trusted.
   const { source } = getAuthTokenSource()
   const isEnvVarToken =
-    source === 'CLAUDE_CODE_OAUTH_TOKEN' ||
-    source === 'CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR'
+    source === 'DEIMOS_OAUTH_TOKEN' ||
+    source === 'DEIMOS_OAUTH_TOKEN_FILE_DESCRIPTOR'
 
   const profile = await getOauthProfileFromOauthToken(tokens.accessToken)
   if (!profile) {
@@ -1997,9 +1999,9 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
 
   if (isEnvVarToken) {
     const envVarName =
-      source === 'CLAUDE_CODE_OAUTH_TOKEN'
-        ? 'CLAUDE_CODE_OAUTH_TOKEN'
-        : 'CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR'
+      source === 'DEIMOS_OAUTH_TOKEN'
+        ? 'DEIMOS_OAUTH_TOKEN'
+        : 'DEIMOS_OAUTH_TOKEN_FILE_DESCRIPTOR'
     return {
       valid: false,
       message:

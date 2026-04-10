@@ -19,7 +19,7 @@ export interface EnvironmentMetadata {
   is_ci?: boolean | undefined
   is_claubbit?: boolean | undefined
   is_github_action?: boolean | undefined
-  is_claude_code_action?: boolean | undefined
+  is_deimos_action?: boolean | undefined
   is_claude_ai_auth?: boolean | undefined
   version?: string | undefined
   github_event_name?: string | undefined
@@ -29,10 +29,10 @@ export interface EnvironmentMetadata {
   wsl_version?: string | undefined
   github_actions_metadata?: GitHubActionsMetadata | undefined
   arch?: string | undefined
-  is_claude_code_remote?: boolean | undefined
+  is_deimos_remote?: boolean | undefined
   remote_environment_type?: string | undefined
-  claude_code_container_id?: string | undefined
-  claude_code_remote_session_id?: string | undefined
+  deimos_container_id?: string | undefined
+  deimos_remote_session_id?: string | undefined
   tags?: string[] | undefined
   deployment_environment?: string | undefined
   is_conductor?: boolean | undefined

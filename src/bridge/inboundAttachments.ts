@@ -4,10 +4,10 @@
  * Web composer uploads via cookie-authed /api/{org}/upload, sends file_uuid
  * alongside the message. Here we fetch each via GET /api/oauth/files/{uuid}/content
  * (oauth-authed, same store), write to ~/.claude/uploads/{sessionId}/, and
- * return @path refs to prepend. Claude's Read tool takes it from there.
+ * return @path refs to prepend. Deimos's Read tool takes it from there.
  *
  * Best-effort: any failure (no token, network, non-2xx, disk) logs debug and
- * skips that attachment. The message still reaches Claude, just without @path.
+ * skips that attachment. The message still reaches Deimos, just without @path.
  */
 
 import type { ContentBlockParam } from '@anthropic-ai/sdk/resources/messages.mjs'
@@ -75,7 +75,7 @@ async function resolveOne(att: InboundAttachment): Promise<string | undefined> {
   let data: Buffer
   try {
     // getOauthConfig() (via getBridgeBaseUrl) throws on a non-allowlisted
-    // CLAUDE_CODE_CUSTOM_OAUTH_URL — keep it inside the try so a bad
+    // DEIMOS_CUSTOM_OAUTH_URL — keep it inside the try so a bad
     // FedStart URL degrades to "no @path" instead of crashing print.ts's
     // reader loop (which has no catch around the await).
     const url = `${getBridgeBaseUrl()}/api/oauth/files/${encodeURIComponent(att.file_uuid)}/content`

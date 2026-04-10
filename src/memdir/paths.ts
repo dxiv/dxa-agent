@@ -21,14 +21,14 @@ import {
 /**
  * Whether auto-memory features are enabled (memdir, agent memory, past session search).
  * Enabled by default. Priority chain (first defined wins):
- *   1. CLAUDE_CODE_DISABLE_AUTO_MEMORY env var (1/true → OFF, 0/false → ON)
- *   2. CLAUDE_CODE_SIMPLE (--bare) → OFF
- *   3. CCR without persistent storage → OFF (no CLAUDE_CODE_REMOTE_MEMORY_DIR)
+ *   1. DEIMOS_DISABLE_AUTO_MEMORY env var (1/true → OFF, 0/false → ON)
+ *   2. DEIMOS_SIMPLE (--bare) → OFF
+ *   3. CCR without persistent storage → OFF (no DEIMOS_REMOTE_MEMORY_DIR)
  *   4. autoMemoryEnabled in settings.json (supports project-level opt-out)
  *   5. Default: enabled
  */
 export function isAutoMemoryEnabled(): boolean {
-  const envVal = process.env.CLAUDE_CODE_DISABLE_AUTO_MEMORY
+  const envVal = process.env.DEIMOS_DISABLE_AUTO_MEMORY
   if (isEnvTruthy(envVal)) {
     return false
   }
@@ -38,12 +38,12 @@ export function isAutoMemoryEnabled(): boolean {
   // --bare / SIMPLE: prompts.ts already drops the memory section from the
   // system prompt via its SIMPLE early-return; this gate stops the other half
   // (extractMemories turn-end fork, autoDream, /remember, /dream, team sync).
-  if (isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE)) {
+  if (isEnvTruthy(process.env.DEIMOS_SIMPLE)) {
     return false
   }
   if (
-    isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) &&
-    !process.env.CLAUDE_CODE_REMOTE_MEMORY_DIR
+    isEnvTruthy(process.env.DEIMOS_REMOTE) &&
+    !process.env.DEIMOS_REMOTE_MEMORY_DIR
   ) {
     return false
   }
@@ -79,12 +79,12 @@ export function isExtractModeActive(): boolean {
 /**
  * Returns the base directory for persistent memory storage.
  * Resolution order:
- *   1. CLAUDE_CODE_REMOTE_MEMORY_DIR env var (explicit override, set in CCR)
+ *   1. DEIMOS_REMOTE_MEMORY_DIR env var (explicit override, set in CCR)
  *   2. ~/.claude (default config home)
  */
 export function getMemoryBaseDir(): string {
-  if (process.env.CLAUDE_CODE_REMOTE_MEMORY_DIR) {
-    return process.env.CLAUDE_CODE_REMOTE_MEMORY_DIR
+  if (process.env.DEIMOS_REMOTE_MEMORY_DIR) {
+    return process.env.DEIMOS_REMOTE_MEMORY_DIR
   }
   return getDeimosConfigHomeDir()
 }
@@ -198,7 +198,7 @@ export function hasAutoMemPathOverride(): boolean {
 /**
  * Returns the canonical git repo root if available, otherwise falls back to
  * the stable project root. Uses findCanonicalGitRoot so all worktrees of the
- * same repo share one auto-memory directory (anthropics/claude-code#24382).
+ * same repo share one auto-memory directory (anthropics/deimos#24382).
  */
 function getAutoMemBase(): string {
   return findCanonicalGitRoot(getProjectRoot()) ?? getProjectRoot()

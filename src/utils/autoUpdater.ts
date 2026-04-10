@@ -29,7 +29,7 @@ import {
 import { jsonParse } from './slowOperations.js'
 
 const GCS_BUCKET_URL =
-  'https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases'
+  'https://storage.googleapis.com/deimos-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/deimos-releases'
 
 class AutoUpdaterError extends ClaudeError {}
 

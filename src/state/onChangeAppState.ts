@@ -114,7 +114,7 @@ export function onChangeAppState({
 
     // Keep active provider profiles in sync with /model choices so restarts
     // keep using the last selected model instead of the profile's old default.
-    if (process.env.CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED === '1') {
+    if (process.env.DEIMOS_PROVIDER_PROFILE_ENV_APPLIED === '1') {
       persistActiveProviderProfileModel(newState.mainLoopModel)
     }
   }

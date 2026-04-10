@@ -96,7 +96,7 @@ export function MCPRemoteServerMenu({
     try {
       const result = await reconnectMcpServer(server.name);
       const success = result.client.type === 'connected';
-      logEvent('tengu_claudeai_mcp_auth_completed', {
+      logEvent('tengu_deimoscloud_mcp_auth_completed', {
         success
       });
       if (success) {
@@ -107,7 +107,7 @@ export function MCPRemoteServerMenu({
         onComplete?.('Authentication successful, but server reconnection failed. You may need to manually restart Deimos for the changes to take effect.');
       }
     } catch (err) {
-      logEvent('tengu_claudeai_mcp_auth_completed', {
+      logEvent('tengu_deimoscloud_mcp_auth_completed', {
         success: false
       });
       onComplete?.(handleReconnectError(err, server.name));
@@ -139,7 +139,7 @@ export function MCPRemoteServerMenu({
         }
       };
     });
-    logEvent('tengu_claudeai_mcp_clear_auth_completed', {});
+    logEvent('tengu_deimoscloud_mcp_clear_auth_completed', {});
     onComplete?.(`Disconnected from ${server.name}.`);
     setIsDeimosCloudClearingAuth(false);
     setDeimosCloudClearAuthUrl(null);
@@ -157,7 +157,7 @@ export function MCPRemoteServerMenu({
     isActive: isAuthenticating
   });
 
-  // Escape to cancel Claude AI authentication
+  // Escape to cancel Deimos AI authentication
   useKeybinding('confirm:no', () => {
     setIsDeimosCloudAuthenticating(false);
     setDeimosCloudAuthUrl(null);
@@ -166,7 +166,7 @@ export function MCPRemoteServerMenu({
     isActive: isDeimosCloudAuthenticating
   });
 
-  // Escape to cancel Claude AI clear auth
+  // Escape to cancel Deimos AI clear auth
   useKeybinding('confirm:no', () => {
     setIsDeimosCloudClearingAuth(false);
     setDeimosCloudClearAuthUrl(null);
@@ -217,11 +217,11 @@ export function MCPRemoteServerMenu({
     const accountInfo = getOauthAccountInfo();
     const orgUuid = accountInfo?.organizationUuid;
     let authUrl: string;
-    if (orgUuid && server.config.type === 'claudeai-proxy' && server.config.id) {
+    if (orgUuid && server.config.type === 'deimos-proxy' && server.config.id) {
       // Use the direct auth URL with org and server IDs
       // Replace 'mcprs' prefix with 'mcpsrv' if present
       const serverId = server.config.id.startsWith('mcprs') ? 'mcpsrv' + server.config.id.slice(5) : server.config.id;
-      const productSurface = encodeURIComponent(process.env.CLAUDE_CODE_ENTRYPOINT || 'cli');
+      const productSurface = encodeURIComponent(process.env.DEIMOS_ENTRYPOINT || 'cli');
       authUrl = `${deimosCloudPortalBaseUrl}/api/organizations/${orgUuid}/mcp/start-auth/${serverId}?product_surface=${productSurface}`;
     } else {
       // Fall back to settings/connectors if we don't have the required IDs
@@ -229,19 +229,19 @@ export function MCPRemoteServerMenu({
     }
     setDeimosCloudAuthUrl(authUrl);
     setIsDeimosCloudAuthenticating(true);
-    logEvent('tengu_claudeai_mcp_auth_started', {});
+    logEvent('tengu_deimoscloud_mcp_auth_started', {});
     await openBrowser(authUrl);
   }, [server.config]);
   const handleDeimosCloudClearAuth = React.useCallback(() => {
     setIsDeimosCloudClearingAuth(true);
-    logEvent('tengu_claudeai_mcp_clear_auth_started', {});
+    logEvent('tengu_deimoscloud_mcp_clear_auth_started', {});
   }, []);
   const handleToggleEnabled = React.useCallback(async () => {
     const wasEnabled = server.client.type !== 'disabled';
     try {
       await toggleMcpServer(server.name);
-      if (server.config.type === 'claudeai-proxy') {
-        logEvent('tengu_claudeai_mcp_toggle', {
+      if (server.config.type === 'deimos-proxy') {
+        logEvent('tengu_deimoscloud_mcp_toggle', {
           new_state: (wasEnabled ? 'disabled' : 'enabled') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
         });
       }
@@ -254,7 +254,7 @@ export function MCPRemoteServerMenu({
     }
   }, [server.client.type, server.config.type, server.name, toggleMcpServer, onCancel, onComplete]);
   const handleAuthenticate = React.useCallback(async () => {
-    if (server.config.type === 'claudeai-proxy') return;
+    if (server.config.type === 'deimos-proxy') return;
     setIsAuthenticating(true);
     setError(null);
     const controller = new AbortController();
@@ -301,7 +301,7 @@ export function MCPRemoteServerMenu({
     }
   }, [server.isAuthenticated, server.config, server.name, onComplete, reconnectMcpServer, isEffectivelyAuthenticated]);
   const handleClearAuth = async () => {
-    if (server.config.type === 'claudeai-proxy') return;
+    if (server.config.type === 'deimos-proxy') return;
     if (server.config) {
       // First revoke the authentication tokens and clear all auth state
       await revokeServerTokens(server.name, server.config);
@@ -342,7 +342,7 @@ export function MCPRemoteServerMenu({
     // XAA: silent exchange (cached id_token → no browser), so don't claim
     // one will open. If IdP login IS needed, authorizationUrl populates and
     // the URL fallback block below still renders.
-    const authCopy = server.config.type !== 'claudeai-proxy' && server.config.oauth?.xaa ? ' Authenticating via your identity provider' : ' A browser window will open for authentication';
+    const authCopy = server.config.type !== 'deimos-proxy' && server.config.oauth?.xaa ? ' Authenticating via your identity provider' : ' A browser window will open for authentication';
     return <Box flexDirection="column" gap={1} padding={1}>
         <Text color="claude">Authenticating with {server.name}…</Text>
         <Box>
@@ -441,7 +441,7 @@ export function MCPRemoteServerMenu({
             </Box>
           </> : <>
             <Text>
-              This will open claude.ai in the browser. Find the MCP server in
+              This will open dxa.dev/deimos in the browser. Find the MCP server in
               the list and click &quot;Disconnect&quot;.
             </Text>
             <Box marginLeft={3} flexDirection="column">
@@ -482,16 +482,16 @@ export function MCPRemoteServerMenu({
       value: 'tools'
     });
   }
-  if (server.config.type === 'claudeai-proxy') {
+  if (server.config.type === 'deimos-proxy') {
     if (server.client.type === 'connected') {
       menuOptions.push({
         label: 'Clear authentication',
-        value: 'claudeai-clear-auth'
+        value: 'deimos-clear-auth'
       });
     } else if (server.client.type !== 'disabled') {
       menuOptions.push({
         label: 'Authenticate',
-        value: 'claudeai-auth'
+        value: 'deimos-auth'
       });
     }
   } else {
@@ -550,7 +550,7 @@ export function MCPRemoteServerMenu({
               </Text> : <Text>{color('error', theme)(figures.cross)} failed</Text>}
           </Box>
 
-          {server.transport !== 'claudeai-proxy' && <Box>
+          {server.transport !== 'deimos-proxy' && <Box>
               <Text bold>Auth: </Text>
               {isEffectivelyAuthenticated ? <Text>
                   {color('success', theme)(figures.tick)} authenticated
@@ -594,18 +594,18 @@ export function MCPRemoteServerMenu({
             case 'clear-auth':
               await handleClearAuth();
               break;
-            case 'claudeai-auth':
+            case 'deimos-auth':
               await handleDeimosCloudAuth();
               break;
-            case 'claudeai-clear-auth':
+            case 'deimos-clear-auth':
               handleDeimosCloudClearAuth();
               break;
             case 'reconnectMcpServer':
               setIsReconnecting(true);
               try {
                 const result_1 = await reconnectMcpServer(server.name);
-                if (server.config.type === 'claudeai-proxy') {
-                  logEvent('tengu_claudeai_mcp_reconnect', {
+                if (server.config.type === 'deimos-proxy') {
+                  logEvent('tengu_deimoscloud_mcp_reconnect', {
                     success: result_1.client.type === 'connected'
                   });
                 }
@@ -614,8 +614,8 @@ export function MCPRemoteServerMenu({
                 } = handleReconnectResult(result_1, server.name);
                 onComplete?.(message_0);
               } catch (err_2) {
-                if (server.config.type === 'claudeai-proxy') {
-                  logEvent('tengu_claudeai_mcp_reconnect', {
+                if (server.config.type === 'deimos-proxy') {
+                  logEvent('tengu_deimoscloud_mcp_reconnect', {
                     success: false
                   });
                 }

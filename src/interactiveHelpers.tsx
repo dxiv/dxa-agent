@@ -296,7 +296,7 @@ export async function showSetupScreens(root: Root, permissionMode: PermissionMod
     }
   }
 
-  // Show Chrome onboarding for first-time Claude in Chrome users
+  // Show Chrome onboarding for first-time Deimos in Chrome users
   if (deimosInChrome && !getGlobalConfig().hasCompletedDeimosInChromeOnboarding) {
     const {
       DeimosInChromeOnboarding
@@ -325,7 +325,7 @@ export function getRenderContext(exitOnCtrlC: boolean): {
   // offline analysis by bench/repl-scroll.ts. Captures the full TUI
   // render pipeline (yoga → screen buffer → diff → optimize → stdout)
   // so perf work on any phase can be validated against real user flows.
-  const frameTimingLogPath = process.env.CLAUDE_CODE_FRAME_TIMING_LOG;
+  const frameTimingLogPath = process.env.DEIMOS_FRAME_TIMING_LOG;
   return {
     getFpsMetrics: () => fpsTracker.getMetrics(),
     stats,

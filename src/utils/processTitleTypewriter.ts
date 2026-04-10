@@ -6,7 +6,7 @@ function shouldSetTitle(): boolean {
   return (
     !process.env.CI &&
     process.stdout.isTTY &&
-    !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE)
+    !isEnvTruthy(process.env.DEIMOS_DISABLE_TERMINAL_TITLE)
   )
 }
 

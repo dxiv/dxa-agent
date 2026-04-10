@@ -17,12 +17,12 @@ import * as signalActual from './signal.js'
 const originalEnv = { ...process.env }
 
 function clearThirdPartyProviderFlags(): void {
-  delete process.env.CLAUDE_CODE_USE_OPENAI
-  delete process.env.CLAUDE_CODE_USE_GEMINI
-  delete process.env.CLAUDE_CODE_USE_GITHUB
-  delete process.env.CLAUDE_CODE_USE_BEDROCK
-  delete process.env.CLAUDE_CODE_USE_VERTEX
-  delete process.env.CLAUDE_CODE_USE_FOUNDRY
+  delete process.env.DEIMOS_USE_OPENAI
+  delete process.env.DEIMOS_USE_GEMINI
+  delete process.env.DEIMOS_USE_GITHUB
+  delete process.env.DEIMOS_USE_BEDROCK
+  delete process.env.DEIMOS_USE_VERTEX
+  delete process.env.DEIMOS_USE_FOUNDRY
 }
 
 async function importFreshFastModeModule() {

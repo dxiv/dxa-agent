@@ -29,7 +29,7 @@ class DomainBlockedError extends Error {
 class DomainCheckFailedError extends Error {
   constructor(domain: string) {
     super(
-      `Unable to verify if domain ${domain} is safe to fetch. This may be due to network restrictions or enterprise security policies blocking claude.ai.`,
+      `Unable to verify if domain ${domain} is safe to fetch. This may be due to network restrictions or enterprise security policies blocking dxa.dev/deimos.`,
     )
     this.name = 'DomainCheckFailedError'
   }
@@ -388,7 +388,7 @@ export async function getURLMarkdownContent(
 
     // Check if the user has opted to skip the blocklist check
     // This is for enterprise customers with restrictive security policies
-    // that prevent outbound connections to claude.ai
+    // that prevent outbound connections to dxa.dev/deimos
     const settings = getSettings_DEPRECATED()
     if (!settings.skipWebFetchPreflight) {
       const checkResult = await checkDomainBlocklist(hostname)
@@ -438,7 +438,7 @@ export async function getURLMarkdownContent(
   ;(response as { data: unknown }).data = null
   const contentType = response.headers['content-type'] ?? ''
 
-  // Binary content: save raw bytes to disk with a proper extension so Claude
+  // Binary content: save raw bytes to disk with a proper extension so Deimos
   // can inspect the file later. We still fall through to the utf-8 decode +
   // Haiku path below — for PDFs in particular the decoded string has enough
   // ASCII structure (/Title, text streams) that Haiku can summarize it, and

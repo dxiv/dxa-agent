@@ -56,7 +56,7 @@ type PreviousState = {
   /** Resolved effort (env → options → model default). Goes into output_config
    *  or anthropic_internal.effort_override. */
   effortValue: string
-  /** Hash of getExtraBodyParams() — catches CLAUDE_CODE_EXTRA_BODY and
+  /** Hash of getExtraBodyParams() — catches DEIMOS_EXTRA_BODY and
    *  anthropic_internal changes. */
   extraBodyHash: number
   callCount: number

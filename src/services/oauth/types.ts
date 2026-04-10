@@ -32,7 +32,7 @@ export type OAuthTokens = {
   scope?: string
   scopes?: string[]
   subscriptionType?: SubscriptionType
-  /** Present for Claude.ai subscriber tokens; mirrored in secure storage. */
+  /** Present for dxa.dev/deimos subscriber tokens; mirrored in secure storage. */
   rateLimitTier?: RateLimitTier
   profile?: OAuthProfilePayload
   tokenAccount?: OAuthTokenAccountFallback
@@ -43,7 +43,7 @@ export type OAuthTokenExchangeResponse = Record<string, unknown>
 export type OAuthProfileResponse = Partial<OAuthProfilePayload> & Record<string, unknown>
 export type UserRolesResponse = Record<string, unknown>
 
-/** Guest-pass / referral API campaign id (e.g. `claude_code_guest_pass`). */
+/** Guest-pass / referral API campaign id (e.g. `deimos_guest_pass`). */
 export type ReferralCampaign = string
 
 export type ReferrerRewardInfo = {

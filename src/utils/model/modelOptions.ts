@@ -365,14 +365,14 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     ]
   }
 
-  // When using Ollama, show models from the Ollama server instead of Claude models
+  // When using Ollama, show models from the Ollama server instead of Deimos models
   if (getAPIProvider() === 'openai' && isOllamaProvider()) {
     const defaultOption = getDefaultOptionForUser(fastMode)
     const ollamaModels = getCachedOllamaModelOptions()
     if (ollamaModels.length > 0) {
       return [defaultOption, ...ollamaModels]
     }
-    // Fallback: if models not yet fetched, show current model instead of Claude models
+    // Fallback: if models not yet fetched, show current model instead of Deimos models
     const currentModel = getUserSpecifiedModelSetting() ?? getInitialMainLoopModel()
     if (currentModel != null) {
       return [

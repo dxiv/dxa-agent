@@ -243,7 +243,7 @@ export const getGroveNoticeConfig = memoize(
           throw new Error(`Failed to get auth headers: ${authHeaders.error}`)
         }
         return axios.get<GroveConfig>(
-          `${getOauthConfig().BASE_API_URL}/api/claude_code_grove`,
+          `${getOauthConfig().BASE_API_URL}/api/deimos_grove`,
           {
             headers: {
               ...authHeaders.headers,
@@ -306,7 +306,7 @@ export function calculateShouldShowGrove(
     return true
   }
   // Check if we need to remind the user to accept the terms and choose
-  // whether to help improve Claude.
+  // whether to help improve Deimos.
   const reminderFrequency = config.notice_reminder_frequency
   if (reminderFrequency !== null && settings.grove_notice_viewed_at) {
     const daysSinceViewed = Math.floor(

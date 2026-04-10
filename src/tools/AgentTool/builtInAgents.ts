@@ -33,7 +33,7 @@ export function getBuiltInAgents(): AgentDefinition[] {
   // issues at module init time. The coordinatorMode module depends on tools
   // which depend on AgentTool which imports this file.
   if (feature('COORDINATOR_MODE')) {
-    if (isEnvTruthy(process.env.CLAUDE_CODE_COORDINATOR_MODE)) {
+    if (isEnvTruthy(process.env.DEIMOS_COORDINATOR_MODE)) {
       /* eslint-disable @typescript-eslint/no-require-imports */
       const { getCoordinatorAgents } = require(
         '../../coordinator/workerAgent.js',
@@ -54,9 +54,9 @@ export function getBuiltInAgents(): AgentDefinition[] {
 
   // Include Code Guide agent for non-SDK entrypoints
   const isNonSdkEntrypoint =
-    process.env.CLAUDE_CODE_ENTRYPOINT !== 'sdk-ts' &&
-    process.env.CLAUDE_CODE_ENTRYPOINT !== 'sdk-py' &&
-    process.env.CLAUDE_CODE_ENTRYPOINT !== 'sdk-cli'
+    process.env.DEIMOS_ENTRYPOINT !== 'sdk-ts' &&
+    process.env.DEIMOS_ENTRYPOINT !== 'sdk-py' &&
+    process.env.DEIMOS_ENTRYPOINT !== 'sdk-cli'
 
   if (isNonSdkEntrypoint) {
     agents.push(DEIMOS_GUIDE_AGENT)

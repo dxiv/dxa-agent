@@ -57,7 +57,7 @@ export function buildGithubOnboardingSettingsEnv(
   model: string,
 ): Record<string, string | undefined> {
   return {
-    CLAUDE_CODE_USE_GITHUB: '1',
+    DEIMOS_USE_GITHUB: '1',
     OPENAI_MODEL: model,
     OPENAI_API_KEY: undefined,
     OPENAI_ORG: undefined,
@@ -65,11 +65,11 @@ export function buildGithubOnboardingSettingsEnv(
     OPENAI_ORGANIZATION: undefined,
     OPENAI_BASE_URL: undefined,
     OPENAI_API_BASE: undefined,
-    CLAUDE_CODE_USE_OPENAI: undefined,
-    CLAUDE_CODE_USE_GEMINI: undefined,
-    CLAUDE_CODE_USE_BEDROCK: undefined,
-    CLAUDE_CODE_USE_VERTEX: undefined,
-    CLAUDE_CODE_USE_FOUNDRY: undefined,
+    DEIMOS_USE_OPENAI: undefined,
+    DEIMOS_USE_GEMINI: undefined,
+    DEIMOS_USE_BEDROCK: undefined,
+    DEIMOS_USE_VERTEX: undefined,
+    DEIMOS_USE_FOUNDRY: undefined,
   }
 }
 
@@ -77,7 +77,7 @@ export function applyGithubOnboardingProcessEnv(
   model: string,
   env: NodeJS.ProcessEnv = process.env,
 ): void {
-  env.CLAUDE_CODE_USE_GITHUB = '1'
+  env.DEIMOS_USE_GITHUB = '1'
   env.OPENAI_MODEL = model
 
   delete env.OPENAI_API_KEY
@@ -87,13 +87,13 @@ export function applyGithubOnboardingProcessEnv(
   delete env.OPENAI_BASE_URL
   delete env.OPENAI_API_BASE
 
-  delete env.CLAUDE_CODE_USE_OPENAI
-  delete env.CLAUDE_CODE_USE_GEMINI
-  delete env.CLAUDE_CODE_USE_BEDROCK
-  delete env.CLAUDE_CODE_USE_VERTEX
-  delete env.CLAUDE_CODE_USE_FOUNDRY
-  delete env.CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED
-  delete env.CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED_ID
+  delete env.DEIMOS_USE_OPENAI
+  delete env.DEIMOS_USE_GEMINI
+  delete env.DEIMOS_USE_BEDROCK
+  delete env.DEIMOS_USE_VERTEX
+  delete env.DEIMOS_USE_FOUNDRY
+  delete env.DEIMOS_PROVIDER_PROFILE_ENV_APPLIED
+  delete env.DEIMOS_PROVIDER_PROFILE_ENV_APPLIED_ID
 }
 
 function mergeUserSettingsEnv(model: string): { ok: boolean; detail?: string } {
@@ -160,7 +160,7 @@ function OnboardGithub(props: {
       if (!activated.ok) {
         setErrorMsg(
           `Token saved, but settings were not updated: ${activated.detail ?? 'unknown error'}. ` +
-            `Add env CLAUDE_CODE_USE_GITHUB=1 and OPENAI_MODEL to ~/.claude/settings.json manually.`,
+            `Add env DEIMOS_USE_GITHUB=1 and OPENAI_MODEL to ~/.claude/settings.json manually.`,
         )
         setStep('error')
         return
@@ -294,7 +294,7 @@ function OnboardGithub(props: {
       <Text bold>GitHub Models setup</Text>
       <Text dimColor>
         Stores your token in the OS credential store (macOS Keychain when available)
-        and enables CLAUDE_CODE_USE_GITHUB in your user settings - no export
+        and enables DEIMOS_USE_GITHUB in your user settings - no export
         GITHUB_TOKEN needed for future runs.
       </Text>
       <Select
@@ -324,7 +324,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     if (!activated.ok) {
       onDone(
         `GitHub token detected, but settings activation failed: ${activated.detail ?? 'unknown error'}. ` +
-          'Set CLAUDE_CODE_USE_GITHUB=1 and OPENAI_MODEL=github:copilot in user settings manually.',
+          'Set DEIMOS_USE_GITHUB=1 and OPENAI_MODEL=github:copilot in user settings manually.',
         { display: 'system' },
       )
       return null

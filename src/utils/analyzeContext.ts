@@ -354,7 +354,7 @@ async function countMemoryFileTokens(): Promise<{
   deimosMdTokens: number
 }> {
   // Simple mode disables CLAUDE.md loading, so don't report tokens for them
-  if (isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE)) {
+  if (isEnvTruthy(process.env.DEIMOS_SIMPLE)) {
     return { memoryFileDetails: [], deimosMdTokens: 0 }
   }
 

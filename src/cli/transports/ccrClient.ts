@@ -287,7 +287,7 @@ type WorkerStateResponse = {
 
 /**
  * Manages the worker lifecycle protocol with CCR v2:
- * - Epoch management: reads worker_epoch from CLAUDE_CODE_WORKER_EPOCH env var
+ * - Epoch management: reads worker_epoch from DEIMOS_WORKER_EPOCH env var
  * - Runtime state reporting: PUT /sessions/{id}/worker
  * - Heartbeat: POST /sessions/{id}/worker/heartbeat for liveness detection
  *
@@ -335,7 +335,7 @@ export class CCRClient {
 
   /**
    * Auth header source. Defaults to the process-wide session-ingress token
-   * (CLAUDE_CODE_SESSION_ACCESS_TOKEN env var). Callers managing multiple
+   * (DEIMOS_SESSION_ACCESS_TOKEN env var). Callers managing multiple
    * concurrent sessions with distinct JWTs MUST inject this — the env-var
    * path is a process global and would stomp across sessions.
    */
@@ -350,7 +350,7 @@ export class CCRClient {
       heartbeatJitterFraction?: number
       /**
        * Per-instance auth header source. Omit to read the process-wide
-       * CLAUDE_CODE_SESSION_ACCESS_TOKEN (single-session callers — REPL,
+       * DEIMOS_SESSION_ACCESS_TOKEN (single-session callers — REPL,
        * daemon). Required for concurrent multi-session callers.
        */
       getAuthHeaders?: () => Record<string, string>
@@ -482,7 +482,7 @@ export class CCRClient {
   /**
    * Initialize the session worker:
    * 1. Take worker_epoch from the argument, or fall back to
-   *    CLAUDE_CODE_WORKER_EPOCH (set by env-manager / bridge spawner)
+   *    DEIMOS_WORKER_EPOCH (set by env-manager / bridge spawner)
    * 2. Report state as 'idle'
    * 3. Start heartbeat timer
    *
@@ -496,7 +496,7 @@ export class CCRClient {
       throw new CCRInitError('no_auth_headers')
     }
     if (epoch === undefined) {
-      const rawEpoch = process.env.CLAUDE_CODE_WORKER_EPOCH
+      const rawEpoch = process.env.DEIMOS_WORKER_EPOCH
       epoch = rawEpoch ? parseInt(rawEpoch, 10) : NaN
     }
     if (isNaN(epoch)) {

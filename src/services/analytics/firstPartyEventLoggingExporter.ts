@@ -538,7 +538,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
     const baseHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
       'User-Agent': getDeimosUserAgent(),
-      'x-service-name': 'claude-code',
+      'x-service-name': 'deimos',
     }
 
     // Skip auth if trust hasn't been established yet

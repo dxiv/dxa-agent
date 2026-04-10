@@ -38,8 +38,8 @@ export type ProviderPresetDefaults = Omit<ProviderProfileInput, 'provider'> & {
 
 const DEFAULT_OLLAMA_BASE_URL = 'http://localhost:11434/v1'
 const DEFAULT_OLLAMA_MODEL = 'llama3.1:8b'
-const PROFILE_ENV_APPLIED_FLAG = 'CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED'
-const PROFILE_ENV_APPLIED_ID = 'CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED_ID'
+const PROFILE_ENV_APPLIED_FLAG = 'DEIMOS_PROVIDER_PROFILE_ENV_APPLIED'
+const PROFILE_ENV_APPLIED_ID = 'DEIMOS_PROVIDER_PROFILE_ENV_APPLIED_ID'
 
 function trimValue(value: string | undefined): string {
   return value?.trim() ?? ''
@@ -276,12 +276,13 @@ function hasProviderSelectionFlags(
   processEnv: NodeJS.ProcessEnv = process.env,
 ): boolean {
   return (
-    processEnv.CLAUDE_CODE_USE_OPENAI !== undefined ||
-    processEnv.CLAUDE_CODE_USE_GEMINI !== undefined ||
-    processEnv.CLAUDE_CODE_USE_GITHUB !== undefined ||
-    processEnv.CLAUDE_CODE_USE_BEDROCK !== undefined ||
-    processEnv.CLAUDE_CODE_USE_VERTEX !== undefined ||
-    processEnv.CLAUDE_CODE_USE_FOUNDRY !== undefined
+    processEnv.DEIMOS_USE_OPENAI !== undefined ||
+    processEnv.DEIMOS_USE_OPENAI !== undefined ||
+    processEnv.DEIMOS_USE_GEMINI !== undefined ||
+    processEnv.DEIMOS_USE_GITHUB !== undefined ||
+    processEnv.DEIMOS_USE_BEDROCK !== undefined ||
+    processEnv.DEIMOS_USE_VERTEX !== undefined ||
+    processEnv.DEIMOS_USE_FOUNDRY !== undefined
   )
 }
 
@@ -294,11 +295,11 @@ function hasConflictingProviderFlagsForProfile(
   }
 
   return (
-    processEnv.CLAUDE_CODE_USE_GEMINI !== undefined ||
-    processEnv.CLAUDE_CODE_USE_GITHUB !== undefined ||
-    processEnv.CLAUDE_CODE_USE_BEDROCK !== undefined ||
-    processEnv.CLAUDE_CODE_USE_VERTEX !== undefined ||
-    processEnv.CLAUDE_CODE_USE_FOUNDRY !== undefined
+    processEnv.DEIMOS_USE_GEMINI !== undefined ||
+    processEnv.DEIMOS_USE_GITHUB !== undefined ||
+    processEnv.DEIMOS_USE_BEDROCK !== undefined ||
+    processEnv.DEIMOS_USE_VERTEX !== undefined ||
+    processEnv.DEIMOS_USE_FOUNDRY !== undefined
   )
 }
 
@@ -337,12 +338,13 @@ function isProcessEnvAlignedWithProfile(
   }
 
   return (
-    processEnv.CLAUDE_CODE_USE_OPENAI !== undefined &&
-    processEnv.CLAUDE_CODE_USE_GEMINI === undefined &&
-    processEnv.CLAUDE_CODE_USE_GITHUB === undefined &&
-    processEnv.CLAUDE_CODE_USE_BEDROCK === undefined &&
-    processEnv.CLAUDE_CODE_USE_VERTEX === undefined &&
-    processEnv.CLAUDE_CODE_USE_FOUNDRY === undefined &&
+    (processEnv.DEIMOS_USE_OPENAI !== undefined ||
+      processEnv.DEIMOS_USE_OPENAI !== undefined) &&
+    processEnv.DEIMOS_USE_GEMINI === undefined &&
+    processEnv.DEIMOS_USE_GITHUB === undefined &&
+    processEnv.DEIMOS_USE_BEDROCK === undefined &&
+    processEnv.DEIMOS_USE_VERTEX === undefined &&
+    processEnv.DEIMOS_USE_FOUNDRY === undefined &&
     sameOptionalEnvValue(processEnv.OPENAI_BASE_URL, profile.baseUrl) &&
     sameOptionalEnvValue(processEnv.OPENAI_MODEL, profile.model) &&
     (!includeApiKey ||
@@ -365,12 +367,13 @@ export function getActiveProviderProfile(
 export function clearProviderProfileEnvFromProcessEnv(
   processEnv: NodeJS.ProcessEnv = process.env,
 ): void {
-  delete processEnv.CLAUDE_CODE_USE_OPENAI
-  delete processEnv.CLAUDE_CODE_USE_GEMINI
-  delete processEnv.CLAUDE_CODE_USE_GITHUB
-  delete processEnv.CLAUDE_CODE_USE_BEDROCK
-  delete processEnv.CLAUDE_CODE_USE_VERTEX
-  delete processEnv.CLAUDE_CODE_USE_FOUNDRY
+  delete processEnv.DEIMOS_USE_OPENAI
+  delete processEnv.DEIMOS_USE_OPENAI
+  delete processEnv.DEIMOS_USE_GEMINI
+  delete processEnv.DEIMOS_USE_GITHUB
+  delete processEnv.DEIMOS_USE_BEDROCK
+  delete processEnv.DEIMOS_USE_VERTEX
+  delete processEnv.DEIMOS_USE_FOUNDRY
 
   delete processEnv.OPENAI_BASE_URL
   delete processEnv.OPENAI_API_BASE
@@ -406,7 +409,9 @@ export function applyProviderProfileToProcessEnv(profile: ProviderProfile): void
     return
   }
 
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
+  process.env.DEIMOS_USE_OPENAI = '1'
+  // Back-compat for older builds/scripts.
+  process.env.DEIMOS_USE_OPENAI ??= '1'
   process.env.OPENAI_BASE_URL = profile.baseUrl
   process.env.OPENAI_MODEL = profile.model
 

@@ -129,6 +129,7 @@ import {
   runPostToolUseHooks,
   runPreToolUseHooks,
 } from './toolHooks.js'
+import { stat } from 'node:fs/promises'
 
 function isStopHookTimingAttachment(
   att: unknown,
@@ -290,7 +291,7 @@ export type McpServerType =
   | 'sdk'
   | 'sse-ide'
   | 'ws-ide'
-  | 'claudeai-proxy'
+  | 'deimos-proxy'
   | undefined
 
 function findMcpServerConnection(
@@ -307,7 +308,7 @@ function findMcpServerConnection(
   }
 
   // mcpInfo.serverName is normalized (e.g., "claude_ai_Slack"), but client.name
-  // is the original name (e.g., "claude.ai Slack"). Normalize both for comparison.
+  // is the original name (e.g., "dxa.dev/deimos Slack"). Normalize both for comparison.
   return mcpClients.find(
     client => normalizeNameForMCP(client.name) === mcpInfo.serverName,
   )
@@ -625,7 +626,7 @@ async function checkPermissionsAndCallTool(
   ) => void,
 ): Promise<MessageUpdateLazy[]> {
   // Validate input types with zod (surprisingly, the model is not great at generating valid input)
-  const parsedInput = tool.inputSchema.safeParse(input)
+  let parsedInput = tool.inputSchema.safeParse(input)
   if (!parsedInput.success) {
     let errorContent = formatZodValidationError(tool.name, parsedInput.error)
 
@@ -690,6 +691,48 @@ async function checkPermissionsAndCallTool(
         }),
       },
     ]
+  }
+
+  // -------------------------------------------------------------------------
+  // Local-model resiliency: models often call Read() on directories when asked
+  // to "list directory". Instead of failing, rewrite to a safe directory list.
+  // -------------------------------------------------------------------------
+  if (
+    tool.name === FILE_READ_TOOL_NAME &&
+    parsedInput.success &&
+    typeof (parsedInput.data as Record<string, unknown>).file_path === 'string'
+  ) {
+    const filePath = (parsedInput.data as { file_path: string }).file_path
+    try {
+      const s = await stat(filePath)
+      if (s.isDirectory()) {
+        const isWin = process.platform === 'win32'
+        const altToolName = isWin ? POWERSHELL_TOOL_NAME : BASH_TOOL_NAME
+        const altTool = findToolByName(toolUseContext.options.tools, altToolName)
+        if (altTool) {
+          const bashQuoted =
+            `'${filePath.replace(/'/g, `'\\''`)}'`
+          const psQuoted =
+            `'${filePath.replace(/'/g, `''`)}'`
+          const altInput =
+            isWin
+              ? ({ command: `Get-ChildItem -Force -LiteralPath ${psQuoted}` } satisfies Record<string, unknown>)
+              : ({ command: `ls -la ${bashQuoted}` } satisfies Record<string, unknown>)
+
+          const altParsed = altTool.inputSchema.safeParse(altInput)
+          if (altParsed.success) {
+            logEvent('tengu_tool_call_rewrite_read_directory', {
+              fromTool: sanitizeToolNameForAnalytics(tool.name),
+              toTool: sanitizeToolNameForAnalytics(altTool.name),
+            })
+            tool = altTool
+            parsedInput = altParsed
+          }
+        }
+      }
+    } catch {
+      // Ignore: stat failures will be handled by the Read tool itself.
+    }
   }
 
   // Validate input values. Each tool has its own validation logic

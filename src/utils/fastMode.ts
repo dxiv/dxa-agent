@@ -39,7 +39,7 @@ export function isFastModeEnabled(): boolean {
   if (getAPIProvider() !== 'firstParty') {
     return false
   }
-  return !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_FAST_MODE)
+  return !isEnvTruthy(process.env.DEIMOS_DISABLE_FAST_MODE)
 }
 
 export function isFastModeAvailable(): boolean {
@@ -97,7 +97,7 @@ export function getFastModeUnavailableReason(): string | null {
     !isInBundledMode() &&
     getFeatureValue_CACHED_MAY_BE_STALE('tengu_marble_sandcastle', false)
   ) {
-    return 'Fast mode requires the native binary · Install from: https://claude.com/product/claude-code'
+    return 'Fast mode requires the native binary · Install from: https://claude.com/product/deimos'
   }
 
   // Not available in the SDK unless explicitly opted in via --settings.
@@ -122,10 +122,10 @@ export function getFastModeUnavailableReason(): string | null {
       orgStatus.reason === 'unknown'
     ) {
       // The org check can fail behind corporate proxies that block the
-      // endpoint. We add CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS=1 to
+      // endpoint. We add DEIMOS_SKIP_FAST_MODE_NETWORK_ERRORS=1 to
       // bypass this check in the CC binary. This is OK since we have
       // another check in the API to error out when disabled by org.
-      if (isEnvTruthy(process.env.CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS)) {
+      if (isEnvTruthy(process.env.DEIMOS_SKIP_FAST_MODE_NETWORK_ERRORS)) {
         return null
       }
     }
@@ -367,7 +367,7 @@ type FastModeResponse = {
 async function fetchFastModeStatus(
   auth: { accessToken: string } | { apiKey: string },
 ): Promise<FastModeResponse> {
-  const endpoint = `${getOauthConfig().BASE_API_URL}/api/claude_code_penguin_mode`
+  const endpoint = `${getOauthConfig().BASE_API_URL}/api/deimos_penguin_mode`
   const headers: Record<string, string> =
     'accessToken' in auth
       ? {

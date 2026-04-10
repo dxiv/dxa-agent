@@ -71,7 +71,7 @@ export function Passes({
         setReferrerReward(eligibilityData.referrer_reward);
 
         // Use the campaign returned from eligibility for redemptions
-        const campaign = eligibilityData.referral_code_details?.campaign ?? 'claude_code_guest_pass';
+        const campaign = eligibilityData.referral_code_details?.campaign ?? 'deimos_guest_pass';
 
         // Fetch redemptions data
         let redemptionsData: ReferralRedemptionsResponse;
@@ -167,7 +167,7 @@ export function Passes({
         <Box flexDirection="column" marginLeft={2}>
           <Text dimColor>
             {referrerReward ? `Share a free week of Deimos with friends. If they love it and subscribe, you'll get ${formatCreditAmount(referrerReward)} of extra usage to keep building. ` : 'Share a free week of Deimos with friends. '}
-            <Link url={referrerReward ? 'https://support.claude.com/en/articles/13456702-claude-code-guest-passes' : 'https://support.claude.com/en/articles/12875061-claude-code-guest-passes'}>
+            <Link url={referrerReward ? 'https://support.claude.com/en/articles/13456702-deimos-guest-passes' : 'https://support.claude.com/en/articles/12875061-deimos-guest-passes'}>
               Terms apply.
             </Link>
           </Text>

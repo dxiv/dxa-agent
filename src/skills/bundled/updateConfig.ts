@@ -91,7 +91,7 @@ Set \`commit\` or \`pr\` to empty string \`""\` to hide that attribution.
   }
 }
 \`\`\`
-Plugin syntax: \`plugin-name@source\` where source is \`claude-code-marketplace\`, \`claude-plugins-official\`, or \`builtin\`.
+Plugin syntax: \`plugin-name@source\` where source is \`deimos-marketplace\`, \`claude-plugins-official\`, or \`builtin\`.
 
 ### Other Settings
 - \`language\`: Preferred response language (e.g., "japanese")
@@ -141,7 +141,7 @@ Hooks run commands at specific points in Deimos's lifecycle.
 | PostToolUse | Tool name | Run after successful tool |
 | PostToolUseFailure | Tool name | Run after tool fails |
 | Notification | Notification type | Run on notifications |
-| Stop | - | Run when Claude stops (including clear, resume, compact) |
+| Stop | - | Run when Deimos stops (including clear, resume, compact) |
 | PreCompact | "manual"/"auto" | Before compaction |
 | PostCompact | "manual"/"auto" | After compaction (receives summary) |
 | UserPromptSubmit | - | When user submits |
@@ -385,7 +385,7 @@ ${HOOK_VERIFICATION_FLOW}
 
 ### Adding a Hook
 
-User: "Format my code after Claude writes it"
+User: "Format my code after Deimos writes it"
 
 1. **Clarify**: Which formatter? (prettier, gofmt, etc.)
 2. **Read**: \`.claude/settings.json\` (or create if missing)
@@ -446,7 +446,7 @@ export function registerUpdateConfigSkill(): void {
   registerBundledSkill({
     name: 'update-config',
     description:
-      'Use this skill to configure the Deimos harness via settings.json. Automated behaviors ("from now on when X", "each time X", "whenever X", "before/after X") require hooks configured in settings.json - the harness executes these, not Claude, so memory/preferences cannot fulfill them. Also use for: permissions ("allow X", "add permission", "move permission to"), env vars ("set X=Y"), hook troubleshooting, or any changes to settings.json/settings.local.json files. Examples: "allow npm commands", "add bq permission to global settings", "move permission to user settings", "set DEBUG=true", "when claude stops show X". For simple settings like theme/model, use Config tool.',
+      'Use this skill to configure the Deimos harness via settings.json. Automated behaviors ("from now on when X", "each time X", "whenever X", "before/after X") require hooks configured in settings.json - the harness executes these, not Deimos, so memory/preferences cannot fulfill them. Also use for: permissions ("allow X", "add permission", "move permission to"), env vars ("set X=Y"), hook troubleshooting, or any changes to settings.json/settings.local.json files. Examples: "allow npm commands", "add bq permission to global settings", "move permission to user settings", "set DEBUG=true", "when claude stops show X". For simple settings like theme/model, use Config tool.',
     allowedTools: ['Read'],
     userInvocable: true,
     async getPromptForCommand(args) {

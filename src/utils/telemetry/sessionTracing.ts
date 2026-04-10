@@ -126,7 +126,7 @@ function ensureCleanupInterval(): void {
 export function isEnhancedTelemetryEnabled(): boolean {
   if (feature('ENHANCED_TELEMETRY_BETA')) {
     const env =
-      process.env.CLAUDE_CODE_ENHANCED_TELEMETRY_BETA ??
+      process.env.DEIMOS_ENHANCED_TELEMETRY_BETA ??
       process.env.ENABLE_ENHANCED_TELEMETRY_BETA
     if (isEnvTruthy(env)) {
       return true
@@ -169,7 +169,7 @@ function createSpanAttributes(
 }
 
 /**
- * Start an interaction span. This wraps a user request -> Claude response cycle.
+ * Start an interaction span. This wraps a user request -> Deimos response cycle.
  * This is now a root span that includes all session-level attributes.
  * Sets the interaction context for all subsequent operations.
  */

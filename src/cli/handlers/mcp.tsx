@@ -271,7 +271,7 @@ export async function mcpListHandler(): Promise<void> {
       } else if (server.type === 'http') {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
         console.log(`${name}: ${server.url} (HTTP) - ${status}`);
-      } else if (server.type === 'claudeai-proxy') {
+      } else if (server.type === 'deimos-proxy') {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
         console.log(`${name}: ${server.url} - ${status}`);
       } else if (!server.type || server.type === 'stdio') {
@@ -423,7 +423,7 @@ export async function mcpAddFromDesktopHandler(options: {
     } = await import('../../utils/anthropicDesktopConfig.js');
     const servers = await readClaudeDesktopMcpServers();
     if (Object.keys(servers).length === 0) {
-      cliOk('No MCP servers found in Claude Desktop configuration or configuration file does not exist.');
+      cliOk('No MCP servers found in Deimos Desktop configuration or configuration file does not exist.');
     }
     const {
       unmount

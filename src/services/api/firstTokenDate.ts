@@ -24,7 +24,7 @@ export async function fetchAndStoreDeimosFirstTokenDate(): Promise<void> {
     }
 
     const oauthConfig = getOauthConfig()
-    const url = `${oauthConfig.BASE_API_URL}/api/organization/claude_code_first_token_date`
+    const url = `${oauthConfig.BASE_API_URL}/api/organization/deimos_first_token_date`
 
     const response = await axios.get(url, {
       headers: {

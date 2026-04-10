@@ -35,7 +35,7 @@ let vscodeMcpClient: ConnectedMCPServer | null = null
 
 /**
  * Sends a file_updated notification to the VSCode MCP server. This is used to
- * notify VSCode when files are edited or written by Claude.
+ * notify VSCode when files are edited or written by Deimos.
  */
 export function notifyVscodeFileUpdated(
   filePath: string,

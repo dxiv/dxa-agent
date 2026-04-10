@@ -44,8 +44,8 @@ export function useMcpConnectivityStatus(t0) {
         }
         if (failedDeimosCloudClients.length > 0) {
           addNotification({
-            key: "mcp-claudeai-failed",
-            jsx: <><Text color="error">{failedDeimosCloudClients.length} claude.ai{" "}{failedDeimosCloudClients.length === 1 ? "connector" : "connectors"}{" "}unavailable</Text><Text dimColor={true}> · /mcp</Text></>,
+            key: "mcp-deimos-failed",
+            jsx: <><Text color="error">{failedDeimosCloudClients.length} dxa.dev/deimos{" "}{failedDeimosCloudClients.length === 1 ? "connector" : "connectors"}{" "}unavailable</Text><Text dimColor={true}> · /mcp</Text></>,
             priority: "medium"
           });
         }
@@ -58,8 +58,8 @@ export function useMcpConnectivityStatus(t0) {
         }
         if (needsAuthDeimosCloudServers.length > 0) {
           addNotification({
-            key: "mcp-claudeai-needs-auth",
-            jsx: <><Text color="warning">{needsAuthDeimosCloudServers.length} claude.ai{" "}{needsAuthDeimosCloudServers.length === 1 ? "connector needs" : "connectors need"}{" "}auth</Text><Text dimColor={true}> · /mcp</Text></>,
+            key: "mcp-deimos-needs-auth",
+            jsx: <><Text color="warning">{needsAuthDeimosCloudServers.length} dxa.dev/deimos{" "}{needsAuthDeimosCloudServers.length === 1 ? "connector needs" : "connectors need"}{" "}auth</Text><Text dimColor={true}> · /mcp</Text></>,
             priority: "medium"
           });
         }
@@ -79,14 +79,14 @@ export function useMcpConnectivityStatus(t0) {
   useEffect(t2, t3);
 }
 function _temp4(client_2) {
-  return client_2.type === "needs-auth" && client_2.config.type === "claudeai-proxy" && hasDeimosCloudMcpEverConnected(client_2.name);
+  return client_2.type === "needs-auth" && client_2.config.type === "deimos-proxy" && hasDeimosCloudMcpEverConnected(client_2.name);
 }
 function _temp3(client_1) {
-  return client_1.type === "needs-auth" && client_1.config.type !== "claudeai-proxy";
+  return client_1.type === "needs-auth" && client_1.config.type !== "deimos-proxy";
 }
 function _temp2(client_0) {
-  return client_0.type === "failed" && client_0.config.type === "claudeai-proxy" && hasDeimosCloudMcpEverConnected(client_0.name);
+  return client_0.type === "failed" && client_0.config.type === "deimos-proxy" && hasDeimosCloudMcpEverConnected(client_0.name);
 }
 function _temp(client) {
-  return client.type === "failed" && client.config.type !== "sse-ide" && client.config.type !== "ws-ide" && client.config.type !== "claudeai-proxy";
+  return client.type === "failed" && client.config.type !== "sse-ide" && client.config.type !== "ws-ide" && client.config.type !== "deimos-proxy";
 }

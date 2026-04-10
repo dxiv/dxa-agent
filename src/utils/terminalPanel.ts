@@ -2,7 +2,7 @@
  * Built-in terminal panel toggled with Meta+J.
  *
  * Uses tmux for shell persistence: a separate tmux server with a per-instance
- * socket (e.g., "claude-panel-a1b2c3d4") holds the shell session. Each Claude
+ * socket (e.g., "claude-panel-a1b2c3d4") holds the shell session. Each Deimos
  * Code instance gets its own isolated terminal panel that persists within the
  * session but is destroyed when the instance exits.
  *
@@ -118,7 +118,7 @@ class TerminalPanel {
       'bind-key', '-n', 'M-j', 'detach-client', ';',
       'set-option', '-g', 'status-style', 'bg=default', ';',
       'set-option', '-g', 'status-left', '', ';',
-      'set-option', '-g', 'status-right', ' Alt+J to return to Claude ', ';',
+      'set-option', '-g', 'status-right', ' Alt+J to return to Deimos ', ';',
       'set-option', '-g', 'status-right-style', 'fg=brightblack',
     ])
 

@@ -14,14 +14,16 @@ export type StartupProviderInfo = {
  */
 export function detectStartupProvider(): StartupProviderInfo {
   const useGemini =
-    process.env.CLAUDE_CODE_USE_GEMINI === '1' ||
-    process.env.CLAUDE_CODE_USE_GEMINI === 'true'
+    process.env.DEIMOS_USE_GEMINI === '1' ||
+    process.env.DEIMOS_USE_GEMINI === 'true'
   const useGithub =
-    process.env.CLAUDE_CODE_USE_GITHUB === '1' ||
-    process.env.CLAUDE_CODE_USE_GITHUB === 'true'
+    process.env.DEIMOS_USE_GITHUB === '1' ||
+    process.env.DEIMOS_USE_GITHUB === 'true'
   const useOpenAI =
-    process.env.CLAUDE_CODE_USE_OPENAI === '1' ||
-    process.env.CLAUDE_CODE_USE_OPENAI === 'true'
+    process.env.DEIMOS_USE_OPENAI === '1' ||
+    process.env.DEIMOS_USE_OPENAI === 'true' ||
+    process.env.DEIMOS_USE_OPENAI === '1' ||
+    process.env.DEIMOS_USE_OPENAI === 'true'
 
   if (useGemini) {
     const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash'

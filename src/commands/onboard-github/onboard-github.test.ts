@@ -54,7 +54,7 @@ describe('hasExistingGithubModelsLoginToken', () => {
 describe('onboarding auth precedence cleanup', () => {
   test('clears preexisting OpenAI auth when switching to GitHub', () => {
     const env: NodeJS.ProcessEnv = {
-      CLAUDE_CODE_USE_OPENAI: '1',
+      DEIMOS_USE_OPENAI: '1',
       OPENAI_MODEL: 'gpt-4o',
       OPENAI_API_KEY: 'sk-stale-openai-key',
       OPENAI_ORG: 'org-old',
@@ -62,13 +62,13 @@ describe('onboarding auth precedence cleanup', () => {
       OPENAI_ORGANIZATION: 'org-legacy',
       OPENAI_BASE_URL: 'https://api.openai.com/v1',
       OPENAI_API_BASE: 'https://api.openai.com/v1',
-      CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED: '1',
-      CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED_ID: 'profile_old',
+      DEIMOS_PROVIDER_PROFILE_ENV_APPLIED: '1',
+      DEIMOS_PROVIDER_PROFILE_ENV_APPLIED_ID: 'profile_old',
     }
 
     applyGithubOnboardingProcessEnv('github:copilot', env)
 
-    expect(env.CLAUDE_CODE_USE_GITHUB).toBe('1')
+    expect(env.DEIMOS_USE_GITHUB).toBe('1')
     expect(env.OPENAI_MODEL).toBe('github:copilot')
 
     expect(env.OPENAI_API_KEY).toBeUndefined()
@@ -78,12 +78,12 @@ describe('onboarding auth precedence cleanup', () => {
     expect(env.OPENAI_BASE_URL).toBeUndefined()
     expect(env.OPENAI_API_BASE).toBeUndefined()
 
-    expect(env.CLAUDE_CODE_USE_OPENAI).toBeUndefined()
-    expect(env.CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED).toBeUndefined()
-    expect(env.CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED_ID).toBeUndefined()
+    expect(env.DEIMOS_USE_OPENAI).toBeUndefined()
+    expect(env.DEIMOS_PROVIDER_PROFILE_ENV_APPLIED).toBeUndefined()
+    expect(env.DEIMOS_PROVIDER_PROFILE_ENV_APPLIED_ID).toBeUndefined()
 
     const settingsEnv = buildGithubOnboardingSettingsEnv('github:copilot')
-    expect(settingsEnv.CLAUDE_CODE_USE_GITHUB).toBe('1')
+    expect(settingsEnv.DEIMOS_USE_GITHUB).toBe('1')
     expect(settingsEnv.OPENAI_MODEL).toBe('github:copilot')
     expect(settingsEnv.OPENAI_API_KEY).toBeUndefined()
     expect(settingsEnv.OPENAI_ORG).toBeUndefined()

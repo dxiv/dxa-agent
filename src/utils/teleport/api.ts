@@ -185,7 +185,7 @@ export async function prepareApiRequest(): Promise<{
   const accessToken = getDeimosCloudOAuthTokens()?.accessToken
   if (accessToken === undefined) {
     throw new Error(
-      'Deimos web sessions require authentication with a Claude.ai account. API key authentication is not sufficient. Please run /login to authenticate, or check your authentication status with /status.',
+      'Deimos web sessions require authentication with a dxa.dev/deimos account. API key authentication is not sufficient. Please run /login to authenticate, or check your authentication status with /status.',
     )
   }
 

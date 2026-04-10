@@ -232,7 +232,7 @@ test('buildProfileSaveMessage describes Gemini access token / ADC mode clearly',
 test('buildCurrentProviderSummary redacts poisoned model and endpoint values', () => {
   const summary = buildCurrentProviderSummary({
     processEnv: {
-      CLAUDE_CODE_USE_OPENAI: '1',
+      DEIMOS_USE_OPENAI: '1',
       OPENAI_API_KEY: 'sk-secret-12345678',
       OPENAI_MODEL: 'sk-secret-12345678',
       OPENAI_BASE_URL: 'sk-secret-12345678',
@@ -248,7 +248,7 @@ test('buildCurrentProviderSummary redacts poisoned model and endpoint values', (
 test('buildCurrentProviderSummary labels generic local openai-compatible providers', () => {
   const summary = buildCurrentProviderSummary({
     processEnv: {
-      CLAUDE_CODE_USE_OPENAI: '1',
+      DEIMOS_USE_OPENAI: '1',
       OPENAI_MODEL: 'qwen2.5-coder-7b-instruct',
       OPENAI_BASE_URL: 'http://127.0.0.1:8080/v1',
     },
@@ -263,7 +263,7 @@ test('buildCurrentProviderSummary labels generic local openai-compatible provide
 test('buildCurrentProviderSummary does not relabel local gpt-5.4 providers as Codex', () => {
   const summary = buildCurrentProviderSummary({
     processEnv: {
-      CLAUDE_CODE_USE_OPENAI: '1',
+      DEIMOS_USE_OPENAI: '1',
       OPENAI_MODEL: 'gpt-5.4',
       OPENAI_BASE_URL: 'http://127.0.0.1:8080/v1',
     },
@@ -278,7 +278,7 @@ test('buildCurrentProviderSummary does not relabel local gpt-5.4 providers as Co
 test('buildCurrentProviderSummary recognizes GitHub Models mode', () => {
   const summary = buildCurrentProviderSummary({
     processEnv: {
-      CLAUDE_CODE_USE_GITHUB: '1',
+      DEIMOS_USE_GITHUB: '1',
       OPENAI_MODEL: 'github:copilot',
       OPENAI_BASE_URL: 'https://models.github.ai/inference',
     },

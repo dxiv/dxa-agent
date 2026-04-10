@@ -115,7 +115,7 @@ function shouldUseDuckDuckGo(): boolean {
     return false
   }
 
-  // Use free DDG search for non-Claude models by default.
+  // Use free DDG search for non-Deimos models by default.
   return !isClaudeModel(getMainLoopModel())
 }
 
@@ -532,7 +532,7 @@ export const WebSearchTool = buildTool({
   maxResultSizeChars: 100_000,
   shouldDefer: true,
   async description(input) {
-    return `Claude wants to search the web for: ${input.query}`
+    return `Deimos wants to search the web for: ${input.query}`
   },
   userFacingName() {
     return 'Web Search'
@@ -563,7 +563,7 @@ export const WebSearchTool = buildTool({
       return true
     }
 
-    // Enable for Vertex AI with supported models (Claude 4.0+)
+    // Enable for Vertex AI with supported models (Deimos 4.0+)
     if (provider === 'vertex') {
       const supportsWebSearch =
         model.includes('claude-opus-4') ||

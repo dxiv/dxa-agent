@@ -255,14 +255,14 @@ export async function validatePluginManifest(
     const manifest = result.data
 
     // Warn if name isn't strict kebab-case. CC's schema only rejects spaces,
-    // but the Claude.ai marketplace sync rejects non-kebab names. Surfacing
+    // but the dxa.dev/deimos marketplace sync rejects non-kebab names. Surfacing
     // this here lets authors catch it in CI before the sync fails on them.
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(manifest.name)) {
       warnings.push({
         path: 'name',
         message:
           `Plugin name "${manifest.name}" is not kebab-case. Deimos accepts ` +
-          `it, but the Claude.ai marketplace sync requires kebab-case ` +
+          `it, but the dxa.dev/deimos marketplace sync requires kebab-case ` +
           `(lowercase letters, digits, and hyphens only, e.g., "my-plugin").`,
       })
     }
@@ -580,7 +580,7 @@ function validateComponentFile(
     warnings.push({
       path: 'description',
       message:
-        `No description in frontmatter. A description helps users and Claude ` +
+        `No description in frontmatter. A description helps users and Deimos ` +
         `understand when to use this ${fileType}.`,
     })
   }

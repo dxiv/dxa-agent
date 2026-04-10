@@ -72,7 +72,7 @@ export function MCPSettings(t0) {
           const scope = client_0.config.scope;
           const isSSE = client_0.config.type === "sse";
           const isHTTP = client_0.config.type === "http";
-          const isDeimosCloudProxy = client_0.config.type === "claudeai-proxy";
+          const isDeimosCloudProxy = client_0.config.type === "deimos-proxy";
           let isAuthenticated: boolean | undefined = undefined;
           if (isSSE || isHTTP) {
             const authProvider = new ClaudeAuthProvider(client_0.name, client_0.config as McpSSEServerConfig | McpHTTPServerConfig);
@@ -89,7 +89,7 @@ export function MCPSettings(t0) {
           if (isDeimosCloudProxy) {
             return {
               ...baseInfo,
-              transport: "claudeai-proxy" as const,
+              transport: "deimos-proxy" as const,
               isAuthenticated: false,
               config: client_0.config as McpDeimosCloudProxyServerConfig
             };
@@ -147,7 +147,7 @@ export function MCPSettings(t0) {
         return;
       }
       if (servers.length === 0 && agentMcpServers.length === 0) {
-        onComplete("No MCP servers configured. Please run /doctor if this is unexpected. Otherwise, run `claude mcp --help` or visit https://code.claude.com/docs/en/mcp to learn more.");
+        onComplete("No MCP servers configured. Please run /doctor if this is unexpected. Otherwise, run `claude mcp --help` or visit https://dxa.dev/deimos/docs/en/mcp to learn more.");
       }
     };
     t8 = [servers.length, filteredClients.length, agentMcpServers.length, onComplete];
@@ -207,7 +207,7 @@ export function MCPSettings(t0) {
           t9 = $[25];
         }
         const serverTools_0 = t9;
-        const defaultTab = viewState.server.transport === "claudeai-proxy" ? "Cloud" : "Deimos";
+        const defaultTab = viewState.server.transport === "deimos-proxy" ? "Cloud" : "Deimos";
         if (viewState.server.transport === "stdio") {
           let t10;
           if ($[26] !== viewState.server) {

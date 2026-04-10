@@ -9,14 +9,14 @@ import { getWorkload } from '../utils/workloadContext.js'
 
 const DEFAULT_PREFIX =
   `You are Deimos, a terminal coding agent (https://dxa.dev/deimos/).`
-const AGENT_SDK_CLAUDE_CODE_PRESET_PREFIX =
-  `You are Deimos, running within the Claude Agent SDK (https://dxa.dev/deimos/).`
+const AGENT_SDK_DEIMOS_PRESET_PREFIX =
+  `You are Deimos, running within the Deimos Agent SDK (https://dxa.dev/deimos/).`
 const AGENT_SDK_PREFIX =
-  `You are a Claude agent running in Deimos, built on the Claude Agent SDK.`
+  `You are a Deimos agent running in Deimos, built on the Deimos Agent SDK.`
 
 const CLI_SYSPROMPT_PREFIX_VALUES = [
   DEFAULT_PREFIX,
-  AGENT_SDK_CLAUDE_CODE_PRESET_PREFIX,
+  AGENT_SDK_DEIMOS_PRESET_PREFIX,
   AGENT_SDK_PREFIX,
 ] as const
 
@@ -41,7 +41,7 @@ export function getCLISyspromptPrefix(options?: {
 
   if (options?.isNonInteractive) {
     if (options.hasAppendSystemPrompt) {
-      return AGENT_SDK_CLAUDE_CODE_PRESET_PREFIX
+      return AGENT_SDK_DEIMOS_PRESET_PREFIX
     }
     return AGENT_SDK_PREFIX
   }
@@ -53,7 +53,7 @@ export function getCLISyspromptPrefix(options?: {
  * Enabled by default, can be disabled via env var or GrowthBook killswitch.
  */
 function isAttributionHeaderEnabled(): boolean {
-  if (isEnvDefinedFalsy(process.env.CLAUDE_CODE_ATTRIBUTION_HEADER)) {
+  if (isEnvDefinedFalsy(process.env.DEIMOS_ATTRIBUTION_HEADER)) {
     return false
   }
   return getFeatureValue_CACHED_MAY_BE_STALE('tengu_attribution_header', true)
@@ -67,7 +67,7 @@ function isAttributionHeaderEnabled(): boolean {
  * When NATIVE_CLIENT_ATTESTATION is enabled, includes a `cch=00000` placeholder.
  * Before the request is sent, Bun's native HTTP stack finds this placeholder
  * in the request body and overwrites the zeros with a computed hash. The
- * server verifies this token to confirm the request came from a real Claude
+ * server verifies this token to confirm the request came from a real Deimos
  * Code client. See bun-anthropic/src/http/Attestation.zig for implementation.
  *
  * We use a placeholder (instead of injecting from Zig) because same-length
@@ -79,7 +79,7 @@ export function getAttributionHeader(fingerprint: string): string {
   }
 
   const version = `${MACRO.VERSION}.${fingerprint}`
-  const entrypoint = process.env.CLAUDE_CODE_ENTRYPOINT ?? 'unknown'
+  const entrypoint = process.env.DEIMOS_ENTRYPOINT ?? 'unknown'
 
   // cch=00000 placeholder is overwritten by Bun's HTTP stack with attestation token
   const cch = feature('NATIVE_CLIENT_ATTESTATION') ? ' cch=00000;' : ''

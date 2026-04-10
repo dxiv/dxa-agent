@@ -12,9 +12,9 @@ import {
 // Deimos: disable experimental API betas by default.
 // Tool search (defer_loading), global cache scope, and context management
 // require internal API support not available to external accounts → 500.
-// Users can opt-in with CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=false.
+// Users can opt-in with DEIMOS_DISABLE_EXPERIMENTAL_BETAS=false.
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
-process.env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS ??= 'true'
+process.env.DEIMOS_DISABLE_EXPERIMENTAL_BETAS ??= 'true'
 
 // Bugfix for corepack auto-pinning, which adds yarnpkg to peoples' package.jsons
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
@@ -22,7 +22,7 @@ process.env.COREPACK_ENABLE_AUTO_PIN = '0';
 
 // Set max heap size for child processes in CCR environments (containers have 16GB)
 // eslint-disable-next-line custom-rules/no-top-level-side-effects, custom-rules/no-process-env-top-level, custom-rules/safe-env-boolean-check
-if (process.env.CLAUDE_CODE_REMOTE === 'true') {
+if (process.env.DEIMOS_REMOTE === 'true') {
   // eslint-disable-next-line custom-rules/no-top-level-side-effects, custom-rules/no-process-env-top-level
   const existing = process.env.NODE_OPTIONS || '';
   // eslint-disable-next-line custom-rules/no-top-level-side-effects, custom-rules/no-process-env-top-level
@@ -34,8 +34,8 @@ if (process.env.CLAUDE_CODE_REMOTE === 'true') {
 // module-level consts at import time — init() runs too late. feature() gate
 // DCEs this entire block from external builds.
 // eslint-disable-next-line custom-rules/no-top-level-side-effects, custom-rules/no-process-env-top-level
-if (feature('ABLATION_BASELINE') && process.env.CLAUDE_CODE_ABLATION_BASELINE) {
-  for (const k of ['CLAUDE_CODE_SIMPLE', 'CLAUDE_CODE_DISABLE_THINKING', 'DISABLE_INTERLEAVED_THINKING', 'DISABLE_COMPACT', 'DISABLE_AUTO_COMPACT', 'CLAUDE_CODE_DISABLE_AUTO_MEMORY', 'CLAUDE_CODE_DISABLE_BACKGROUND_TASKS']) {
+if (feature('ABLATION_BASELINE') && process.env.DEIMOS_ABLATION_BASELINE) {
+  for (const k of ['DEIMOS_SIMPLE', 'DEIMOS_DISABLE_THINKING', 'DISABLE_INTERLEAVED_THINKING', 'DISABLE_COMPACT', 'DISABLE_AUTO_COMPACT', 'DEIMOS_DISABLE_AUTO_MEMORY', 'DEIMOS_DISABLE_BACKGROUND_TASKS']) {
     // eslint-disable-next-line custom-rules/no-top-level-side-effects, custom-rules/no-process-env-top-level
     process.env[k] ??= '1';
   }
@@ -347,7 +347,7 @@ async function main(): Promise<void> {
   // --bare: set SIMPLE early so gates fire during module eval / commander
   // option building (not just inside the action handler).
   if (args.includes('--bare')) {
-    process.env.CLAUDE_CODE_SIMPLE = '1';
+    process.env.DEIMOS_SIMPLE = '1';
   }
 
   // No special flags detected, load and run the full CLI

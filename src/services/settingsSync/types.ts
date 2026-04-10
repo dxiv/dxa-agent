@@ -20,7 +20,7 @@ export const UserSyncContentSchema = lazySchema(() =>
 )
 
 /**
- * Full response from GET /api/claude_code/user_settings
+ * Full response from GET /api/deimos/user_settings
  */
 export const UserSyncDataSchema = lazySchema(() =>
   z.object({

@@ -26,7 +26,7 @@ Optional integrations may call **public APIs** or use **SDKs** published by thir
 
 ## 4. Trademarks and naming
 
-Names such as **“Anthropic”**, **“Claude”** (models and APIs), **“OpenAI”**, **“Gemini”**, **“GitHub”**, and others are **trademarks** of their respective owners.
+Names such as **“Anthropic”**, **“Deimos”** (models and APIs), **“OpenAI”**, **“Gemini”**, **“GitHub”**, and others are **trademarks** of their respective owners.
 
 Those names may appear in **documentation**, **configuration examples**, or **user-facing text** **only** where helpful to identify a **product**, **API**, or **setting** a user might already recognise. That is **descriptive (nominative) use**: it does **not** mean the trademark owner **built**, **runs**, or **endorses** Deimos, and it does **not** authorize use of their logos or trade dress as if they were ours.
 

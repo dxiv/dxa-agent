@@ -7,7 +7,7 @@ import {
 import { getIsNonInteractiveSession, getSdkBetas } from '../bootstrap/state.js'
 import {
   BEDROCK_EXTRA_PARAMS_HEADERS,
-  CLAUDE_CODE_20250219_BETA_HEADER,
+  DEIMOS_20250219_BETA_HEADER,
   CLI_INTERNAL_BETA_HEADER,
   CONTEXT_1M_BETA_HEADER,
   CONTEXT_MANAGEMENT_BETA_HEADER,
@@ -113,7 +113,7 @@ export function modelSupportsISP(model: string): boolean {
 
 function vertexModelSupportsWebSearch(model: string): boolean {
   const canonical = getCanonicalName(model)
-  // Web search only supported on Claude 4.0+ models on Vertex
+  // Web search only supported on Deimos 4.0+ models on Vertex
   return (
     canonical.includes('claude-opus-4') ||
     canonical.includes('claude-sonnet-4') ||
@@ -121,7 +121,7 @@ function vertexModelSupportsWebSearch(model: string): boolean {
   )
 }
 
-// Context management is supported on Claude 4+ models
+// Context management is supported on Deimos 4+ models
 export function modelSupportsContextManagement(model: string): boolean {
   const canonical = getCanonicalName(model)
   const provider = getAPIProvider()
@@ -156,7 +156,7 @@ export function modelSupportsStructuredOutputs(model: string): boolean {
   )
 }
 
-// @[MODEL LAUNCH]: Add the new model if it supports auto mode (specifically PI probes) — ask in #proj-claude-code-safety-research.
+// @[MODEL LAUNCH]: Add the new model if it supports auto mode (specifically PI probes) — ask in #proj-deimos-safety-research.
 export function modelSupportsAutoMode(model: string): boolean {
   if (feature('TRANSCRIPT_CLASSIFIER')) {
     const m = getCanonicalName(model)
@@ -196,7 +196,7 @@ export function modelSupportsAutoMode(model: string): boolean {
 
 /**
  * Get the correct tool search beta header for the current API provider.
- * - Claude API / Foundry: advanced-tool-use-2025-11-20
+ * - Deimos API / Foundry: advanced-tool-use-2025-11-20
  * - Vertex AI / Bedrock: tool-search-tool-2025-10-19
  */
 export function getToolSearchBetaHeader(): string {
@@ -215,7 +215,7 @@ export function getToolSearchBetaHeader(): string {
 export function shouldIncludeFirstPartyOnlyBetas(): boolean {
   return (
     (getAPIProvider() === 'firstParty' || getAPIProvider() === 'foundry') &&
-    !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS)
+    !isEnvTruthy(process.env.DEIMOS_DISABLE_EXPERIMENTAL_BETAS)
   )
 }
 
@@ -227,7 +227,7 @@ export function shouldIncludeFirstPartyOnlyBetas(): boolean {
 export function shouldUseGlobalCacheScope(): boolean {
   return (
     getAPIProvider() === 'firstParty' &&
-    !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS)
+    !isEnvTruthy(process.env.DEIMOS_DISABLE_EXPERIMENTAL_BETAS)
   )
 }
 
@@ -238,10 +238,10 @@ export const getAllModelBetas = memoize((model: string): string[] => {
   const includeFirstPartyOnlyBetas = shouldIncludeFirstPartyOnlyBetas()
 
   if (!isHaiku) {
-    betaHeaders.push(CLAUDE_CODE_20250219_BETA_HEADER)
+    betaHeaders.push(DEIMOS_20250219_BETA_HEADER)
     if (
       process.env.USER_TYPE === 'ant' &&
-      process.env.CLAUDE_CODE_ENTRYPOINT === 'cli'
+      process.env.DEIMOS_ENTRYPOINT === 'cli'
     ) {
       if (CLI_INTERNAL_BETA_HEADER) {
         betaHeaders.push(CLI_INTERNAL_BETA_HEADER)
@@ -311,7 +311,7 @@ export const getAllModelBetas = memoize((model: string): string[] => {
     betaHeaders.push(CONTEXT_MANAGEMENT_BETA_HEADER)
   }
   // Add strict tool use beta if experiment is enabled.
-  // Gate on includeFirstPartyOnlyBetas: CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS
+  // Gate on includeFirstPartyOnlyBetas: DEIMOS_DISABLE_EXPERIMENTAL_BETAS
   // already strips schema.strict from tool bodies at api.ts's choke point, but
   // this header was escaping that kill switch. Proxy gateways that look like
   // firstParty but forward to Vertex reject this header with 400.
@@ -342,7 +342,7 @@ export const getAllModelBetas = memoize((model: string): string[] => {
     betaHeaders.push(TOKEN_EFFICIENT_TOOLS_BETA_HEADER)
   }
 
-  // Add web search beta for Vertex Claude 4.0+ models only
+  // Add web search beta for Vertex Deimos 4.0+ models only
   if (provider === 'vertex' && vertexModelSupportsWebSearch(model)) {
     betaHeaders.push(WEB_SEARCH_BETA_HEADER)
   }
@@ -400,16 +400,16 @@ export function getMergedBetas(
 ): string[] {
   const baseBetas = [...getModelBetas(model)]
 
-  // Agentic queries always need claude-code and cli-internal beta headers.
+  // Agentic queries always need deimos and cli-internal beta headers.
   // For non-Haiku models these are already in baseBetas; for Haiku they're
   // excluded by getAllModelBetas() since non-agentic Haiku calls don't need them.
   if (options?.isAgenticQuery) {
-    if (!baseBetas.includes(CLAUDE_CODE_20250219_BETA_HEADER)) {
-      baseBetas.push(CLAUDE_CODE_20250219_BETA_HEADER)
+    if (!baseBetas.includes(DEIMOS_20250219_BETA_HEADER)) {
+      baseBetas.push(DEIMOS_20250219_BETA_HEADER)
     }
     if (
       process.env.USER_TYPE === 'ant' &&
-      process.env.CLAUDE_CODE_ENTRYPOINT === 'cli' &&
+      process.env.DEIMOS_ENTRYPOINT === 'cli' &&
       CLI_INTERNAL_BETA_HEADER &&
       !baseBetas.includes(CLI_INTERNAL_BETA_HEADER)
     ) {

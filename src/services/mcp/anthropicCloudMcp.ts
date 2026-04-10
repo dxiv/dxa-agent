@@ -32,8 +32,8 @@ const FETCH_TIMEOUT_MS = 5000
 const MCP_SERVERS_BETA_HEADER = 'mcp-servers-2025-12-04'
 
 /**
- * Fetches MCP server configurations from Claude.ai org configs.
- * These servers are managed by the organization via Claude.ai.
+ * Fetches MCP server configurations from dxa.dev/deimos org configs.
+ * These servers are managed by the organization via dxa.dev/deimos.
  *
  * Results are memoized for the session lifetime (fetch once per CLI session).
  */
@@ -41,17 +41,17 @@ export const fetchDeimosCloudMcpConfigsIfEligible = memoize(
   async (): Promise<Record<string, ScopedMcpServerConfig>> => {
     try {
       if (getAPIProvider() !== 'firstParty') {
-        logForDebugging('[claudeai-mcp] Skipped: non-first-party provider')
-        logEvent('tengu_claudeai_mcp_eligibility', {
+        logForDebugging('[deimos-mcp] Skipped: non-first-party provider')
+        logEvent('tengu_deimoscloud_mcp_eligibility', {
           state:
             'non_first_party_provider' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
         return {}
       }
 
-      if (isEnvDefinedFalsy(process.env.ENABLE_CLAUDEAI_MCP_SERVERS)) {
-        logForDebugging('[claudeai-mcp] Disabled via env var')
-        logEvent('tengu_claudeai_mcp_eligibility', {
+      if (isEnvDefinedFalsy(process.env.ENABLE_DEIMOS_CLOUD_MCP_SERVERS)) {
+        logForDebugging('[deimos-mcp] Disabled via env var')
+        logEvent('tengu_deimoscloud_mcp_eligibility', {
           state:
             'disabled_env_var' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
@@ -60,8 +60,8 @@ export const fetchDeimosCloudMcpConfigsIfEligible = memoize(
 
       const tokens = getDeimosCloudOAuthTokens()
       if (!tokens?.accessToken) {
-        logForDebugging('[claudeai-mcp] No access token')
-        logEvent('tengu_claudeai_mcp_eligibility', {
+        logForDebugging('[deimos-mcp] No access token')
+        logEvent('tengu_deimoscloud_mcp_eligibility', {
           state:
             'no_oauth_token' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
@@ -72,12 +72,12 @@ export const fetchDeimosCloudMcpConfigsIfEligible = memoize(
       // In non-interactive mode, isDeimosCloudSubscriber() returns false when ANTHROPIC_API_KEY
       // is set (even with valid OAuth tokens) because preferThirdPartyAuthentication() causes
       // isAnthropicAuthEnabled() to return false. Checking the scope directly allows users
-      // with both API keys and OAuth tokens to access claude.ai MCPs in print mode.
+      // with both API keys and OAuth tokens to access dxa.dev/deimos MCPs in print mode.
       if (!tokens.scopes?.includes('user:mcp_servers')) {
         logForDebugging(
-          `[claudeai-mcp] Missing user:mcp_servers scope (scopes=${tokens.scopes?.join(',') || 'none'})`,
+          `[deimos-mcp] Missing user:mcp_servers scope (scopes=${tokens.scopes?.join(',') || 'none'})`,
         )
-        logEvent('tengu_claudeai_mcp_eligibility', {
+        logEvent('tengu_deimoscloud_mcp_eligibility', {
           state:
             'missing_scope' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
@@ -87,7 +87,7 @@ export const fetchDeimosCloudMcpConfigsIfEligible = memoize(
       const baseUrl = getOauthConfig().BASE_API_URL
       const url = `${baseUrl}/v1/mcp_servers?limit=1000`
 
-      logForDebugging(`[claudeai-mcp] Fetching from ${url}`)
+      logForDebugging(`[deimos-mcp] Fetching from ${url}`)
 
       const response = await axios.get<DeimosCloudMcpServersResponse>(url, {
         headers: {
@@ -107,7 +107,7 @@ export const fetchDeimosCloudMcpConfigsIfEligible = memoize(
       const usedNormalizedNames = new Set<string>()
 
       for (const server of response.data.data) {
-        const baseName = `claude.ai ${server.display_name}`
+        const baseName = `dxa.dev/deimos ${server.display_name}`
 
         // Try without suffix first, then increment until we find an unused normalized name
         let finalName = baseName
@@ -121,23 +121,23 @@ export const fetchDeimosCloudMcpConfigsIfEligible = memoize(
         usedNormalizedNames.add(finalNormalized)
 
         configs[finalName] = {
-          type: 'claudeai-proxy',
+          type: 'deimos-proxy',
           url: server.url,
           id: server.id,
-          scope: 'claudeai',
+          scope: 'deimos',
         }
       }
 
       logForDebugging(
-        `[claudeai-mcp] Fetched ${Object.keys(configs).length} servers`,
+        `[deimos-mcp] Fetched ${Object.keys(configs).length} servers`,
       )
-      logEvent('tengu_claudeai_mcp_eligibility', {
+      logEvent('tengu_deimoscloud_mcp_eligibility', {
         state:
           'eligible' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       })
       return configs
     } catch {
-      logForDebugging(`[claudeai-mcp] Fetch failed`)
+      logForDebugging(`[deimos-mcp] Fetch failed`)
       return {}
     }
   },
@@ -154,7 +154,7 @@ export function clearDeimosCloudMcpConfigsCache(): void {
 }
 
 /**
- * Record that a claude.ai connector successfully connected. Idempotent.
+ * Record that a dxa.dev/deimos connector successfully connected. Idempotent.
  *
  * Gates the "N connectors unavailable/need auth" startup notifications: a
  * connector that was working yesterday and is now failed is a state change

@@ -31,7 +31,7 @@ async function _temp2() {
   logEvent("tengu_switch_to_subscription_notice_shown", {});
   return {
     key: "switch-to-subscription",
-    jsx: <Text color="suggestion">Use your existing Claude {subscriptionType} plan with Deimos<Text color="text" dimColor={true}>{" "}· /login to activate</Text></Text>,
+    jsx: <Text color="suggestion">Use your existing Deimos {subscriptionType} plan with Deimos<Text color="text" dimColor={true}>{" "}· /login to activate</Text></Text>,
     priority: "low" as const
   };
 }

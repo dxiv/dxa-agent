@@ -299,7 +299,7 @@ export function resolveProviderRequest(options?: {
   fallbackModel?: string
   reasoningEffortOverride?: ReasoningEffort
 }): ResolvedProviderRequest {
-  const isGithubMode = isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+  const isGithubMode = isEnvTruthy(process.env.DEIMOS_USE_GITHUB)
   const requestedModel =
     options?.model?.trim() ||
     process.env.OPENAI_MODEL?.trim() ||
@@ -317,7 +317,7 @@ export function resolveProviderRequest(options?: {
 
   const resolvedModel =
     transport === 'chat_completions' &&
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+    isEnvTruthy(process.env.DEIMOS_USE_GITHUB)
       ? normalizeGithubModelsApiModel(requestedModel)
       : descriptor.baseModel
 
@@ -341,12 +341,15 @@ export function resolveProviderRequest(options?: {
 }
 
 export function getAdditionalModelOptionsCacheScope(): string | null {
-  if (!isEnvTruthy(process.env.CLAUDE_CODE_USE_OPENAI)) {
-    if (!isEnvTruthy(process.env.CLAUDE_CODE_USE_GEMINI) &&
-        !isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB) &&
-        !isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK) &&
-        !isEnvTruthy(process.env.CLAUDE_CODE_USE_VERTEX) &&
-        !isEnvTruthy(process.env.CLAUDE_CODE_USE_FOUNDRY)) {
+  if (
+    !isEnvTruthy(process.env.DEIMOS_USE_OPENAI) &&
+    !isEnvTruthy(process.env.DEIMOS_USE_OPENAI)
+  ) {
+    if (!isEnvTruthy(process.env.DEIMOS_USE_GEMINI) &&
+        !isEnvTruthy(process.env.DEIMOS_USE_GITHUB) &&
+        !isEnvTruthy(process.env.DEIMOS_USE_BEDROCK) &&
+        !isEnvTruthy(process.env.DEIMOS_USE_VERTEX) &&
+        !isEnvTruthy(process.env.DEIMOS_USE_FOUNDRY)) {
       return 'firstParty'
     }
     return null

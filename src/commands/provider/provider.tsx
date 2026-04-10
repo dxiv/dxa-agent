@@ -170,7 +170,7 @@ export function buildCurrentProviderSummary(options?: {
   const persisted = options?.persisted ?? loadProfileFile()
   const savedProfileLabel = persisted?.profile ?? 'none'
 
-  if (isEnvTruthy(processEnv.CLAUDE_CODE_USE_GEMINI)) {
+  if (isEnvTruthy(processEnv.DEIMOS_USE_GEMINI)) {
     return {
       providerLabel: 'Google Gemini',
       modelLabel: getSafeDisplayValue(
@@ -185,7 +185,7 @@ export function buildCurrentProviderSummary(options?: {
     }
   }
 
-  if (isEnvTruthy(processEnv.CLAUDE_CODE_USE_GITHUB)) {
+  if (isEnvTruthy(processEnv.DEIMOS_USE_GITHUB)) {
     return {
       providerLabel: 'GitHub Models',
       modelLabel: getSafeDisplayValue(
@@ -202,7 +202,10 @@ export function buildCurrentProviderSummary(options?: {
     }
   }
 
-  if (isEnvTruthy(processEnv.CLAUDE_CODE_USE_OPENAI)) {
+  if (
+    isEnvTruthy(processEnv.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(processEnv.DEIMOS_USE_OPENAI)
+  ) {
     const request = resolveProviderRequest({
       model: processEnv.OPENAI_MODEL,
       baseUrl: processEnv.OPENAI_BASE_URL,

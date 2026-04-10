@@ -867,12 +867,12 @@ export async function performMCPOAuthFlow(
   // user explicitly asked for XAA) and security-relevant (consent flow may
   // have a different trust/scope posture than the org's IdP policy).
   //
-  // Servers with `oauth.xaa` but CLAUDE_CODE_ENABLE_XAA unset hard-fail with
+  // Servers with `oauth.xaa` but DEIMOS_ENABLE_XAA unset hard-fail with
   // actionable copy rather than silently degrade to consent.
   if (serverConfig.oauth?.xaa) {
     if (!isXaaEnabled()) {
       throw new Error(
-        `XAA is not enabled (set CLAUDE_CODE_ENABLE_XAA=1). Remove 'oauth.xaa' from server '${serverName}' to use the standard consent flow.`,
+        `XAA is not enabled (set DEIMOS_ENABLE_XAA=1). Remove 'oauth.xaa' from server '${serverName}' to use the standard consent flow.`,
       )
     }
     logEvent('tengu_mcp_oauth_flow_start', {
@@ -1350,7 +1350,7 @@ export async function performMCPOAuthFlow(
  * retry → 403 again → aborts with "Server returned 403 after trying upscoping",
  * never reaching redirectToAuthorization where step-up scope is persisted.
  * With this flag set, tokens() omits refresh_token so the SDK falls through
- * to the PKCE flow. See github.com/anthropics/claude-code/issues/28258.
+ * to the PKCE flow. See github.com/anthropics/deimos/issues/28258.
  */
 export function wrapFetchWithStepUpDetection(
   baseFetch: FetchLike,

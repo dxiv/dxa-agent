@@ -3,7 +3,7 @@ export const DEFAULT_SESSION_TIMEOUT_MS = 24 * 60 * 60 * 1000
 
 /** Reusable login guidance appended to bridge auth errors. */
 export const BRIDGE_LOGIN_INSTRUCTION =
-  'Remote Control is only available with claude.ai subscriptions. Please use `/login` to sign in with your claude.ai account.'
+  'Remote Control is only available with dxa.dev/deimos subscriptions. Please use `/login` to sign in with your dxa.dev/deimos account.'
 
 /** Full error printed when `claude remote-control` is run without auth. */
 export const BRIDGE_LOGIN_ERROR =
@@ -39,7 +39,7 @@ export type WorkSecret = {
     git_info?: { type: string; repo: string; ref?: string; token?: string }
   }>
   auth: Array<{ type: string; token: string }>
-  /** Normalized from server JSON key `claude_code_args` (see decodeWorkSecret). */
+  /** Normalized from server JSON key `deimos_args` (see decodeWorkSecret). */
   codeCliArgs?: Record<string, string> | null
   mcp_config?: unknown | null
   environment_variables?: Record<string, string> | null
@@ -71,7 +71,7 @@ export type SpawnMode = 'single-session' | 'worktree' | 'same-dir'
 
 /**
  * Well-known worker_type values THIS codebase produces. Sent as
- * `metadata.worker_type` at environment registration so claude.ai can filter
+ * `metadata.worker_type` at environment registration so dxa.dev/deimos can filter
  * the session picker by origin (e.g. assistant tab only shows assistant
  * workers). The backend treats this as an opaque string — desktop cowork
  * sends `"cowork"`, which isn't in this union. REPL code uses this narrow

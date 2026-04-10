@@ -196,7 +196,7 @@ export const SOURCES = [
 
 /**
  * The JSON Schema URL for Deimos settings
- * You can edit the contents at https://github.com/SchemaStore/schemastore/blob/master/src/schemas/json/claude-code-settings.json
+ * You can edit the contents at https://github.com/SchemaStore/schemastore/blob/master/src/schemas/json/deimos-settings.json
  */
-export const CLAUDE_CODE_SETTINGS_SCHEMA_URL =
-  'https://json.schemastore.org/claude-code-settings.json'
+export const DEIMOS_SETTINGS_SCHEMA_URL =
+  'https://json.schemastore.org/deimos-settings.json'

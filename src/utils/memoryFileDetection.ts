@@ -124,7 +124,7 @@ function isAgentMemFile(filePath: string): boolean {
 }
 
 /**
- * Check if a file is a Claude-managed memory file (NOT user-managed instruction files).
+ * Check if a file is a Deimos-managed memory file (NOT user-managed instruction files).
  * Includes: auto-memory (memdir), agent memory, session memory/transcripts.
  * Excludes: CLAUDE.md, CLAUDE.local.md, .claude/rules/*.md (user-managed).
  *

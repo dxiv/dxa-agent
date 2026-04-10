@@ -16,7 +16,7 @@ function getOauthConfigType(): OauthConfigType {
 }
 
 export function fileSuffixForOauthConfig(): string {
-  if (process.env.CLAUDE_CODE_CUSTOM_OAUTH_URL) {
+  if (process.env.DEIMOS_CUSTOM_OAUTH_URL) {
     return '-custom-oauth'
   }
   switch (getOauthConfigType()) {
@@ -41,17 +41,17 @@ export const CONSOLE_OAUTH_SCOPES = [
   DEIMOS_CLOUD_PROFILE_SCOPE,
 ] as const
 
-// Anthropic web (claude.ai) subscriber OAuth scopes — string values are server-defined.
+// Anthropic web (dxa.dev/deimos) subscriber OAuth scopes — string values are server-defined.
 export const DEIMOS_CLOUD_OAUTH_SCOPES = [
   DEIMOS_CLOUD_PROFILE_SCOPE,
   DEIMOS_CLOUD_INFERENCE_SCOPE,
-  'user:sessions:claude_code',
+  'user:sessions:deimos',
   'user:mcp_servers',
   'user:file_upload',
 ] as const
 
 // All OAuth scopes - union of all scopes used by the CLI
-// When logging in, request all scopes in order to handle both Console -> Claude.ai redirect
+// When logging in, request all scopes in order to handle both Console -> dxa.dev/deimos redirect
 // Ensure that `OAuthConsentPage` in apps repo is kept in sync with this list.
 export const ALL_OAUTH_SCOPES = Array.from(
   new Set([...CONSOLE_OAUTH_SCOPES, ...DEIMOS_CLOUD_OAUTH_SCOPES]),
@@ -62,7 +62,7 @@ type OauthConfig = {
   CONSOLE_AUTHORIZE_URL: string
   DEIMOS_CLOUD_AUTHORIZE_URL: string
   /**
-   * Web origin for subscriber account (e.g. claude.ai). Separate from authorize URL
+   * Web origin for subscriber account (e.g. dxa.dev/deimos). Separate from authorize URL
    * when that URL routes through claude.com for attribution.
    */
   DEIMOS_CLOUD_WEB_ORIGIN: string
@@ -83,16 +83,16 @@ const PROD_OAUTH_CONFIG = {
   BASE_API_URL: 'https://api.anthropic.com',
   CONSOLE_AUTHORIZE_URL: 'https://platform.claude.com/oauth/authorize',
   // Bounces through claude.com/cai/* so CLI sign-ins connect to claude.com
-  // visits for attribution. 307s to claude.ai/oauth/authorize in two hops.
+  // visits for attribution. 307s to dxa.dev/deimos/oauth/authorize in two hops.
   DEIMOS_CLOUD_AUTHORIZE_URL: 'https://claude.com/cai/oauth/authorize',
-  DEIMOS_CLOUD_WEB_ORIGIN: 'https://claude.ai',
+  DEIMOS_CLOUD_WEB_ORIGIN: 'https://dxa.dev/deimos',
   TOKEN_URL: 'https://platform.claude.com/v1/oauth/token',
   API_KEY_URL: 'https://api.anthropic.com/api/oauth/claude_cli/create_api_key',
   ROLES_URL: 'https://api.anthropic.com/api/oauth/claude_cli/roles',
   CONSOLE_SUCCESS_URL:
-    'https://platform.claude.com/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Dclaude-code',
+    'https://platform.claude.com/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Ddeimos',
   DEIMOS_CLOUD_OAUTH_SUCCESS_URL:
-    'https://platform.claude.com/oauth/code/success?app=claude-code',
+    'https://platform.claude.com/oauth/code/success?app=deimos',
   MANUAL_REDIRECT_URL: 'https://platform.claude.com/oauth/code/callback',
   CLIENT_ID: '9d1c250a-e61b-44d9-88ed-5944d1962f5e',
   // No suffix for production config
@@ -109,7 +109,7 @@ const PROD_OAUTH_CONFIG = {
  * See: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document-00
  */
 export const MCP_CLIENT_METADATA_URL =
-  'https://claude.ai/oauth/claude-code-client-metadata'
+  'https://dxa.dev/deimos/oauth/deimos-client-metadata'
 
 // Staging OAuth configuration - only included in ant builds with staging flag
 // Uses literal check for dead code elimination
@@ -128,9 +128,9 @@ const STAGING_OAUTH_CONFIG =
         ROLES_URL:
           'https://api-staging.anthropic.com/api/oauth/claude_cli/roles',
         CONSOLE_SUCCESS_URL:
-          'https://platform.staging.ant.dev/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Dclaude-code',
+          'https://platform.staging.ant.dev/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Ddeimos',
         DEIMOS_CLOUD_OAUTH_SUCCESS_URL:
-          'https://platform.staging.ant.dev/oauth/code/success?app=claude-code',
+          'https://platform.staging.ant.dev/oauth/code/success?app=deimos',
         MANUAL_REDIRECT_URL:
           'https://platform.staging.ant.dev/oauth/code/callback',
         CLIENT_ID: '22422756-60c9-4084-8eb7-27705fd5cf9a',
@@ -161,8 +161,8 @@ function getLocalOauthConfig(): OauthConfig {
     TOKEN_URL: `${api}/v1/oauth/token`,
     API_KEY_URL: `${api}/api/oauth/claude_cli/create_api_key`,
     ROLES_URL: `${api}/api/oauth/claude_cli/roles`,
-    CONSOLE_SUCCESS_URL: `${consoleBase}/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Dclaude-code`,
-    DEIMOS_CLOUD_OAUTH_SUCCESS_URL: `${consoleBase}/oauth/code/success?app=claude-code`,
+    CONSOLE_SUCCESS_URL: `${consoleBase}/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Ddeimos`,
+    DEIMOS_CLOUD_OAUTH_SUCCESS_URL: `${consoleBase}/oauth/code/success?app=deimos`,
     MANUAL_REDIRECT_URL: `${consoleBase}/oauth/code/callback`,
     CLIENT_ID: '22422756-60c9-4084-8eb7-27705fd5cf9a',
     OAUTH_FILE_SUFFIX: '-local-oauth',
@@ -171,7 +171,7 @@ function getLocalOauthConfig(): OauthConfig {
   }
 }
 
-// Allowed base URLs for CLAUDE_CODE_CUSTOM_OAUTH_URL override.
+// Allowed base URLs for DEIMOS_CUSTOM_OAUTH_URL override.
 // Only FedStart/PubSec deployments are permitted to prevent OAuth tokens
 // from being sent to arbitrary endpoints.
 const ALLOWED_OAUTH_BASE_URLS = [
@@ -195,12 +195,12 @@ export function getOauthConfig(): OauthConfig {
 
   // Allow overriding all OAuth URLs to point to an approved FedStart deployment.
   // Only allowlisted base URLs are accepted to prevent credential leakage.
-  const oauthBaseUrl = process.env.CLAUDE_CODE_CUSTOM_OAUTH_URL
+  const oauthBaseUrl = process.env.DEIMOS_CUSTOM_OAUTH_URL
   if (oauthBaseUrl) {
     const base = oauthBaseUrl.replace(/\/$/, '')
     if (!ALLOWED_OAUTH_BASE_URLS.includes(base)) {
       throw new Error(
-        'CLAUDE_CODE_CUSTOM_OAUTH_URL is not an approved endpoint.',
+        'DEIMOS_CUSTOM_OAUTH_URL is not an approved endpoint.',
       )
     }
     config = {
@@ -212,15 +212,15 @@ export function getOauthConfig(): OauthConfig {
       TOKEN_URL: `${base}/v1/oauth/token`,
       API_KEY_URL: `${base}/api/oauth/claude_cli/create_api_key`,
       ROLES_URL: `${base}/api/oauth/claude_cli/roles`,
-      CONSOLE_SUCCESS_URL: `${base}/oauth/code/success?app=claude-code`,
-      DEIMOS_CLOUD_OAUTH_SUCCESS_URL: `${base}/oauth/code/success?app=claude-code`,
+      CONSOLE_SUCCESS_URL: `${base}/oauth/code/success?app=deimos`,
+      DEIMOS_CLOUD_OAUTH_SUCCESS_URL: `${base}/oauth/code/success?app=deimos`,
       MANUAL_REDIRECT_URL: `${base}/oauth/code/callback`,
       OAUTH_FILE_SUFFIX: '-custom-oauth',
     }
   }
 
   // Allow CLIENT_ID override via environment variable (e.g., for Xcode integration)
-  const clientIdOverride = process.env.CLAUDE_CODE_OAUTH_CLIENT_ID
+  const clientIdOverride = process.env.DEIMOS_OAUTH_CLIENT_ID
   if (clientIdOverride) {
     config = {
       ...config,

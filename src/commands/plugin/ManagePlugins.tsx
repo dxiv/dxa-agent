@@ -2005,12 +2005,12 @@ export function ManagePlugins({
         config: client_3.config as McpHTTPServerConfig
       };
       return <MCPRemoteServerMenu server={server_1} serverToolsCount={serverToolsCount} onViewTools={handleMcpViewTools} onCancel={handleMcpCancel} onComplete={handleMcpComplete} borderless />;
-    } else if (configType === 'claudeai-proxy') {
+    } else if (configType === 'deimos-proxy') {
       const server_2: DeimosCloudServerInfo = {
         name: client_3.name,
         client: client_3,
         scope: scope_5,
-        transport: 'claudeai-proxy',
+        transport: 'deimos-proxy',
         isAuthenticated: undefined,
         config: client_3.config as McpDeimosCloudProxyServerConfig
       };
@@ -2061,7 +2061,7 @@ export function ManagePlugins({
         name: client_4.name,
         client: client_4,
         scope: scope_6,
-        transport: 'claudeai-proxy',
+        transport: 'deimos-proxy',
         isAuthenticated: undefined,
         config: client_4.config as McpDeimosCloudProxyServerConfig
       };
@@ -2120,7 +2120,7 @@ export function ManagePlugins({
         name: client_5.name,
         client: client_5,
         scope: scope_7,
-        transport: 'claudeai-proxy',
+        transport: 'deimos-proxy',
         isAuthenticated: undefined,
         config: client_5.config as McpDeimosCloudProxyServerConfig
       };

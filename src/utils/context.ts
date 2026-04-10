@@ -31,7 +31,7 @@ export const ESCALATED_MAX_TOKENS = 64_000
  * Used by C4E admins to disable 1M context for HIPAA compliance.
  */
 export function is1mContextDisabled(): boolean {
-  return isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_1M_CONTEXT)
+  return isEnvTruthy(process.env.DEIMOS_DISABLE_1M_CONTEXT)
 }
 
 export function has1mContext(model: string): boolean {
@@ -60,9 +60,9 @@ export function getContextWindowForModel(
   // while still using a 1M-capable endpoint.
   if (
     process.env.USER_TYPE === 'ant' &&
-    process.env.CLAUDE_CODE_MAX_CONTEXT_TOKENS
+    process.env.DEIMOS_MAX_CONTEXT_TOKENS
   ) {
-    const override = parseInt(process.env.CLAUDE_CODE_MAX_CONTEXT_TOKENS, 10)
+    const override = parseInt(process.env.DEIMOS_MAX_CONTEXT_TOKENS, 10)
     if (!isNaN(override) && override > 0) {
       return override
     }
@@ -77,9 +77,10 @@ export function getContextWindowForModel(
   // Unknown models get a conservative 8k default so auto-compact triggers
   // before hitting a hard context_window_exceeded error.
   const isOpenAIProvider =
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_OPENAI) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GEMINI) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_GEMINI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_GITHUB)
   if (isOpenAIProvider) {
     const openaiWindow = getOpenAIContextWindow(model)
     if (openaiWindow !== undefined) {
@@ -185,9 +186,10 @@ export function getModelMaxOutputTokens(model: string): {
 
   // OpenAI-compatible provider — use known output limits to avoid 400 errors
   if (
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_OPENAI) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GEMINI) ||
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_GEMINI) ||
+    isEnvTruthy(process.env.DEIMOS_USE_GITHUB)
   ) {
     const openaiMax = getOpenAIMaxOutputTokens(model)
     if (openaiMax !== undefined) {

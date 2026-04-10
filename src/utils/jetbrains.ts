@@ -4,7 +4,7 @@ import { getFsImplementation } from '../utils/fsOperations.js'
 import type { IdeType } from './ide.js'
 
 /** Installed plugin directory name (must match the JetBrains plugin ID on disk). */
-const PLUGIN_PREFIX = 'claude-code-jetbrains-plugin'
+const PLUGIN_PREFIX = 'deimos-jetbrains-plugin'
 
 // Map of IDE names to their directory patterns
 const ideNameToDirMap: { [key: string]: string[] } = {

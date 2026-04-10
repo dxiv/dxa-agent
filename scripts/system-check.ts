@@ -121,10 +121,10 @@ const GEMINI_DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1bet
 const GITHUB_MODELS_DEFAULT_BASE = 'https://models.github.ai/inference'
 
 function currentBaseUrl(): string {
-  if (isTruthy(process.env.CLAUDE_CODE_USE_GEMINI)) {
+  if (isTruthy(process.env.DEIMOS_USE_GEMINI)) {
     return process.env.GEMINI_BASE_URL ?? GEMINI_DEFAULT_BASE_URL
   }
-  if (isTruthy(process.env.CLAUDE_CODE_USE_GITHUB)) {
+  if (isTruthy(process.env.DEIMOS_USE_GITHUB)) {
     return process.env.OPENAI_BASE_URL ?? GITHUB_MODELS_DEFAULT_BASE
   }
   return process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1'
@@ -184,9 +184,9 @@ function checkGithubEnv(): CheckResult[] {
 
 function checkOpenAIEnv(): CheckResult[] {
   const results: CheckResult[] = []
-  const useGemini = isTruthy(process.env.CLAUDE_CODE_USE_GEMINI)
-  const useGithub = isTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
-  const useOpenAI = isTruthy(process.env.CLAUDE_CODE_USE_OPENAI)
+  const useGemini = isTruthy(process.env.DEIMOS_USE_GEMINI)
+  const useGithub = isTruthy(process.env.DEIMOS_USE_GITHUB)
+  const useOpenAI = isTruthy(process.env.DEIMOS_USE_OPENAI)
 
   if (useGemini) {
     return checkGeminiEnv()
@@ -197,7 +197,7 @@ function checkOpenAIEnv(): CheckResult[] {
   }
 
   if (!useOpenAI) {
-    results.push(pass('Provider mode', 'Anthropic login flow enabled (CLAUDE_CODE_USE_OPENAI is off).'))
+    results.push(pass('Provider mode', 'Anthropic login flow enabled (DEIMOS_USE_OPENAI is off).'))
     return results
   }
 
@@ -265,9 +265,9 @@ function checkOpenAIEnv(): CheckResult[] {
 }
 
 async function checkBaseUrlReachability(): Promise<CheckResult> {
-  const useGemini = isTruthy(process.env.CLAUDE_CODE_USE_GEMINI)
-  const useOpenAI = isTruthy(process.env.CLAUDE_CODE_USE_OPENAI)
-  const useGithub = isTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+  const useGemini = isTruthy(process.env.DEIMOS_USE_GEMINI)
+  const useOpenAI = isTruthy(process.env.DEIMOS_USE_OPENAI)
+  const useGithub = isTruthy(process.env.DEIMOS_USE_GITHUB)
 
   if (!useGemini && !useOpenAI && !useGithub) {
     return pass('Provider reachability', 'Skipped (OpenAI-compatible mode disabled).')
@@ -371,9 +371,9 @@ function isAtomicChatUrl(baseUrl: string): boolean {
 
 function checkOllamaProcessorMode(): CheckResult {
   if (
-    !isTruthy(process.env.CLAUDE_CODE_USE_OPENAI) ||
-    isTruthy(process.env.CLAUDE_CODE_USE_GEMINI) ||
-    isTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+    !isTruthy(process.env.DEIMOS_USE_OPENAI) ||
+    isTruthy(process.env.DEIMOS_USE_GEMINI) ||
+    isTruthy(process.env.DEIMOS_USE_GITHUB)
   ) {
     return pass('Ollama processor mode', 'Skipped (OpenAI-compatible mode disabled).')
   }
@@ -417,20 +417,20 @@ function checkOllamaProcessorMode(): CheckResult {
 }
 
 function serializeSafeEnvSummary(): Record<string, string | boolean> {
-  if (isTruthy(process.env.CLAUDE_CODE_USE_GEMINI)) {
+  if (isTruthy(process.env.DEIMOS_USE_GEMINI)) {
     return {
-      CLAUDE_CODE_USE_GEMINI: true,
+      DEIMOS_USE_GEMINI: true,
       GEMINI_MODEL: process.env.GEMINI_MODEL ?? '(unset, default: gemini-2.0-flash)',
       GEMINI_BASE_URL: process.env.GEMINI_BASE_URL ?? 'https://generativelanguage.googleapis.com/v1beta/openai',
       GEMINI_API_KEY_SET: Boolean(process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY),
     }
   }
   if (
-    isTruthy(process.env.CLAUDE_CODE_USE_GITHUB) &&
-    !isTruthy(process.env.CLAUDE_CODE_USE_OPENAI)
+    isTruthy(process.env.DEIMOS_USE_GITHUB) &&
+    !isTruthy(process.env.DEIMOS_USE_OPENAI)
   ) {
     return {
-      CLAUDE_CODE_USE_GITHUB: true,
+      DEIMOS_USE_GITHUB: true,
       OPENAI_MODEL:
         process.env.OPENAI_MODEL ??
         '(unset, default: github:copilot → openai/gpt-4.1)',
@@ -446,7 +446,7 @@ function serializeSafeEnvSummary(): Record<string, string | boolean> {
     baseUrl: process.env.OPENAI_BASE_URL,
   })
   return {
-    CLAUDE_CODE_USE_OPENAI: isTruthy(process.env.CLAUDE_CODE_USE_OPENAI),
+    DEIMOS_USE_OPENAI: isTruthy(process.env.DEIMOS_USE_OPENAI),
     OPENAI_MODEL: process.env.OPENAI_MODEL ?? '(unset)',
     OPENAI_BASE_URL: request.baseUrl,
     OPENAI_API_KEY_SET: Boolean(process.env.OPENAI_API_KEY),

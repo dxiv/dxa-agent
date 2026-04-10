@@ -30,13 +30,13 @@ export function getUserAgent(): string {
   // so the read picks up the same setWorkload() value as getAttributionHeader.
   const workload = getWorkload()
   const workloadSuffix = workload ? `, workload/${workload}` : ''
-  return `deimos/${getDeimosVersionString()} (${process.env.USER_TYPE}, ${process.env.CLAUDE_CODE_ENTRYPOINT ?? 'cli'}${agentSdkVersion}${clientApp}${workloadSuffix})`
+  return `deimos/${getDeimosVersionString()} (${process.env.USER_TYPE}, ${process.env.DEIMOS_ENTRYPOINT ?? 'cli'}${agentSdkVersion}${clientApp}${workloadSuffix})`
 }
 
 export function getMCPUserAgent(): string {
   const parts: string[] = []
-  if (process.env.CLAUDE_CODE_ENTRYPOINT) {
-    parts.push(process.env.CLAUDE_CODE_ENTRYPOINT)
+  if (process.env.DEIMOS_ENTRYPOINT) {
+    parts.push(process.env.DEIMOS_ENTRYPOINT)
   }
   if (process.env.CLAUDE_AGENT_SDK_VERSION) {
     parts.push(`agent-sdk/${process.env.CLAUDE_AGENT_SDK_VERSION}`)

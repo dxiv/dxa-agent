@@ -14,7 +14,7 @@ export function applyDeimosEnvAliases(): void {
     if (!key.startsWith('DEIMOS_') || DEIMOS_ENV_NO_ALIAS.has(key)) continue
     const suffix = key.slice('DEIMOS_'.length)
     if (!suffix) continue
-    const legacy = `CLAUDE_CODE_${suffix}`
+    const legacy = `DEIMOS_${suffix}`
     if (env[legacy] === undefined && env[key] !== undefined) {
       env[legacy] = env[key]
     }

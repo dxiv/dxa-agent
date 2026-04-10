@@ -112,7 +112,7 @@ export function usePostCompactSurvey(
     if (isFeedbackSurveyDisabled()) {
       return;
     }
-    if (isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY)) {
+    if (isEnvTruthy(process.env.DEIMOS_DISABLE_FEEDBACK_SURVEY)) {
       return;
     }
     if (pendingCompactBoundaryUuid.current !== null) {

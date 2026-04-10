@@ -556,7 +556,7 @@ export async function installPluginFromMarketplace({
 
     // _PROTO_* routes to PII-tagged plugin_name/marketplace_name BQ columns.
     // plugin_id kept in additional_metadata (redacted to 'third-party' for
-    // non-official) because dbt external_claude_code_plugin_installs.sql
+    // non-official) because dbt external_deimos_plugin_installs.sql
     // extracts $.plugin_id for official-marketplace install tracking. Other
     // plugin lifecycle events drop the blob key — no downstream consumers.
     logEvent('tengu_plugin_installed', {

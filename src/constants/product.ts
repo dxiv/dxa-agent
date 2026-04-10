@@ -1,7 +1,7 @@
 export const PRODUCT_URL = 'https://dxa.dev/deimos/'
 
-// Remote session web base URLs (still point at Anthropic / claude.ai routing)
-export const DEIMOS_CLOUD_WEB_BASE_URL = 'https://claude.ai'
+// Remote session web base URLs (still point at Anthropic / dxa.dev/deimos routing)
+export const DEIMOS_CLOUD_WEB_BASE_URL = 'https://dxa.dev/deimos'
 export const DEIMOS_CLOUD_WEB_STAGING_BASE_URL = 'https://claude-ai.staging.ant.dev'
 export const DEIMOS_CLOUD_WEB_LOCAL_BASE_URL = 'http://localhost:4000'
 
@@ -34,7 +34,7 @@ export function isRemoteSessionLocal(
 }
 
 /**
- * Get the base URL for Claude AI based on environment.
+ * Get the base URL for Deimos AI based on environment.
  */
 export function getDeimosCloudPortalBaseUrl(
   sessionId?: string,
@@ -54,7 +54,7 @@ export function getDeimosCloudPortalBaseUrl(
  *
  * The cse_→session_ translation is a temporary shim gated by
  * tengu_bridge_repl_v2_cse_shim_enabled (see isCseShimEnabled). Worker
- * endpoints (/v1/code/sessions/{id}/worker/*) want `cse_*` but the claude.ai
+ * endpoints (/v1/code/sessions/{id}/worker/*) want `cse_*` but the dxa.dev/deimos
  * frontend currently routes on `session_*` (compat/convert.go:27 validates
  * TagSession). Same UUID body, different tag prefix. Once the server tags by
  * environment_kind and the frontend accepts `cse_*` directly, flip the gate

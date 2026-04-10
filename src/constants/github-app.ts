@@ -1,7 +1,7 @@
 export const PR_TITLE = 'Add Deimos GitHub Workflow'
 
 export const GITHUB_ACTION_SETUP_DOCS_URL =
-  'https://github.com/anthropics/claude-code-action/blob/main/docs/setup.md'
+  'https://github.com/anthropics/deimos-action/blob/main/docs/setup.md'
 
 export const WORKFLOW_CONTENT = `name: Deimos
 
@@ -28,7 +28,7 @@ jobs:
       pull-requests: read
       issues: read
       id-token: write
-      actions: read # Required for Claude to read CI results on PRs
+      actions: read # Required for Deimos to read CI results on PRs
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,20 +37,20 @@ jobs:
 
       - name: Run Deimos
         id: claude
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/deimos-action@v1
         with:
           anthropic_api_key: \${{ secrets.ANTHROPIC_API_KEY }}
 
-          # This is an optional setting that allows Claude to read CI results on PRs
+          # This is an optional setting that allows Deimos to read CI results on PRs
           additional_permissions: |
             actions: read
 
-          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
+          # Optional: Give a custom prompt to Deimos. If this is not specified, Deimos will perform the instructions specified in the comment that tagged it.
           # prompt: 'Update the pull request description to include a summary of changes.'
 
           # Optional: Add claude_args to customize behavior and configuration
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
+          # See https://github.com/anthropics/deimos-action/blob/main/docs/usage.md
+          # or https://dxa.dev/deimos/docs/en/cli-reference for available options
           # claude_args: '--allowed-tools Bash(gh pr:*)'
 
 `
@@ -61,7 +61,7 @@ This PR adds a GitHub Actions workflow that enables Deimos integration in our re
 
 ### What is Deimos?
 
-[Deimos](https://claude.com/claude-code) is an AI coding agent that can help with:
+[Deimos](https://claude.com/deimos) is an AI coding agent that can help with:
 - Bug fixes and improvements  
 - Documentation updates
 - Implementing new features
@@ -71,29 +71,29 @@ This PR adds a GitHub Actions workflow that enables Deimos integration in our re
 
 ### How it works
 
-Once this PR is merged, we'll be able to interact with Claude by mentioning @claude in a pull request or issue comment.
-Once the workflow is triggered, Claude will analyze the comment and surrounding context, and execute on the request in a GitHub action.
+Once this PR is merged, we'll be able to interact with Deimos by mentioning @claude in a pull request or issue comment.
+Once the workflow is triggered, Deimos will analyze the comment and surrounding context, and execute on the request in a GitHub action.
 
 ### Important Notes
 
 - **This workflow won't take effect until this PR is merged**
 - **@claude mentions won't work until after the merge is complete**
-- The workflow runs automatically whenever Claude is mentioned in PR or issue comments
-- Claude gets access to the entire PR or issue context including files, diffs, and previous comments
+- The workflow runs automatically whenever Deimos is mentioned in PR or issue comments
+- Deimos gets access to the entire PR or issue context including files, diffs, and previous comments
 
 ### Security
 
 - Our Anthropic API key is securely stored as a GitHub Actions secret
 - Only users with write access to the repository can trigger the workflow
-- All Claude runs are stored in the GitHub Actions run history
-- Claude's default tools are limited to reading/writing files and interacting with our repo by creating comments, branches, and commits.
+- All Deimos runs are stored in the GitHub Actions run history
+- Deimos's default tools are limited to reading/writing files and interacting with our repo by creating comments, branches, and commits.
 - We can add more allowed tools by adding them to the workflow file like:
 
 \`\`\`
 allowed_tools: Bash(npm install),Bash(npm run build),Bash(npm run lint),Bash(npm run test)
 \`\`\`
 
-There's more information in the [Deimos action repo](https://github.com/anthropics/claude-code-action).
+There's more information in the [Deimos action repo](https://github.com/anthropics/deimos-action).
 
 After merging this PR, let's try mentioning @claude in a comment on any PR to get started!`
 
@@ -132,13 +132,13 @@ jobs:
 
       - name: Run Deimos Review
         id: claude-review
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/deimos-action@v1
         with:
           anthropic_api_key: \${{ secrets.ANTHROPIC_API_KEY }}
-          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-          plugins: 'code-review@claude-code-plugins'
+          plugin_marketplaces: 'https://github.com/anthropics/deimos.git'
+          plugins: 'code-review@deimos-plugins'
           prompt: '/code-review:code-review \${{ github.repository }}/pull/\${{ github.event.pull_request.number }}'
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
+          # See https://github.com/anthropics/deimos-action/blob/main/docs/usage.md
+          # or https://dxa.dev/deimos/docs/en/cli-reference for available options
 
 `

@@ -13,12 +13,12 @@ import { lazySchema } from '../lazySchema.js'
  */
 
 /**
- * Official marketplace names that are reserved for Anthropic/Claude official use.
+ * Official marketplace names that are reserved for Anthropic/Deimos official use.
  * These names are allowed ONLY for official marketplaces and blocked for third parties.
  */
 export const ALLOWED_OFFICIAL_MARKETPLACE_NAMES = new Set([
-  'claude-code-marketplace',
-  'claude-code-plugins',
+  'deimos-marketplace',
+  'deimos-plugins',
   'claude-plugins-official',
   'anthropic-marketplace',
   'anthropic-plugins',
@@ -58,7 +58,7 @@ export function isMarketplaceAutoUpdate(
 }
 
 /**
- * Pattern to detect names that impersonate official Anthropic/Claude marketplaces.
+ * Pattern to detect names that impersonate official Anthropic/Deimos marketplaces.
  *
  * Matches names containing variations like:
  * - "official" combined with "anthropic" or "claude" (e.g., "official-claude-plugins")
@@ -79,7 +79,7 @@ export const BLOCKED_OFFICIAL_NAME_PATTERN =
 const NON_ASCII_PATTERN = /[^\u0020-\u007E]/
 
 /**
- * Check if a marketplace name impersonates an official Anthropic/Claude marketplace.
+ * Check if a marketplace name impersonates an official Anthropic/Deimos marketplace.
  *
  * @param name - The marketplace name to check
  * @returns true if the name is blocked (impersonates official), false if allowed
@@ -234,7 +234,7 @@ const MarketplaceNameSchema = lazySchema(() =>
     )
     .refine(name => !isBlockedOfficialName(name), {
       message:
-        'Marketplace name impersonates an official Anthropic/Claude marketplace',
+        'Marketplace name impersonates an official Anthropic/Deimos marketplace',
     })
     .refine(name => name.toLowerCase() !== 'inline', {
       message:

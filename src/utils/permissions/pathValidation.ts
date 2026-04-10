@@ -182,7 +182,7 @@ export function isPathAllowed(
 
   // 2.5. For write/create operations, check comprehensive safety validations
   // This MUST come before checking working directory to prevent bypass via acceptEdits mode
-  // Checks: Windows patterns, Claude config files, dangerous files (on original + symlink paths)
+  // Checks: Windows patterns, Deimos config files, dangerous files (on original + symlink paths)
   if (operationType !== 'read') {
     const safetyCheck = checkPathSafetyForAutoEdit(
       resolvedPath,

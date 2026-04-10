@@ -2,7 +2,7 @@
  * Plugin install counts data layer
  *
  * This module fetches and caches plugin install counts from the official
- * Claude plugins statistics repository. The cache is refreshed if older
+ * Deimos plugins statistics repository. The cache is refreshed if older
  * than 24 hours.
  *
  * Cache location: ~/.claude/plugins/install-counts-cache.json

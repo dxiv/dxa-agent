@@ -23,7 +23,7 @@ import { sequential } from './sequential.js'
  *
  * NOTE: This is intentionally a repo allowlist, not an org-wide check.
  * The anthropics and anthropic-experimental orgs contain PUBLIC repos
- * (e.g. anthropics/claude-code, anthropic-experimental/sandbox-runtime).
+ * (e.g. anthropics/deimos, anthropic-experimental/sandbox-runtime).
  * Undercover mode must stay ON in those to prevent codename leaks.
  * Only add repos here that are confirmed PRIVATE.
  */
@@ -168,7 +168,7 @@ export function sanitizeModelName(shortName: string): string {
 }
 
 /**
- * Attribution state for tracking Claude's contributions to files.
+ * Attribution state for tracking Deimos's contributions to files.
  */
 export type AttributionState = {
   // File states keyed by relative path (from cwd)
@@ -192,7 +192,7 @@ export type AttributionState = {
 }
 
 /**
- * Summary of Claude's contribution for a commit.
+ * Summary of Deimos's contribution for a commit.
  */
 export type AttributionSummary = {
   claudePercent: number
@@ -227,7 +227,7 @@ export type AttributionData = {
  * Get the current client surface from environment.
  */
 export function getClientSurface(): string {
-  return process.env.CLAUDE_CODE_ENTRYPOINT ?? 'cli'
+  return process.env.DEIMOS_ENTRYPOINT ?? 'cli'
 }
 
 /**
@@ -332,7 +332,7 @@ function computeFileModificationState(
   const normalizedPath = normalizeFilePath(filePath)
 
   try {
-    // Calculate Claude's character contribution
+    // Calculate Deimos's character contribution
     let claudeContribution: number
 
     if (oldContent === '' || newContent === '') {
@@ -396,7 +396,7 @@ export async function getFileMtime(filePath: string): Promise<number> {
 }
 
 /**
- * Track a file modification by Claude.
+ * Track a file modification by Deimos.
  * Called after Edit/Write tool completes.
  */
 export function trackFileModification(
@@ -433,8 +433,8 @@ export function trackFileModification(
 }
 
 /**
- * Track a file creation by Claude (e.g., via bash command).
- * Used when Claude creates a new file through a non-tracked mechanism.
+ * Track a file creation by Deimos (e.g., via bash command).
+ * Used when Deimos creates a new file through a non-tracked mechanism.
  */
 export function trackFileCreation(
   state: AttributionState,
@@ -447,8 +447,8 @@ export function trackFileCreation(
 }
 
 /**
- * Track a file deletion by Claude (e.g., via bash rm command).
- * Used when Claude deletes a file through a non-tracked mechanism.
+ * Track a file deletion by Deimos (e.g., via bash rm command).
+ * Used when Deimos deletes a file through a non-tracked mechanism.
  */
 export function trackFileDeletion(
   state: AttributionState,
@@ -637,7 +637,7 @@ export async function calculateCommitAttribution(
       if (deleted) {
         // File was deleted
         if (fileState) {
-          // Claude deleted this file (tracked deletion)
+          // Deimos deleted this file (tracked deletion)
           claudeChars = fileState.claudeContribution
           humanChars = 0
         } else {
@@ -662,7 +662,7 @@ export async function calculateCommitAttribution(
             const diffSize = await getGitDiffSize(file)
             humanChars = diffSize > 0 ? diffSize : stats.size
           } else {
-            // New file not created by Claude
+            // New file not created by Deimos
             humanChars = stats.size
           }
         } catch {

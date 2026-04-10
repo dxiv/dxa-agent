@@ -15,7 +15,7 @@ export async function getAnthropicDesktopConfigPath(): Promise<string> {
 
   if (!SUPPORTED_PLATFORMS.includes(platform)) {
     throw new Error(
-      `Unsupported platform: ${platform} - Claude Desktop integration only works on macOS and WSL.`,
+      `Unsupported platform: ${platform} - Deimos Desktop integration only works on macOS and WSL.`,
     )
   }
 
@@ -24,7 +24,7 @@ export async function getAnthropicDesktopConfigPath(): Promise<string> {
       homedir(),
       'Library',
       'Application Support',
-      'Claude',
+      'Deimos',
       'claude_desktop_config.json',
     )
   }
@@ -37,7 +37,7 @@ export async function getAnthropicDesktopConfigPath(): Promise<string> {
   if (windowsHome) {
     // Remove drive letter and convert to WSL path format
     const wslPath = windowsHome.replace(/^[A-Z]:/, '')
-    const configPath = `/mnt/c${wslPath}/AppData/Roaming/Claude/claude_desktop_config.json`
+    const configPath = `/mnt/c${wslPath}/AppData/Roaming/Deimos/claude_desktop_config.json`
 
     // Check if the file exists
     try {
@@ -56,7 +56,7 @@ export async function getAnthropicDesktopConfigPath(): Promise<string> {
     try {
       const userDirs = await readdir(usersDir, { withFileTypes: true })
 
-      // Look for Claude Desktop config in each user directory
+      // Look for Deimos Desktop config in each user directory
       for (const user of userDirs) {
         if (
           user.name === 'Public' ||
@@ -72,7 +72,7 @@ export async function getAnthropicDesktopConfigPath(): Promise<string> {
           user.name,
           'AppData',
           'Roaming',
-          'Claude',
+          'Deimos',
           'claude_desktop_config.json',
         )
 
@@ -91,7 +91,7 @@ export async function getAnthropicDesktopConfigPath(): Promise<string> {
   }
 
   throw new Error(
-    'Could not find Claude Desktop config file in Windows. Make sure Claude Desktop is installed on Windows.',
+    'Could not find Deimos Desktop config file in Windows. Make sure Deimos Desktop is installed on Windows.',
   )
 }
 
@@ -100,7 +100,7 @@ export async function readClaudeDesktopMcpServers(): Promise<
 > {
   if (!SUPPORTED_PLATFORMS.includes(getPlatform())) {
     throw new Error(
-      'Unsupported platform - Claude Desktop integration only works on macOS and WSL.',
+      'Unsupported platform - Deimos Desktop integration only works on macOS and WSL.',
     )
   }
   try {

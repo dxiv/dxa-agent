@@ -4,12 +4,12 @@ const originalEnv = { ...process.env }
 const originalFetch = globalThis.fetch
 
 function clearThirdPartyProviderFlags(): void {
-  delete process.env.CLAUDE_CODE_USE_OPENAI
-  delete process.env.CLAUDE_CODE_USE_GEMINI
-  delete process.env.CLAUDE_CODE_USE_GITHUB
-  delete process.env.CLAUDE_CODE_USE_BEDROCK
-  delete process.env.CLAUDE_CODE_USE_VERTEX
-  delete process.env.CLAUDE_CODE_USE_FOUNDRY
+  delete process.env.DEIMOS_USE_OPENAI
+  delete process.env.DEIMOS_USE_GEMINI
+  delete process.env.DEIMOS_USE_GITHUB
+  delete process.env.DEIMOS_USE_BEDROCK
+  delete process.env.DEIMOS_USE_VERTEX
+  delete process.env.DEIMOS_USE_FOUNDRY
 }
 
 async function importFreshModule() {
@@ -28,7 +28,7 @@ afterEach(() => {
 describe('preconnectAnthropicApi', () => {
   test('does not fetch when OpenAI mode is enabled', async () => {
     clearThirdPartyProviderFlags()
-    process.env.CLAUDE_CODE_USE_OPENAI = '1'
+    process.env.DEIMOS_USE_OPENAI = '1'
     const fetchMock = mock(() => Promise.resolve(new Response(null, { status: 200 })))
     globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch
 
@@ -40,7 +40,7 @@ describe('preconnectAnthropicApi', () => {
 
   test('does not fetch when Gemini mode is enabled', async () => {
     clearThirdPartyProviderFlags()
-    process.env.CLAUDE_CODE_USE_GEMINI = '1'
+    process.env.DEIMOS_USE_GEMINI = '1'
     const fetchMock = mock(() => Promise.resolve(new Response(null, { status: 200 })))
     globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch
 
@@ -52,7 +52,7 @@ describe('preconnectAnthropicApi', () => {
 
   test('does not fetch when GitHub mode is enabled', async () => {
     clearThirdPartyProviderFlags()
-    process.env.CLAUDE_CODE_USE_GITHUB = '1'
+    process.env.DEIMOS_USE_GITHUB = '1'
     const fetchMock = mock(() => Promise.resolve(new Response(null, { status: 200 })))
     globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch
 

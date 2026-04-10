@@ -133,38 +133,38 @@ export async function authLogin({
   email,
   sso,
   console: useConsole,
-  claudeai,
+  deimos,
 }: {
   email?: string
   sso?: boolean
   console?: boolean
-  claudeai?: boolean
+  deimos?: boolean
 }): Promise<void> {
-  if (useConsole && claudeai) {
+  if (useConsole && deimos) {
     process.stderr.write(
-      'Error: --console and --claudeai cannot be used together.\n',
+      'Error: --console and --deimos cannot be used together.\n',
     )
     process.exit(1)
   }
 
   const settings = getInitialSettings()
   // forceLoginMethod is a hard constraint (enterprise setting) — matches ConsoleOAuthFlow behavior.
-  // Without it, --console selects Console; --claudeai (or no flag) selects web subscription login.
+  // Without it, --console selects Console; --deimos (or no flag) selects web subscription login.
   const loginWithDeimosCloud = settings.forceLoginMethod
-    ? settings.forceLoginMethod === 'claudeai'
+    ? settings.forceLoginMethod === 'deimos'
     : !useConsole
   const orgUUID = settings.forceLoginOrgUUID
 
   // Fast path: if a refresh token is provided via env var, skip the browser
   // OAuth flow and exchange it directly for tokens.
-  const envRefreshToken = process.env.CLAUDE_CODE_OAUTH_REFRESH_TOKEN
+  const envRefreshToken = process.env.DEIMOS_OAUTH_REFRESH_TOKEN
   if (envRefreshToken) {
-    const envScopes = process.env.CLAUDE_CODE_OAUTH_SCOPES
+    const envScopes = process.env.DEIMOS_OAUTH_SCOPES
     if (!envScopes) {
       process.stderr.write(
-        'CLAUDE_CODE_OAUTH_SCOPES is required when using CLAUDE_CODE_OAUTH_REFRESH_TOKEN.\n' +
+        'DEIMOS_OAUTH_SCOPES is required when using DEIMOS_OAUTH_REFRESH_TOKEN.\n' +
           'Set it to the space-separated scopes the refresh token was issued with\n' +
-          '(e.g. "user:inference" or "user:profile user:inference user:sessions:claude_code user:mcp_servers").\n',
+          '(e.g. "user:inference" or "user:profile user:inference user:sessions:deimos user:mcp_servers").\n',
       )
       process.exit(1)
     }

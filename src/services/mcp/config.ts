@@ -162,7 +162,7 @@ function getServerUrl(config: McpServerConfig): string | null {
 }
 
 /**
- * CCR proxy URL path markers. In remote sessions, claude.ai connectors arrive
+ * CCR proxy URL path markers. In remote sessions, dxa.dev/deimos connectors arrive
  * via --mcp-config with URLs rewritten to route through the CCR/session-ingress
  * SHTTP proxy. The original vendor URL is preserved in the mcp_url query param
  * so the proxy knows where to forward. See api-go/ccr/internal/ccrshared/
@@ -266,11 +266,11 @@ export function dedupPluginMcpServers(
 }
 
 /**
- * Filter claude.ai connectors, dropping any whose signature matches an enabled
+ * Filter dxa.dev/deimos connectors, dropping any whose signature matches an enabled
  * manually-configured server. Manual wins: a user who wrote .mcp.json or ran
  * `claude mcp add` expressed higher intent than a connector toggled in the web UI.
  *
- * Connector keys are `claude.ai <DisplayName>` so they never key-collide with
+ * Connector keys are `dxa.dev/deimos <DisplayName>` so they never key-collide with
  * manual servers in the merge — this content-based check catches the case where
  * both point at the same underlying URL (e.g. `mcp__slack__*` and
  * `mcp__claude_ai_Slack__*` both hitting mcp.slack.com, ~600 chars/turn wasted).
@@ -279,7 +279,7 @@ export function dedupPluginMcpServers(
  * mustn't suppress its connector twin, or neither runs.
  */
 export function dedupDeimosCloudMcpServers(
-  claudeAiServers: Record<string, ScopedMcpServerConfig>,
+  deimosCloudServers: Record<string, ScopedMcpServerConfig>,
   manualServers: Record<string, ScopedMcpServerConfig>,
 ): {
   servers: Record<string, ScopedMcpServerConfig>
@@ -294,12 +294,12 @@ export function dedupDeimosCloudMcpServers(
 
   const servers: Record<string, ScopedMcpServerConfig> = {}
   const suppressed: Array<{ name: string; duplicateOf: string }> = []
-  for (const [name, config] of Object.entries(claudeAiServers)) {
+  for (const [name, config] of Object.entries(deimosCloudServers)) {
     const sig = getMcpServerSignature(config)
     const manualDup = sig !== null ? manualSigs.get(sig) : undefined
     if (manualDup !== undefined) {
       logForDebugging(
-        `Suppressing claude.ai connector "${name}": duplicates manually-configured "${manualDup}"`,
+        `Suppressing dxa.dev/deimos connector "${name}": duplicates manually-configured "${manualDup}"`,
       )
       suppressed.push({ name, duplicateOf: manualDup })
       continue
@@ -604,7 +604,7 @@ function expandEnvVars(config: McpServerConfig): {
     case 'sdk':
       expanded = config
       break
-    case 'claudeai-proxy':
+    case 'deimos-proxy':
       expanded = config
       break
   }
@@ -705,8 +705,8 @@ export async function addMcpConfig(
       throw new Error('Cannot add MCP server to scope: dynamic')
     case 'enterprise':
       throw new Error('Cannot add MCP server to scope: enterprise')
-    case 'claudeai':
-      throw new Error('Cannot add MCP server to scope: claudeai')
+    case 'deimos':
+      throw new Error('Cannot add MCP server to scope: deimos')
   }
 
   // Add based on scope
@@ -1060,11 +1060,11 @@ export function getMcpConfigByName(name: string): ScopedMcpServerConfig | null {
 }
 
 /**
- * Get Deimos MCP configurations (excludes claude.ai servers from the
+ * Get Deimos MCP configurations (excludes dxa.dev/deimos servers from the
  * returned set — they're fetched separately and merged by callers).
  * This is fast: only local file reads; no awaited network calls on the
  * critical path. The optional extraDedupTargets promise (e.g. the in-flight
- * claude.ai connector fetch) is awaited only after loadAllPluginsCacheOnly() completes,
+ * dxa.dev/deimos connector fetch) is awaited only after loadAllPluginsCacheOnly() completes,
  * so the two overlap rather than serialize.
  * @returns Deimos server configurations with appropriate scopes
  */
@@ -1251,7 +1251,7 @@ export async function getDeimosMcpConfigs(
 }
 
 /**
- * Get all MCP configurations across all scopes, including claude.ai servers.
+ * Get all MCP configurations across all scopes, including dxa.dev/deimos servers.
  * This may be slow due to network calls - use getDeimosMcpConfigs() for fast startup.
  * @returns All server configurations with appropriate scopes
  */
@@ -1259,12 +1259,12 @@ export async function getAllMcpConfigs(): Promise<{
   servers: Record<string, ScopedMcpServerConfig>
   errors: PluginError[]
 }> {
-  // In enterprise mode, don't load claude.ai servers (enterprise has exclusive control)
+  // In enterprise mode, don't load dxa.dev/deimos servers (enterprise has exclusive control)
   if (doesEnterpriseMcpConfigExist()) {
     return getDeimosMcpConfigs()
   }
 
-  // Kick off the claude.ai fetch before getDeimosMcpConfigs so it overlaps
+  // Kick off the dxa.dev/deimos fetch before getDeimosMcpConfigs so it overlaps
   // with loadAllPluginsCacheOnly() inside. Memoized — the awaited call below is a cache hit.
   const deimosCloudMcpPromise = fetchDeimosCloudMcpConfigsIfEligible()
   const { servers: claudeCodeServers, errors } = await getDeimosMcpConfigs(
@@ -1273,18 +1273,18 @@ export async function getAllMcpConfigs(): Promise<{
   )
   const deimosCloudMcpConfigs =
     (await deimosCloudMcpPromise) as Record<string, ScopedMcpServerConfig>
-  const { allowed: claudeaiMcpServers } =
+  const { allowed: deimoscloudMcpServers } =
     filterMcpServersByPolicy(deimosCloudMcpConfigs)
 
-  // Suppress claude.ai connectors that duplicate an enabled manual server.
-  // Keys never collide (`slack` vs `claude.ai Slack`) so the merge below
+  // Suppress dxa.dev/deimos connectors that duplicate an enabled manual server.
+  // Keys never collide (`slack` vs `dxa.dev/deimos Slack`) so the merge below
   // won't catch this — need content-based dedup by URL signature.
   const { servers: dedupedDeimosCloudMcp } = dedupDeimosCloudMcpServers(
-    claudeaiMcpServers,
+    deimoscloudMcpServers,
     claudeCodeServers,
   )
 
-  // Merge with claude.ai having lowest precedence
+  // Merge with dxa.dev/deimos having lowest precedence
   const servers = Object.assign({}, dedupedDeimosCloudMcp, claudeCodeServers)
 
   return { servers, errors }
@@ -1360,7 +1360,7 @@ export function parseMcpConfig(params: {
         ...(filePath && { file: filePath }),
         path: `mcpServers.${name}`,
         message: `Windows requires 'cmd /c' wrapper to execute npx`,
-        suggestion: `Change command to "cmd" with args ["/c", "npx", ...]. See: https://code.claude.com/docs/en/mcp#configure-mcp-servers`,
+        suggestion: `Change command to "cmd" with args ["/c", "npx", ...]. See: https://dxa.dev/deimos/docs/en/mcp#configure-mcp-servers`,
         mcpErrorMetadata: {
           scope,
           serverName: name,

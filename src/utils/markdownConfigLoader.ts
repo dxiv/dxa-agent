@@ -151,7 +151,7 @@ export function parseSlashCommandToolsFromFrontmatter(
  * Uses bigint: true to handle filesystems with large inodes (e.g., ExFAT)
  * that exceed JavaScript's Number precision (53 bits). Without bigint, different
  * large inodes can round to the same Number, causing false duplicate detection.
- * See: https://github.com/anthropics/claude-code/issues/13893
+ * See: https://github.com/anthropics/deimos/issues/13893
  *
  * @param filePath - Path to the file
  * @returns A string identifier "device:inode" or null if file can't be identified
@@ -313,7 +313,7 @@ export const loadMarkdownFilesForSubdir = memoize(
     // is absent. A standard `git worktree add` checks out the full tree, so the
     // worktree already has identical .claude/<subdir> content — loading the main
     // repo's copy too would duplicate every command/agent/skill
-    // (anthropics/claude-code#29599, #28182, #26992).
+    // (anthropics/deimos#29599, #28182, #26992).
     //
     // projectDirs already reflects existence (getProjectDirsUpToHome checked
     // each dir), so we compare against that instead of stat'ing again.
@@ -435,7 +435,7 @@ export const loadMarkdownFilesForSubdir = memoize(
  * This implementation exists alongside ripgrep for the following reasons:
  * 1. Ripgrep has poor startup performance in native builds (noticeable on app startup)
  * 2. Provides a fallback when ripgrep is unavailable
- * 3. Can be explicitly enabled via CLAUDE_CODE_USE_NATIVE_FILE_SEARCH env var
+ * 3. Can be explicitly enabled via DEIMOS_USE_NATIVE_FILE_SEARCH env var
  *
  * Symlink handling:
  * - Follows symlinks (equivalent to ripgrep's --follow flag)
@@ -463,7 +463,7 @@ async function findMarkdownFilesNative(
     // Cycle detection: track visited directories by device+inode
     // Uses bigint: true to handle filesystems with large inodes (e.g., ExFAT)
     // that exceed JavaScript's Number precision (53 bits).
-    // See: https://github.com/anthropics/claude-code/issues/13893
+    // See: https://github.com/anthropics/deimos/issues/13893
     try {
       const stats = await stat(currentDir, { bigint: true })
       if (stats.isDirectory()) {
@@ -552,10 +552,10 @@ async function loadMarkdownFiles(dir: string): Promise<
 > {
   // File search strategy:
   // - Default: ripgrep (faster, battle-tested)
-  // - Fallback: native Node.js (when CLAUDE_CODE_USE_NATIVE_FILE_SEARCH is set)
+  // - Fallback: native Node.js (when DEIMOS_USE_NATIVE_FILE_SEARCH is set)
   //
   // Why both? Ripgrep has poor startup performance in native builds.
-  const useNative = isEnvTruthy(process.env.CLAUDE_CODE_USE_NATIVE_FILE_SEARCH)
+  const useNative = isEnvTruthy(process.env.DEIMOS_USE_NATIVE_FILE_SEARCH)
   const signal = AbortSignal.timeout(3000)
   let files: string[]
   try {

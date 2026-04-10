@@ -14,14 +14,14 @@ EXIT=0
 BANNED=(
   "datadoghq.com"
   "api/event_logging/batch"
-  "api/claude_code/metrics"
+  "api/deimos/metrics"
   "getKubernetesNamespace"
   "/var/run/secrets/kubernetes"
   "/proc/self/mountinfo"
   "tengu_internal_record_permission_context"
   "anthropic-serve"
   "infra.ant.dev"
-  "claude-code-feedback"
+  "deimos-feedback"
   "C07VBSHV7EV"
 )
 

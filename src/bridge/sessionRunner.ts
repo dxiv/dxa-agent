@@ -19,7 +19,7 @@ const MAX_STDERR_LINES = 10
 /**
  * Safe OS and runtime variables that the child process needs to function.
  * Everything else (API keys, DB passwords, proxy secrets, etc.) must not
- * be inherited — the child authenticates via CLAUDE_CODE_SESSION_ACCESS_TOKEN.
+ * be inherited — the child authenticates via DEIMOS_SESSION_ACCESS_TOKEN.
  */
 const CHILD_ENV_ALLOWLIST = new Set([
   // System / shell
@@ -31,13 +31,13 @@ const CHILD_ENV_ALLOWLIST = new Set([
   // Node.js runtime
   'NODE_OPTIONS', 'NODE_PATH', 'NODE_ENV',
   // Deimos session / bridge (non-secret)
-  'CLAUDE_CODE_ENVIRONMENT_KIND',
-  'CLAUDE_CODE_FORCE_SANDBOX',
-  'CLAUDE_CODE_BUBBLEWRAP',
-  'CLAUDE_CODE_ENTRYPOINT',
-  'CLAUDE_CODE_COORDINATOR_MODE',
-  'CLAUDE_CODE_PERMISSIONS_VERSION',
-  'CLAUDE_CODE_PERMISSIONS_SETTING',
+  'DEIMOS_ENVIRONMENT_KIND',
+  'DEIMOS_FORCE_SANDBOX',
+  'DEIMOS_BUBBLEWRAP',
+  'DEIMOS_ENTRYPOINT',
+  'DEIMOS_COORDINATOR_MODE',
+  'DEIMOS_PERMISSIONS_VERSION',
+  'DEIMOS_PERMISSIONS_SETTING',
   // Display / terminal
   'TERM', 'COLORTERM', 'FORCE_COLOR', 'NO_COLOR',
 ])
@@ -66,14 +66,14 @@ export function buildChildEnv(
   }
 
   // Bridge-required overrides
-  env.CLAUDE_CODE_OAUTH_TOKEN = undefined // explicitly strip
-  env.CLAUDE_CODE_ENVIRONMENT_KIND = 'bridge'
-  if (opts.sandbox) env.CLAUDE_CODE_FORCE_SANDBOX = '1'
-  env.CLAUDE_CODE_SESSION_ACCESS_TOKEN = opts.accessToken
-  env.CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2 = '1'
+  env.DEIMOS_OAUTH_TOKEN = undefined // explicitly strip
+  env.DEIMOS_ENVIRONMENT_KIND = 'bridge'
+  if (opts.sandbox) env.DEIMOS_FORCE_SANDBOX = '1'
+  env.DEIMOS_SESSION_ACCESS_TOKEN = opts.accessToken
+  env.DEIMOS_POST_FOR_SESSION_INGRESS_V2 = '1'
   if (opts.useCcrV2) {
-    env.CLAUDE_CODE_USE_CCR_V2 = '1'
-    env.CLAUDE_CODE_WORKER_EPOCH = String(opts.workerEpoch)
+    env.DEIMOS_USE_CCR_V2 = '1'
+    env.DEIMOS_WORKER_EPOCH = String(opts.workerEpoch)
   }
 
   return env
@@ -112,7 +112,7 @@ type SessionSpawnerDeps = {
    * compiled binaries (where execPath is the claude binary itself); contains
    * the script path (process.argv[1]) for npm installs where execPath is the
    * node runtime. Without this, node sees --sdk-url as a node option and
-   * exits with "bad option: --sdk-url" (see anthropics/claude-code#28334).
+   * exits with "bad option: --sdk-url" (see anthropics/deimos#28334).
    */
   scriptArgs: string[]
   env: NodeJS.ProcessEnv
@@ -584,7 +584,7 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
           handle.writeStdin(
             jsonStringify({
               type: 'update_environment_variables',
-              variables: { CLAUDE_CODE_SESSION_ACCESS_TOKEN: token },
+              variables: { DEIMOS_SESSION_ACCESS_TOKEN: token },
             }) + '\n',
           )
           deps.onDebug(

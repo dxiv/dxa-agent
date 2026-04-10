@@ -25,8 +25,8 @@ import { loadAllPlugins } from '../../utils/plugins/pluginLoader.js';
 import { installSelectedPlugins } from '../../utils/plugins/pluginStartupCheck.js';
 
 // Marketplace and plugin identifiers - varies by user type
-const INTERNAL_MARKETPLACE_NAME = 'claude-code-marketplace';
-const INTERNAL_MARKETPLACE_REPO = 'anthropics/claude-code-marketplace';
+const INTERNAL_MARKETPLACE_NAME = 'deimos-marketplace';
+const INTERNAL_MARKETPLACE_REPO = 'anthropics/deimos-marketplace';
 const OFFICIAL_MARKETPLACE_REPO = 'anthropics/claude-plugins-official';
 function getMarketplaceName(): string {
   return ('external' as string) === 'ant' ? INTERNAL_MARKETPLACE_NAME : OFFICIAL_MARKETPLACE_NAME;
@@ -346,7 +346,7 @@ function ThinkbackMenu(t0) {
   }
   let t4;
   if ($[8] !== hasGenerated) {
-    t4 = !hasGenerated && <Box flexDirection="column"><Text>Relive your year of coding with Claude.</Text><Text dimColor={true}>{"We'll create a personalized ASCII animation celebrating your journey."}</Text></Box>;
+    t4 = !hasGenerated && <Box flexDirection="column"><Text>Relive your year of coding with Deimos.</Text><Text dimColor={true}>{"We'll create a personalized ASCII animation celebrating your journey."}</Text></Box>;
     $[8] = hasGenerated;
     $[9] = t4;
   } else {

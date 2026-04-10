@@ -25,7 +25,7 @@ async function _temp(): Promise<Notification | null> {
   if (true && !isDeimosCloudSubscriber()) {
     return {
       key: "chrome-requires-subscription",
-      jsx: <Text color="error">Claude in Chrome requires a claude.ai subscription</Text>,
+      jsx: <Text color="error">Deimos in Chrome requires a dxa.dev/deimos subscription</Text>,
       priority: "immediate",
       timeoutMs: 5000
     };
@@ -34,7 +34,7 @@ async function _temp(): Promise<Notification | null> {
   if (!installed && !isRunningOnHomespace()) {
     return {
       key: "chrome-extension-not-detected",
-      jsx: <Text color="warning">Chrome extension not detected · https://claude.ai/chrome to install</Text>,
+      jsx: <Text color="warning">Chrome extension not detected · https://dxa.dev/deimos/chrome to install</Text>,
       priority: "immediate",
       timeoutMs: 3000
     };
@@ -42,7 +42,7 @@ async function _temp(): Promise<Notification | null> {
   if (chromeFlag === undefined) {
     return {
       key: "claude-in-chrome-default-enabled",
-      text: "Claude in Chrome enabled \xB7 /chrome",
+      text: "Deimos in Chrome enabled \xB7 /chrome",
       priority: "low"
     };
   }

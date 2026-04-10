@@ -8,8 +8,6 @@ import { plainTextStorage } from './plainTextStorage.js'
 export interface SecureStorageData {
   /** Primary: Deimos / Anthropic web subscription OAuth tokens. */
   deimosCloudOauth?: OAuthTokens
-  /** @deprecated Legacy key; still read for migration (see auth.ts). */
-  claudeAiOauth?: OAuthTokens
   mcpOAuth?: Record<
     string,
     {

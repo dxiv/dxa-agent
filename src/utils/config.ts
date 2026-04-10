@@ -219,7 +219,7 @@ export type GlobalConfig = {
   // @deprecated - Migrated to ~/.claude/cache/changelog.md. Keep for migration support.
   cachedChangelog?: string
   mcpServers?: Record<string, McpServerConfig>
-  // Cloud (claude.ai) MCP connectors that have successfully connected at least once.
+  // Cloud (dxa.dev/deimos) MCP connectors that have successfully connected at least once.
   // Used to gate "connector unavailable" / "needs auth" startup notifications:
   // a connector the user has actually used is worth flagging when it breaks,
   // but an org-configured connector that's been needs-auth since day one is
@@ -386,7 +386,7 @@ export type GlobalConfig = {
   // First start time tracking
   firstStartTime?: string // ISO timestamp when Deimos was first started on this machine
 
-  messageIdleNotifThresholdMs: number // How long the user has to have been idle to get a notification that Claude is done generating
+  messageIdleNotifThresholdMs: number // How long the user has to have been idle to get a notification that Deimos is done generating
 
   githubActionSetupCount?: number // Number of times the user has set up the GitHub Action
   slackAppInstallCount?: number // Number of times the user has clicked to install the Slack app
@@ -478,7 +478,7 @@ export type GlobalConfig = {
   // Fullscreen in-app text selection behavior
   copyOnSelect?: boolean // Auto-copy to clipboard on mouse-up (undefined → true; lets cmd+c "work" via no-op)
 
-  // Flicker-free fullscreen mode (equivalent to CLAUDE_CODE_NO_FLICKER=1 env var).
+  // Flicker-free fullscreen mode (equivalent to DEIMOS_NO_FLICKER=1 env var).
   // When true, enables alt-screen + virtualized scroll for all users.
   // Env var still takes precedence: =0 always off, =1 always on.
   flickerFreeMode?: boolean
@@ -593,7 +593,7 @@ export type GlobalConfig = {
   // Keyed by provider profile id.
   openaiAdditionalModelOptionsCacheByProfile?: Record<string, ModelOption[]>
 
-  // Disk cache for /api/claude_code/organizations/metrics_enabled.
+  // Disk cache for /api/deimos/organizations/metrics_enabled.
   // Org-level settings change rarely; persisting across processes avoids a
   // cold API call on every `claude -p` invocation.
   metricsStatusCache?: {
@@ -972,26 +972,6 @@ function migrateLegacyDeimosConfigKeys(config: GlobalConfig): GlobalConfig {
       deimosInChromeDefaultEnabled: raw.deimosInChromeDefaultEnabled as boolean,
     }
   }
-  if (
-    raw.hasCompletedClaudeInChromeOnboarding !== undefined &&
-    next.hasCompletedDeimosInChromeOnboarding === undefined
-  ) {
-    next = {
-      ...next,
-      hasCompletedDeimosInChromeOnboarding:
-        raw.hasCompletedClaudeInChromeOnboarding as boolean,
-    }
-  }
-
-  if (
-    raw.claudeAiMcpEverConnected !== undefined &&
-    next.deimosCloudMcpEverConnected === undefined
-  ) {
-    next = {
-      ...next,
-      deimosCloudMcpEverConnected: raw.claudeAiMcpEverConnected as string[],
-    }
-  }
 
   if (next.projects) {
     next = {
@@ -1295,7 +1275,7 @@ function saveConfigWithLock<A extends object>(
     const lockTime = Date.now() - startTime
     if (lockTime > 100) {
       logForDebugging(
-        'Lock acquisition took longer than expected - another Claude instance may be running',
+        'Lock acquisition took longer than expected - another Deimos instance may be running',
       )
       logEvent('tengu_config_lock_contention', {
         lock_time_ms: lockTime,

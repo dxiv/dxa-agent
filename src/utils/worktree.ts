@@ -1174,7 +1174,7 @@ export async function hasWorktreeChanges(
 
 /**
  * Fast-path handler for --worktree --tmux.
- * Creates the worktree and execs into tmux running Claude inside.
+ * Creates the worktree and execs into tmux running Deimos inside.
  * This is called early in cli.tsx before loading the full CLI.
  */
 export async function execIntoTmuxWorktree(args: string[]): Promise<{
@@ -1254,7 +1254,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
 
   // Mirror createWorktreeForSession(): hook takes precedence over git so the
   // WorktreeCreate hook substitutes the VCS backend for this fast-path too
-  // (anthropics/claude-code#39281). Git path below runs only when no hook.
+  // (anthropics/deimos#39281). Git path below runs only when no hook.
   let worktreeDir: string
   let repoName: string
   if (hasWorktreeCreateHook()) {
@@ -1339,8 +1339,8 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
     }
   }
 
-  // Check if tmux prefix conflicts with Claude keybindings
-  // Claude binds: ctrl+b (task:background), ctrl+c, ctrl+d, ctrl+t, ctrl+o, ctrl+r, ctrl+s, ctrl+g, ctrl+e
+  // Check if tmux prefix conflicts with Deimos keybindings
+  // Deimos binds: ctrl+b (task:background), ctrl+c, ctrl+d, ctrl+t, ctrl+o, ctrl+r, ctrl+s, ctrl+g, ctrl+e
   const claudeBindings = [
     'C-b',
     'C-c',
@@ -1354,12 +1354,12 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
   ]
   const prefixConflicts = claudeBindings.includes(tmuxPrefix)
 
-  // Set env vars for the inner Claude to display tmux info in welcome message
+  // Set env vars for the inner Deimos to display tmux info in welcome message
   const tmuxEnv = {
     ...process.env,
-    CLAUDE_CODE_TMUX_SESSION: tmuxSessionName,
-    CLAUDE_CODE_TMUX_PREFIX: tmuxPrefix,
-    CLAUDE_CODE_TMUX_PREFIX_CONFLICTS: prefixConflicts ? '1' : '',
+    DEIMOS_TMUX_SESSION: tmuxSessionName,
+    DEIMOS_TMUX_PREFIX: tmuxPrefix,
+    DEIMOS_TMUX_PREFIX_CONFLICTS: prefixConflicts ? '1' : '',
   }
 
   // Check if session already exists
@@ -1398,7 +1398,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
   const shouldSetupDevPanes = isAnt && isClaudeCliInternal && !sessionExists
 
   if (shouldSetupDevPanes) {
-    // Create detached session with Claude in first pane
+    // Create detached session with Deimos in first pane
     spawnSync(
       'tmux',
       [
@@ -1437,7 +1437,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
       cwd: worktreeDir,
     })
 
-    // Select the first pane (Claude)
+    // Select the first pane (Deimos)
     spawnSync('tmux', ['select-pane', '-t', `${tmuxSessionName}:0.0`], {
       cwd: worktreeDir,
     })

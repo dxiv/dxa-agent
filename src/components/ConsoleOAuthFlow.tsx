@@ -27,7 +27,7 @@ type Props = {
   onDone(result?: ConsoleOAuthFlowResult): void;
   startingMessage?: string;
   mode?: 'login' | 'setup-token';
-  forceLoginMethod?: 'claudeai' | 'console';
+  forceLoginMethod?: 'deimos' | 'console';
   initialStatus?: OAuthStatus;
 };
 type OAuthStatus = {
@@ -72,7 +72,7 @@ export function ConsoleOAuthFlow({
   const settings = getSettings_DEPRECATED() || {};
   const forceLoginMethod = forceLoginMethodProp ?? settings.forceLoginMethod;
   const orgUUID = settings.forceLoginOrgUUID;
-  const forcedMethodMessage = forceLoginMethod === 'claudeai' ? 'Login method pre-selected: Subscription Plan (Claude Pro/Max)' : forceLoginMethod === 'console' ? 'Login method pre-selected: API Usage Billing (Anthropic Console)' : null;
+  const forcedMethodMessage = forceLoginMethod === 'deimos' ? 'Login method pre-selected: Subscription Plan (Deimos Pro/Max)' : forceLoginMethod === 'console' ? 'Login method pre-selected: API Usage Billing (Anthropic Console)' : null;
   const terminal = useTerminalNotification();
   const [oauthStatus, setOAuthStatus] = useState<OAuthStatus>(() => {
     if (initialStatus) {
@@ -83,7 +83,7 @@ export function ConsoleOAuthFlow({
         state: 'ready_to_start'
       };
     }
-    if (forceLoginMethod === 'claudeai' || forceLoginMethod === 'console') {
+    if (forceLoginMethod === 'deimos' || forceLoginMethod === 'console') {
       return {
         state: 'ready_to_start'
       };
@@ -95,9 +95,9 @@ export function ConsoleOAuthFlow({
   const [pastedCode, setPastedCode] = useState('');
   const [cursorOffset, setCursorOffset] = useState(0);
   const [oauthService] = useState(() => new OAuthService());
-  const [loginWithDeimosCloud, setLoginWithClaudeAi] = useState(() => {
-    // Use Claude AI auth for setup-token mode to support user:inference scope
-    return mode === 'setup-token' || forceLoginMethod === 'claudeai';
+  const [loginWithDeimosCloud, setLoginWithDeimosCloud] = useState(() => {
+    // Use Deimos AI auth for setup-token mode to support user:inference scope
+    return mode === 'setup-token' || forceLoginMethod === 'deimos';
   });
   // After a few seconds we suggest the user to copy/paste url if the
   // browser did not open automatically. In this flow we expect the user to
@@ -108,8 +108,8 @@ export function ConsoleOAuthFlow({
 
   // Log forced login method on mount
   useEffect(() => {
-    if (forceLoginMethod === 'claudeai') {
-      logEvent('tengu_oauth_claudeai_forced', {});
+    if (forceLoginMethod === 'deimos') {
+      logEvent('tengu_oauth_deimoscloud_forced', {});
     } else if (forceLoginMethod === 'console') {
       logEvent('tengu_oauth_console_forced', {});
     }
@@ -247,7 +247,7 @@ export function ConsoleOAuthFlow({
       });
       if (mode === 'setup-token') {
         // For setup-token mode, return the OAuth access token directly (it can be used as an API key)
-        // Don't save to keychain - the token is displayed for manual use with CLAUDE_CODE_OAUTH_TOKEN
+        // Don't save to keychain - the token is displayed for manual use with DEIMOS_OAUTH_TOKEN
         setOAuthStatus({
           state: 'success',
           token: result.accessToken
@@ -341,12 +341,12 @@ export function ConsoleOAuthFlow({
               </Text>
               <Text dimColor>
                 Use this token by setting: export
-                CLAUDE_CODE_OAUTH_TOKEN=&lt;token&gt;
+                DEIMOS_OAUTH_TOKEN=&lt;token&gt;
               </Text>
             </Box>
           </Box>}
       <Box paddingLeft={1} flexDirection="column" gap={1}>
-        <OAuthStatusMessage oauthStatus={oauthStatus} mode={mode} startingMessage={startingMessage} forcedMethodMessage={forcedMethodMessage} showPastePrompt={showPastePrompt} pastedCode={pastedCode} setPastedCode={setPastedCode} cursorOffset={cursorOffset} setCursorOffset={setCursorOffset} textInputColumns={textInputColumns} handleSubmitCode={handleSubmitCode} setOAuthStatus={setOAuthStatus} setLoginWithClaudeAi={setLoginWithClaudeAi} />
+        <OAuthStatusMessage oauthStatus={oauthStatus} mode={mode} startingMessage={startingMessage} forcedMethodMessage={forcedMethodMessage} showPastePrompt={showPastePrompt} pastedCode={pastedCode} setPastedCode={setPastedCode} cursorOffset={cursorOffset} setCursorOffset={setCursorOffset} textInputColumns={textInputColumns} handleSubmitCode={handleSubmitCode} setOAuthStatus={setOAuthStatus} setLoginWithDeimosCloud={setLoginWithDeimosCloud} />
       </Box>
     </Box>;
 }
@@ -363,7 +363,7 @@ type OAuthStatusMessageProps = {
   textInputColumns: number;
   handleSubmitCode: (value: string, url: string) => void;
   setOAuthStatus: (status: OAuthStatus) => void;
-  setLoginWithClaudeAi: (value: boolean) => void;
+  setLoginWithDeimosCloud: (value: boolean) => void;
 };
 function OAuthStatusMessage({
   oauthStatus,
@@ -378,7 +378,7 @@ function OAuthStatusMessage({
   textInputColumns,
   handleSubmitCode,
   setOAuthStatus,
-  setLoginWithClaudeAi,
+  setLoginWithDeimosCloud,
 }: OAuthStatusMessageProps) {
   switch (oauthStatus.state) {
     case 'idle': {
@@ -386,12 +386,12 @@ function OAuthStatusMessage({
         {
           label: (
             <Text>
-              Claude account with subscription ·{' '}
+              Deimos account with subscription ·{' '}
               <Text dimColor>Pro, Max, Team, or Enterprise</Text>
               {'\n'}
             </Text>
           ),
-          value: 'claudeai' as const,
+          value: 'deimos' as const,
         },
         {
           label: (
@@ -423,7 +423,7 @@ function OAuthStatusMessage({
             <>
               <Text bold>Sign in to continue</Text>
               <Text dimColor wrap="wrap">
-                Billing and sign-in depend on your choice: Anthropic (Claude subscription or Console API billing), or a
+                Billing and sign-in depend on your choice: Anthropic (Deimos subscription or Console API billing), or a
                 third-party provider you configure next.
               </Text>
             </>
@@ -440,12 +440,12 @@ function OAuthStatusMessage({
                 }
 
                 setOAuthStatus({ state: 'ready_to_start' })
-                if (value === 'claudeai') {
-                  logEvent('tengu_oauth_claudeai_selected', {})
-                  setLoginWithClaudeAi(true)
+                if (value === 'deimos') {
+                  logEvent('tengu_oauth_deimoscloud_selected', {})
+                  setLoginWithDeimosCloud(true)
                 } else {
                   logEvent('tengu_oauth_console_selected', {})
-                  setLoginWithClaudeAi(false)
+                  setLoginWithDeimosCloud(false)
                 }
               }}
             />

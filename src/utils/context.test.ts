@@ -7,27 +7,27 @@ import {
 } from './context.js'
 
 const originalEnv = {
-  CLAUDE_CODE_USE_OPENAI: process.env.CLAUDE_CODE_USE_OPENAI,
-  CLAUDE_CODE_MAX_OUTPUT_TOKENS: process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS,
+  DEIMOS_USE_OPENAI: process.env.DEIMOS_USE_OPENAI,
+  DEIMOS_MAX_OUTPUT_TOKENS: process.env.DEIMOS_MAX_OUTPUT_TOKENS,
 }
 
 afterEach(() => {
-  if (originalEnv.CLAUDE_CODE_USE_OPENAI === undefined) {
-    delete process.env.CLAUDE_CODE_USE_OPENAI
+  if (originalEnv.DEIMOS_USE_OPENAI === undefined) {
+    delete process.env.DEIMOS_USE_OPENAI
   } else {
-    process.env.CLAUDE_CODE_USE_OPENAI = originalEnv.CLAUDE_CODE_USE_OPENAI
+    process.env.DEIMOS_USE_OPENAI = originalEnv.DEIMOS_USE_OPENAI
   }
-  if (originalEnv.CLAUDE_CODE_MAX_OUTPUT_TOKENS === undefined) {
-    delete process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  if (originalEnv.DEIMOS_MAX_OUTPUT_TOKENS === undefined) {
+    delete process.env.DEIMOS_MAX_OUTPUT_TOKENS
   } else {
-    process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS =
-      originalEnv.CLAUDE_CODE_MAX_OUTPUT_TOKENS
+    process.env.DEIMOS_MAX_OUTPUT_TOKENS =
+      originalEnv.DEIMOS_MAX_OUTPUT_TOKENS
   }
 })
 
 test('deepseek-chat uses provider-specific context and output caps', () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  delete process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  process.env.DEIMOS_USE_OPENAI = '1'
+  delete process.env.DEIMOS_MAX_OUTPUT_TOKENS
 
   expect(getContextWindowForModel('deepseek-chat')).toBe(128_000)
   expect(getModelMaxOutputTokens('deepseek-chat')).toEqual({
@@ -38,15 +38,15 @@ test('deepseek-chat uses provider-specific context and output caps', () => {
 })
 
 test('deepseek-chat clamps oversized max output overrides to the provider limit', () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS = '32000'
+  process.env.DEIMOS_USE_OPENAI = '1'
+  process.env.DEIMOS_MAX_OUTPUT_TOKENS = '32000'
 
   expect(getMaxOutputTokensForModel('deepseek-chat')).toBe(8_192)
 })
 
 test('gpt-4o uses provider-specific context and output caps', () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  delete process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  process.env.DEIMOS_USE_OPENAI = '1'
+  delete process.env.DEIMOS_MAX_OUTPUT_TOKENS
 
   expect(getContextWindowForModel('gpt-4o')).toBe(128_000)
   expect(getModelMaxOutputTokens('gpt-4o')).toEqual({
@@ -57,15 +57,15 @@ test('gpt-4o uses provider-specific context and output caps', () => {
 })
 
 test('gpt-4o clamps oversized max output overrides to the provider limit', () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS = '32000'
+  process.env.DEIMOS_USE_OPENAI = '1'
+  process.env.DEIMOS_MAX_OUTPUT_TOKENS = '32000'
 
   expect(getMaxOutputTokensForModel('gpt-4o')).toBe(16_384)
 })
 
 test('gpt-5.4 family uses provider-specific context and output caps', () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  delete process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  process.env.DEIMOS_USE_OPENAI = '1'
+  delete process.env.DEIMOS_MAX_OUTPUT_TOKENS
 
   expect(getContextWindowForModel('gpt-5.4')).toBe(1_050_000)
   expect(getModelMaxOutputTokens('gpt-5.4')).toEqual({
@@ -87,8 +87,8 @@ test('gpt-5.4 family uses provider-specific context and output caps', () => {
 })
 
 test('gpt-5.4 family keeps large max output overrides within provider limits', () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS = '200000'
+  process.env.DEIMOS_USE_OPENAI = '1'
+  process.env.DEIMOS_MAX_OUTPUT_TOKENS = '200000'
 
   expect(getMaxOutputTokensForModel('gpt-5.4')).toBe(128_000)
   expect(getMaxOutputTokensForModel('gpt-5.4-mini')).toBe(128_000)
@@ -96,8 +96,8 @@ test('gpt-5.4 family keeps large max output overrides within provider limits', (
 })
 
 test('unknown OpenAI-shim model uses conservative 8k context window', () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  delete process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  process.env.DEIMOS_USE_OPENAI = '1'
+  delete process.env.DEIMOS_MAX_OUTPUT_TOKENS
 
   const err = console.error
   console.error = () => {}
@@ -109,8 +109,8 @@ test('unknown OpenAI-shim model uses conservative 8k context window', () => {
 })
 
 test('unknown OpenAI-shim model caps max output vs 8k window (avoids negative effective context)', () => {
-  process.env.CLAUDE_CODE_USE_OPENAI = '1'
-  delete process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  process.env.DEIMOS_USE_OPENAI = '1'
+  delete process.env.DEIMOS_MAX_OUTPUT_TOKENS
 
   const err = console.error
   console.error = () => {}

@@ -2,7 +2,7 @@
  * Plugin Zip Cache Module
  *
  * Manages plugins as ZIP archives in a mounted directory (e.g., Filestore).
- * When CLAUDE_CODE_PLUGIN_USE_ZIP_CACHE is enabled and CLAUDE_CODE_PLUGIN_CACHE_DIR
+ * When DEIMOS_PLUGIN_USE_ZIP_CACHE is enabled and DEIMOS_PLUGIN_CACHE_DIR
  * is set, plugins are stored as ZIPs in that directory and extracted to a
  * session-local temp directory at startup.
  *
@@ -53,19 +53,19 @@ import type { MarketplaceSource } from './schemas.js'
  * Check if the plugin zip cache mode is enabled.
  */
 export function isPluginZipCacheEnabled(): boolean {
-  return isEnvTruthy(process.env.CLAUDE_CODE_PLUGIN_USE_ZIP_CACHE)
+  return isEnvTruthy(process.env.DEIMOS_PLUGIN_USE_ZIP_CACHE)
 }
 
 /**
  * Get the path to the zip cache directory.
- * Requires CLAUDE_CODE_PLUGIN_CACHE_DIR to be set.
+ * Requires DEIMOS_PLUGIN_CACHE_DIR to be set.
  * Returns undefined if zip cache is not enabled.
  */
 export function getPluginZipCachePath(): string | undefined {
   if (!isPluginZipCacheEnabled()) {
     return undefined
   }
-  const dir = process.env.CLAUDE_CODE_PLUGIN_CACHE_DIR
+  const dir = process.env.DEIMOS_PLUGIN_CACHE_DIR
   return dir ? expandTilde(dir) : undefined
 }
 
@@ -254,7 +254,7 @@ async function collectFilesForZip(
   // same JS number, causing subdirs to be silently skipped as "cycles". This
   // broke the round-trip test on Windows CI when sharding shuffled which tests
   // ran first and pushed MFT sequence numbers over the precision cliff.
-  // See also: markdownConfigLoader.ts getFileIdentity, anthropics/claude-code#13893
+  // See also: markdownConfigLoader.ts getFileIdentity, anthropics/deimos#13893
   try {
     const dirStat = await stat(currentDir, { bigint: true })
     // ReFS (Dev Drive), NFS, some FUSE mounts report dev=0 and ino=0 for

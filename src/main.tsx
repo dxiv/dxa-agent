@@ -337,7 +337,7 @@ function getCertEnvVarTelemetry(): Record<string, boolean> {
   if (process.env.NODE_EXTRA_CA_CERTS) {
     result.has_node_extra_ca_certs = true;
   }
-  if (process.env.CLAUDE_CODE_CLIENT_CERT) {
+  if (process.env.DEIMOS_CLIENT_CERT) {
     result.has_client_cert = true;
   }
   if (hasNodeOption('--use-system-ca')) {
@@ -434,7 +434,7 @@ export function startDeferredPrefetches(): void {
   // However, the spawned processes and async work still contend for CPU and event
   // loop time, which skews startup benchmarks (CPU profiles, time-to-first-render
   // measurements). Skip all of it when we're only measuring startup performance.
-  if (isEnvTruthy(process.env.CLAUDE_CODE_EXIT_AFTER_FIRST_RENDER) ||
+  if (isEnvTruthy(process.env.DEIMOS_EXIT_AFTER_FIRST_RENDER) ||
   // --bare: skip ALL prefetches. These are cache-warms for the REPL's
   // first-turn responsiveness (initUser, getUserContext, tips, countFiles,
   // modelCapabilities, change detectors). Scripted -p calls don't have a
@@ -449,10 +449,10 @@ export function startDeferredPrefetches(): void {
   void getUserContext();
   prefetchSystemContextIfSafe();
   void getRelevantTips();
-  if (isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK) && !isEnvTruthy(process.env.CLAUDE_CODE_SKIP_BEDROCK_AUTH)) {
+  if (isEnvTruthy(process.env.DEIMOS_USE_BEDROCK) && !isEnvTruthy(process.env.DEIMOS_SKIP_BEDROCK_AUTH)) {
     void prefetchAwsCredentialsAndBedRockInfoIfSafe();
   }
-  if (isEnvTruthy(process.env.CLAUDE_CODE_USE_VERTEX) && !isEnvTruthy(process.env.CLAUDE_CODE_SKIP_VERTEX_AUTH)) {
+  if (isEnvTruthy(process.env.DEIMOS_USE_VERTEX) && !isEnvTruthy(process.env.DEIMOS_SKIP_VERTEX_AUTH)) {
     void prefetchGcpCredentialsIfSafe();
   }
   void countFilesRoundedRg(getCwd(), AbortSignal.timeout(3000), []);
@@ -560,7 +560,7 @@ function eagerLoadSettings(): void {
 }
 function initializeEntrypoint(isNonInteractive: boolean): void {
   // Skip if already set (e.g., by SDK or other entrypoints)
-  if (process.env.CLAUDE_CODE_ENTRYPOINT) {
+  if (process.env.DEIMOS_ENTRYPOINT) {
     return;
   }
   const cliArgs = process.argv.slice(2);
@@ -568,19 +568,19 @@ function initializeEntrypoint(isNonInteractive: boolean): void {
   // Check for MCP serve command (handle flags before mcp serve, e.g., --debug mcp serve)
   const mcpIndex = cliArgs.indexOf('mcp');
   if (mcpIndex !== -1 && cliArgs[mcpIndex + 1] === 'serve') {
-    process.env.CLAUDE_CODE_ENTRYPOINT = 'mcp';
+    process.env.DEIMOS_ENTRYPOINT = 'mcp';
     return;
   }
-  if (isEnvTruthy(process.env.CLAUDE_CODE_ACTION)) {
-    process.env.CLAUDE_CODE_ENTRYPOINT = 'claude-code-github-action';
+  if (isEnvTruthy(process.env.DEIMOS_ACTION)) {
+    process.env.DEIMOS_ENTRYPOINT = 'deimos-github-action';
     return;
   }
 
   // Note: 'local-agent' entrypoint is set by the local agent mode launcher
-  // via CLAUDE_CODE_ENTRYPOINT env var (handled by early return above)
+  // via DEIMOS_ENTRYPOINT env var (handled by early return above)
 
   // Set based on interactive status
-  process.env.CLAUDE_CODE_ENTRYPOINT = isNonInteractive ? 'sdk-cli' : 'cli';
+  process.env.DEIMOS_ENTRYPOINT = isNonInteractive ? 'sdk-cli' : 'cli';
 }
 
 // Set by early argv processing when `claude open <url>` is detected (interactive mode only)
@@ -712,7 +712,7 @@ export async function main() {
     // URL arrives via Apple Event (not argv). LaunchServices overwrites
     // __CFBundleIdentifier to the launching bundle's ID, which is a precise
     // positive signal — cheaper than importing and guessing with heuristics.
-    if (process.platform === 'darwin' && process.env.__CFBundleIdentifier === 'com.anthropic.claude-code-url-handler') {
+    if (process.platform === 'darwin' && process.env.__CFBundleIdentifier === 'com.anthropic.deimos-url-handler') {
       const {
         enableConfigs
       } = await import('./utils/config.js');
@@ -866,22 +866,22 @@ export async function main() {
   // Determine client type
   const clientType = (() => {
     if (isEnvTruthy(process.env.GITHUB_ACTIONS)) return 'github-action';
-    if (process.env.CLAUDE_CODE_ENTRYPOINT === 'sdk-ts') return 'sdk-typescript';
-    if (process.env.CLAUDE_CODE_ENTRYPOINT === 'sdk-py') return 'sdk-python';
-    if (process.env.CLAUDE_CODE_ENTRYPOINT === 'sdk-cli') return 'sdk-cli';
-    if (process.env.CLAUDE_CODE_ENTRYPOINT === 'claude-vscode') return 'claude-vscode';
-    if (process.env.CLAUDE_CODE_ENTRYPOINT === 'local-agent') return 'local-agent';
-    if (process.env.CLAUDE_CODE_ENTRYPOINT === 'claude-desktop') return 'claude-desktop';
+    if (process.env.DEIMOS_ENTRYPOINT === 'sdk-ts') return 'sdk-typescript';
+    if (process.env.DEIMOS_ENTRYPOINT === 'sdk-py') return 'sdk-python';
+    if (process.env.DEIMOS_ENTRYPOINT === 'sdk-cli') return 'sdk-cli';
+    if (process.env.DEIMOS_ENTRYPOINT === 'claude-vscode') return 'claude-vscode';
+    if (process.env.DEIMOS_ENTRYPOINT === 'local-agent') return 'local-agent';
+    if (process.env.DEIMOS_ENTRYPOINT === 'claude-desktop') return 'claude-desktop';
 
     // Check if session-ingress token is provided (indicates remote session)
-    const hasSessionIngressToken = process.env.CLAUDE_CODE_SESSION_ACCESS_TOKEN || process.env.CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR;
-    if (process.env.CLAUDE_CODE_ENTRYPOINT === 'remote' || hasSessionIngressToken) {
+    const hasSessionIngressToken = process.env.DEIMOS_SESSION_ACCESS_TOKEN || process.env.DEIMOS_WEBSOCKET_AUTH_FILE_DESCRIPTOR;
+    if (process.env.DEIMOS_ENTRYPOINT === 'remote' || hasSessionIngressToken) {
       return 'remote';
     }
     return 'cli';
   })();
   setClientType(clientType);
-  const previewFormat = process.env.CLAUDE_CODE_QUESTION_PREVIEW_FORMAT;
+  const previewFormat = process.env.DEIMOS_QUESTION_PREVIEW_FORMAT;
   if (previewFormat === 'markdown' || previewFormat === 'html') {
     setQuestionPreviewFormat(previewFormat);
   } else if (!clientType.startsWith('sdk-') &&
@@ -892,7 +892,7 @@ export async function main() {
   }
 
   // Tag sessions created via `claude remote-control` so the backend can identify them
-  if (process.env.CLAUDE_CODE_ENVIRONMENT_KIND === 'bridge') {
+  if (process.env.DEIMOS_ENVIRONMENT_KIND === 'bridge') {
     setSessionSource('remote-control');
   }
   profileCheckpoint('main_client_type_determined');
@@ -1016,7 +1016,7 @@ async function run(): Promise<CommanderCommand> {
     // If not provided but flag is present, value will be true
     // The actual filtering is handled in debug.ts by parsing process.argv
     return true;
-  }).addOption(new Option('--debug-to-stderr', 'Enable debug mode (to stderr)').argParser(Boolean).hideHelp()).option('--debug-file <path>', 'Write debug logs to a specific file path (implicitly enables debug mode)', () => true).option('--verbose', 'Override verbose mode setting from config', () => true).option('-p, --print', 'Print response and exit (useful for pipes). Note: The workspace trust dialog is skipped when Claude is run with the -p mode. Only use this flag in directories you trust.', () => true).option('--bare', 'Minimal mode: skip hooks, LSP, plugin sync, attribution, auto-memory, background prefetches, keychain reads, and CLAUDE.md auto-discovery. Sets CLAUDE_CODE_SIMPLE=1. Anthropic auth is strictly ANTHROPIC_API_KEY or apiKeyHelper via --settings (OAuth and keychain are never read). 3P providers (Bedrock/Vertex/Foundry) use their own credentials. Skills still resolve via /skill-name. Explicitly provide context via: --system-prompt[-file], --append-system-prompt[-file], --add-dir (CLAUDE.md dirs), --mcp-config, --settings, --agents, --plugin-dir.', () => true).addOption(new Option('--init', 'Run Setup hooks with init trigger, then continue').hideHelp()).addOption(new Option('--init-only', 'Run Setup and SessionStart:startup hooks, then exit').hideHelp()).addOption(new Option('--maintenance', 'Run Setup hooks with maintenance trigger, then continue').hideHelp()).addOption(new Option('--output-format <format>', 'Output format (only works with --print): "text" (default), "json" (single result), or "stream-json" (realtime streaming)').choices(['text', 'json', 'stream-json'])).addOption(new Option('--json-schema <schema>', 'JSON Schema for structured output validation. ' + 'Example: {"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}').argParser(String)).option('--include-hook-events', 'Include all hook lifecycle events in the output stream (only works with --output-format=stream-json)', () => true).option('--include-partial-messages', 'Include partial message chunks as they arrive (only works with --print and --output-format=stream-json)', () => true).addOption(new Option('--input-format <format>', 'Input format (only works with --print): "text" (default), or "stream-json" (realtime streaming input)').choices(['text', 'stream-json'])).option('--mcp-debug', '[DEPRECATED. Use --debug instead] Enable MCP debug mode (shows MCP server errors)', () => true).option('--dangerously-skip-permissions', 'Bypass all permission checks. Recommended only for sandboxes with no internet access.', () => true).option('--allow-dangerously-skip-permissions', 'Enable bypassing all permission checks as an option, without it being enabled by default. Recommended only for sandboxes with no internet access.', () => true).addOption(new Option('--thinking <mode>', 'Thinking mode: enabled (equivalent to adaptive), disabled').choices(['enabled', 'adaptive', 'disabled']).hideHelp()).addOption(new Option('--max-thinking-tokens <tokens>', '[DEPRECATED. Use --thinking instead for newer models] Maximum number of thinking tokens (only works with --print)').argParser(Number).hideHelp()).addOption(new Option('--max-turns <turns>', 'Maximum number of agentic turns in non-interactive mode. This will early exit the conversation after the specified number of turns. (only works with --print)').argParser(Number).hideHelp()).addOption(new Option('--max-budget-usd <amount>', 'Maximum dollar amount to spend on API calls (only works with --print)').argParser(value => {
+  }).addOption(new Option('--debug-to-stderr', 'Enable debug mode (to stderr)').argParser(Boolean).hideHelp()).option('--debug-file <path>', 'Write debug logs to a specific file path (implicitly enables debug mode)', () => true).option('--verbose', 'Override verbose mode setting from config', () => true).option('-p, --print', 'Print response and exit (useful for pipes). Note: The workspace trust dialog is skipped when Deimos is run with the -p mode. Only use this flag in directories you trust.', () => true).option('--bare', 'Minimal mode: skip hooks, LSP, plugin sync, attribution, auto-memory, background prefetches, keychain reads, and CLAUDE.md auto-discovery. Sets DEIMOS_SIMPLE=1. Anthropic auth is strictly ANTHROPIC_API_KEY or apiKeyHelper via --settings (OAuth and keychain are never read). 3P providers (Bedrock/Vertex/Foundry) use their own credentials. Skills still resolve via /skill-name. Explicitly provide context via: --system-prompt[-file], --append-system-prompt[-file], --add-dir (CLAUDE.md dirs), --mcp-config, --settings, --agents, --plugin-dir.', () => true).addOption(new Option('--init', 'Run Setup hooks with init trigger, then continue').hideHelp()).addOption(new Option('--init-only', 'Run Setup and SessionStart:startup hooks, then exit').hideHelp()).addOption(new Option('--maintenance', 'Run Setup hooks with maintenance trigger, then continue').hideHelp()).addOption(new Option('--output-format <format>', 'Output format (only works with --print): "text" (default), "json" (single result), or "stream-json" (realtime streaming)').choices(['text', 'json', 'stream-json'])).addOption(new Option('--json-schema <schema>', 'JSON Schema for structured output validation. ' + 'Example: {"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}').argParser(String)).option('--include-hook-events', 'Include all hook lifecycle events in the output stream (only works with --output-format=stream-json)', () => true).option('--include-partial-messages', 'Include partial message chunks as they arrive (only works with --print and --output-format=stream-json)', () => true).addOption(new Option('--input-format <format>', 'Input format (only works with --print): "text" (default), or "stream-json" (realtime streaming input)').choices(['text', 'stream-json'])).option('--mcp-debug', '[DEPRECATED. Use --debug instead] Enable MCP debug mode (shows MCP server errors)', () => true).option('--dangerously-skip-permissions', 'Bypass all permission checks. Recommended only for sandboxes with no internet access.', () => true).option('--allow-dangerously-skip-permissions', 'Enable bypassing all permission checks as an option, without it being enabled by default. Recommended only for sandboxes with no internet access.', () => true).addOption(new Option('--thinking <mode>', 'Thinking mode: enabled (equivalent to adaptive), disabled').choices(['enabled', 'adaptive', 'disabled']).hideHelp()).addOption(new Option('--max-thinking-tokens <tokens>', '[DEPRECATED. Use --thinking instead for newer models] Maximum number of thinking tokens (only works with --print)').argParser(Number).hideHelp()).addOption(new Option('--max-turns <turns>', 'Maximum number of agentic turns in non-interactive mode. This will early exit the conversation after the specified number of turns. (only works with --print)').argParser(Number).hideHelp()).addOption(new Option('--max-budget-usd <amount>', 'Maximum dollar amount to spend on API calls (only works with --print)').argParser(value => {
     const amount = Number(value);
     if (isNaN(amount) || amount <= 0) {
       throw new Error('--max-budget-usd must be a positive number greater than 0');
@@ -1046,7 +1046,7 @@ async function run(): Promise<CommanderCommand> {
   // `mcp` and `add` as paths, then choked on --transport as an unknown
   // top-level option. Single-value + collect accumulator means each
   // --plugin-dir takes exactly one arg; repeat the flag for multiple dirs.
-  .option('--plugin-dir <path>', 'Load plugins from a directory for this session only (repeatable: --plugin-dir A --plugin-dir B)', (val: string, prev: string[]) => [...prev, val], [] as string[]).option('--disable-slash-commands', 'Disable all skills', () => true).option('--chrome', 'Enable Claude in Chrome integration').option('--no-chrome', 'Disable Claude in Chrome integration').option('--file <specs...>', 'File resources to download at startup. Format: file_id:relative_path (e.g., --file file_abc:doc.txt file_def:img.png)').action(async (prompt, options) => {
+  .option('--plugin-dir <path>', 'Load plugins from a directory for this session only (repeatable: --plugin-dir A --plugin-dir B)', (val: string, prev: string[]) => [...prev, val], [] as string[]).option('--disable-slash-commands', 'Disable all skills', () => true).option('--chrome', 'Enable Deimos in Chrome integration').option('--no-chrome', 'Disable Deimos in Chrome integration').option('--file <specs...>', 'File resources to download at startup. Format: file_id:relative_path (e.g., --file file_abc:doc.txt file_def:img.png)').action(async (prompt, options) => {
     profileCheckpoint('action_handler_start');
 
     // --bare = one-switch minimal mode. Sets SIMPLE so all the existing
@@ -1055,7 +1055,7 @@ async function run(): Promise<CommanderCommand> {
     if ((options as {
       bare?: boolean;
     }).bare) {
-      process.env.CLAUDE_CODE_SIMPLE = '1';
+      process.env.DEIMOS_SIMPLE = '1';
     }
 
     // Ignore "code" as a prompt - treat it the same as no prompt
@@ -1157,7 +1157,7 @@ async function run(): Promise<CommanderCommand> {
     const agentsJson = options.agents;
     const agentCli = options.agent;
     if (feature('BG_SESSIONS') && agentCli) {
-      process.env.CLAUDE_CODE_AGENT = agentCli;
+      process.env.DEIMOS_AGENT = agentCli;
     }
 
     // NOTE: LSP manager initialization is intentionally deferred until after
@@ -1182,7 +1182,7 @@ async function run(): Promise<CommanderCommand> {
     }).tasks;
     const taskListId = tasksOption ? typeof tasksOption === 'string' ? tasksOption : DEFAULT_TASKS_MODE_TASK_LIST_ID : undefined;
     if (IS_ANT_BUILD && taskListId) {
-      process.env.CLAUDE_CODE_TASK_LIST_ID = taskListId;
+      process.env.DEIMOS_TASK_LIST_ID = taskListId;
     }
 
     // Extract worktree option
@@ -1229,7 +1229,7 @@ async function run(): Promise<CommanderCommand> {
     let storedTeammateOpts: TeammateOptions | undefined;
     if (isAgentSwarmsEnabled()) {
       // Extract agent identity options (for tmux-spawned agents)
-      // These replace the CLAUDE_CODE_* environment variables
+      // These replace the DEIMOS_* environment variables
       const teammateOpts = extractTeammateOptions(options);
       storedTeammateOpts = teammateOpts;
 
@@ -1266,12 +1266,12 @@ async function run(): Promise<CommanderCommand> {
     }).sdkUrl ?? undefined;
 
     // Allow env var to enable partial messages (used by sandbox gateway for baku)
-    const effectiveIncludePartialMessages = includePartialMessages || isEnvTruthy(process.env.CLAUDE_CODE_INCLUDE_PARTIAL_MESSAGES);
+    const effectiveIncludePartialMessages = includePartialMessages || isEnvTruthy(process.env.DEIMOS_INCLUDE_PARTIAL_MESSAGES);
 
     // Enable all hook event types when explicitly requested via SDK option
-    // or when running in CLAUDE_CODE_REMOTE mode (CCR needs them).
+    // or when running in DEIMOS_REMOTE mode (CCR needs them).
     // Without this, only SessionStart and Setup events are emitted.
-    if (includeHookEvents || isEnvTruthy(process.env.CLAUDE_CODE_REMOTE)) {
+    if (includeHookEvents || isEnvTruthy(process.env.DEIMOS_REMOTE)) {
       setAllHookEventsEnabled(true);
     }
 
@@ -1349,15 +1349,15 @@ async function run(): Promise<CommanderCommand> {
       file?: string[];
     }).file;
     if (fileSpecs && fileSpecs.length > 0) {
-      // Get session ingress token (provided by EnvManager via CLAUDE_CODE_SESSION_ACCESS_TOKEN)
+      // Get session ingress token (provided by EnvManager via DEIMOS_SESSION_ACCESS_TOKEN)
       const sessionToken = getSessionIngressAuthToken();
       if (!sessionToken) {
-        process.stderr.write(chalk.red('Error: Session token required for file downloads. CLAUDE_CODE_SESSION_ACCESS_TOKEN must be set.\n'));
+        process.stderr.write(chalk.red('Error: Session token required for file downloads. DEIMOS_SESSION_ACCESS_TOKEN must be set.\n'));
         process.exit(1);
       }
 
       // Resolve session ID: prefer remote session ID, fall back to internal session ID
-      const fileSessionId = process.env.CLAUDE_CODE_REMOTE_SESSION_ID || getSessionId();
+      const fileSessionId = process.env.DEIMOS_REMOTE_SESSION_ID || getSessionId();
       const files = parseFileSpecs(fileSpecs);
       if (files.length > 0) {
         // Use ANTHROPIC_BASE_URL if set (by EnvManager), otherwise use OAuth config
@@ -1565,7 +1565,7 @@ async function run(): Promise<CommanderCommand> {
       }
     }
 
-    // Extract Claude in Chrome option and enforce claude.ai subscriber check (unless user is ant)
+    // Extract Deimos in Chrome option and enforce dxa.dev/deimos subscriber check (unless user is ant)
     const chromeOpts = options as {
       chrome?: boolean;
     };
@@ -1596,10 +1596,10 @@ async function run(): Promise<CommanderCommand> {
         logEvent('tengu_claude_in_chrome_setup_failed', {
           platform: platform as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
         });
-        logForDebugging(`[Claude in Chrome] Error: ${error}`);
+        logForDebugging(`[Deimos in Chrome] Error: ${error}`);
         logError(error);
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(`Error: Failed to run with Claude in Chrome.`);
+        console.error(`Error: Failed to run with Deimos in Chrome.`);
         process.exit(1);
       }
     } else if (autoEnableDeimosInChrome) {
@@ -1615,7 +1615,7 @@ async function run(): Promise<CommanderCommand> {
         appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${hint}` : hint;
       } catch (error) {
         // Silently skip any errors for the auto-enable
-        logForDebugging(`[Claude in Chrome] Error (auto-enable): ${error}`);
+        logForDebugging(`[Deimos in Chrome] Error (auto-enable): ${error}`);
       }
     }
 
@@ -1820,12 +1820,12 @@ async function run(): Promise<CommanderCommand> {
     });
     void assertMinVersion();
 
-    // claude.ai config fetch: -p mode only (interactive uses useManageMCPConnections
+    // dxa.dev/deimos config fetch: -p mode only (interactive uses useManageMCPConnections
     // two-phase loading). Kicked off here to overlap with setup(); awaited
     // before runHeadless so single-turn -p sees connectors. Skipped under
     // enterprise/strict MCP to preserve policy boundaries.
-    const claudeaiConfigPromise: Promise<Record<string, ScopedMcpServerConfig>> = isNonInteractiveSession && !strictMcpConfig && !doesEnterpriseMcpConfigExist() &&
-    // --bare / SIMPLE: skip claude.ai proxy servers (datadog, Gmail,
+    const deimoscloudConfigPromise: Promise<Record<string, ScopedMcpServerConfig>> = isNonInteractiveSession && !strictMcpConfig && !doesEnterpriseMcpConfigExist() &&
+    // --bare / SIMPLE: skip dxa.dev/deimos proxy servers (datadog, Gmail,
     // Slack, BigQuery, PubMed — 6-14s each to connect). Scripted calls
     // that need MCP pass --mcp-config explicitly.
     !isBareMode() ? fetchDeimosCloudMcpConfigsIfEligible().then(configs => {
@@ -1834,7 +1834,7 @@ async function run(): Promise<CommanderCommand> {
         blocked
       } = filterMcpServersByPolicy(configs);
       if (blocked.length > 0) {
-        process.stderr.write(`Warning: claude.ai MCP ${plural(blocked.length, 'server')} blocked by enterprise policy: ${blocked.join(', ')}\n`);
+        process.stderr.write(`Warning: dxa.dev/deimos MCP ${plural(blocked.length, 'server')} blocked by enterprise policy: ${blocked.join(', ')}\n`);
       }
       return allowed;
     }) : Promise.resolve({});
@@ -1912,7 +1912,7 @@ async function run(): Promise<CommanderCommand> {
 
     // Apply coordinator mode tool filtering for headless path
     // (mirrors useMergedTools.ts filtering for REPL/interactive path)
-    if (feature('COORDINATOR_MODE') && isEnvTruthy(process.env.CLAUDE_CODE_COORDINATOR_MODE)) {
+    if (feature('COORDINATOR_MODE') && isEnvTruthy(process.env.DEIMOS_COORDINATOR_MODE)) {
       const {
         applyCoordinatorToolFilter
       } = await import('./utils/toolPool.js');
@@ -1963,7 +1963,7 @@ async function run(): Promise<CommanderCommand> {
     // pure in-memory array pushes (<1ms, zero I/O) that getBundledSkills()
     // reads synchronously. Previously ran inside setup() after ~20ms of
     // await points, so the parallel getCommands() memoized an empty list.
-    if (process.env.CLAUDE_CODE_ENTRYPOINT !== 'local-agent') {
+    if (process.env.DEIMOS_ENTRYPOINT !== 'local-agent') {
       initBuiltinPlugins();
       initBundledSkills();
     }
@@ -2239,7 +2239,7 @@ async function run(): Promise<CommanderCommand> {
     // access and conflict with delegation instructions.
     if ((feature('PROACTIVE') || feature('KAIROS')) && ((options as {
       proactive?: boolean;
-    }).proactive || isEnvTruthy(process.env.CLAUDE_CODE_PROACTIVE)) && !coordinatorModeModule?.isCoordinatorMode()) {
+    }).proactive || isEnvTruthy(process.env.DEIMOS_PROACTIVE)) && !coordinatorModeModule?.isCoordinatorMode()) {
       /* eslint-disable @typescript-eslint/no-require-imports */
       const briefVisibility = feature('KAIROS') || feature('KAIROS_BRIEF') ? (require('./tools/BriefTool/BriefTool.js') as typeof import('./tools/BriefTool/BriefTool.js')).isBriefEnabled() ? 'Call SendUserMessage at checkpoints to mark where things stand.' : 'The user will see any text you output.' : 'The user will see any text you output.';
       /* eslint-enable @typescript-eslint/no-require-imports */
@@ -2262,7 +2262,7 @@ async function run(): Promise<CommanderCommand> {
       const ctx = getRenderContext(false);
       getFpsMetrics = ctx.getFpsMetrics;
       stats = ctx.stats;
-      // Install asciicast recorder before Ink mounts (internal-only, opt-in via CLAUDE_CODE_TERMINAL_RECORDING=1)
+      // Install asciicast recorder before Ink mounts (internal-only, opt-in via DEIMOS_TERMINAL_RECORDING=1)
       if (IS_ANT_BUILD) {
         installAsciicastRecorder();
       }
@@ -2326,7 +2326,7 @@ async function run(): Promise<CommanderCommand> {
         void refreshPolicyLimits();
         // Clear user data cache BEFORE GrowthBook refresh so it picks up fresh credentials
         resetUserCache();
-        // Refresh GrowthBook after login to get updated feature flags (e.g., for claude.ai MCPs)
+        // Refresh GrowthBook after login to get updated feature flags (e.g., for dxa.dev/deimos MCPs)
         refreshGrowthBookAfterAuthChange();
         // Clear any stale trusted device token then enroll for Remote Control.
         // Both self-gate on tengu_sessions_elevated_auth_enforcement internally
@@ -2367,8 +2367,9 @@ async function run(): Promise<CommanderCommand> {
       const nonMcpErrors = errors.filter(e => !e.mcpErrorMetadata);
       if (
         nonMcpErrors.length > 0 &&
-        !isEnvTruthy(process.env.CLAUDE_CODE_USE_OPENAI) &&
-        !isEnvTruthy(process.env.CLAUDE_CODE_USE_GITHUB)
+        !isEnvTruthy(process.env.DEIMOS_USE_OPENAI) &&
+        !isEnvTruthy(process.env.DEIMOS_USE_OPENAI) &&
+        !isEnvTruthy(process.env.DEIMOS_USE_GITHUB)
       ) {
         await launchInvalidSettingsDialog(root, {
           settingsErrors: nonMcpErrors,
@@ -2451,11 +2452,11 @@ async function run(): Promise<CommanderCommand> {
       tools: [],
       commands: []
     }) : prefetchAllMcpResources(regularMcpConfigs);
-    const claudeaiMcpPromise = isNonInteractiveSession ? Promise.resolve({
+    const deimoscloudMcpPromise = isNonInteractiveSession ? Promise.resolve({
       clients: [],
       tools: [],
       commands: []
-    }) : claudeaiConfigPromise.then(configs => Object.keys(configs).length > 0 ? prefetchAllMcpResources(configs) : {
+    }) : deimoscloudConfigPromise.then(configs => Object.keys(configs).length > 0 ? prefetchAllMcpResources(configs) : {
       clients: [],
       tools: [],
       commands: []
@@ -2464,10 +2465,10 @@ async function run(): Promise<CommanderCommand> {
     // adds helper tools (ListMcpResourcesTool, ReadMcpResourceTool) via
     // local dedup flags, so merging two calls can yield duplicates. print.ts
     // already uniqBy's the final tool pool, but dedup here keeps appState clean.
-    const mcpPromise = Promise.all([localMcpPromise, claudeaiMcpPromise]).then(([local, claudeai]) => ({
-      clients: [...local.clients, ...claudeai.clients],
-      tools: uniqBy([...local.tools, ...claudeai.tools], 'name'),
-      commands: uniqBy([...local.commands, ...claudeai.commands], 'name')
+    const mcpPromise = Promise.all([localMcpPromise, deimoscloudMcpPromise]).then(([local, deimos]) => ({
+      clients: [...local.clients, ...deimos.clients],
+      tools: uniqBy([...local.tools, ...deimos.tools], 'name'),
+      commands: uniqBy([...local.commands, ...deimos.commands], 'name')
     }));
 
     // Start hooks early so they run in parallel with MCP connections.
@@ -2762,35 +2763,35 @@ async function run(): Promise<CommanderCommand> {
       // message and turn-1 tool list both need configured MCP tools present.
       // Zero-server case is free via the early return in connectMcpBatch.
       // Connectors parallelize inside getMcpToolsCommandsAndResources
-      // (processBatched with Promise.all). claude.ai is awaited too — its
+      // (processBatched with Promise.all). dxa.dev/deimos is awaited too — its
       // fetch was kicked off early (line ~2558) so only residual time blocks
-      // here. --bare skips claude.ai entirely for perf-sensitive scripts.
+      // here. --bare skips dxa.dev/deimos entirely for perf-sensitive scripts.
       profileCheckpoint('before_connectMcp');
       await connectMcpBatch(regularMcpConfigs, 'regular');
       profileCheckpoint('after_connectMcp');
-      // Dedup: suppress plugin MCP servers that duplicate a claude.ai
-      // connector (connector wins), then connect claude.ai servers.
+      // Dedup: suppress plugin MCP servers that duplicate a dxa.dev/deimos
+      // connector (connector wins), then connect dxa.dev/deimos servers.
       // Bounded wait — #23725 made this blocking so single-turn -p sees
       // connectors, but with 40+ slow connectors tengu_startup_perf p99
       // climbed to 76s. If fetch+connect doesn't finish in time, proceed;
       // the promise keeps running and updates headlessStore in the
       // background so turn 2+ still sees connectors.
       const DEIMOS_CLOUD_MCP_TIMEOUT_MS = 5_000;
-      const claudeaiConnect = claudeaiConfigPromise.then(claudeaiConfigs => {
-        if (Object.keys(claudeaiConfigs).length > 0) {
-          const claudeaiSigs = new Set<string>();
-          for (const config of Object.values(claudeaiConfigs)) {
+      const deimoscloudConnect = deimoscloudConfigPromise.then(deimoscloudConfigs => {
+        if (Object.keys(deimoscloudConfigs).length > 0) {
+          const deimoscloudSigs = new Set<string>();
+          for (const config of Object.values(deimoscloudConfigs)) {
             const sig = getMcpServerSignature(config);
-            if (sig) claudeaiSigs.add(sig);
+            if (sig) deimoscloudSigs.add(sig);
           }
           const suppressed = new Set<string>();
           for (const [name, config] of Object.entries(regularMcpConfigs)) {
             if (!name.startsWith('plugin:')) continue;
             const sig = getMcpServerSignature(config);
-            if (sig && claudeaiSigs.has(sig)) suppressed.add(name);
+            if (sig && deimoscloudSigs.has(sig)) suppressed.add(name);
           }
           if (suppressed.size > 0) {
-            logForDebugging(`[MCP] Lazy dedup: suppressing ${suppressed.size} plugin server(s) that duplicate claude.ai connectors: ${[...suppressed].join(', ')}`);
+            logForDebugging(`[MCP] Lazy dedup: suppressing ${suppressed.size} plugin server(s) that duplicate dxa.dev/deimos connectors: ${[...suppressed].join(', ')}`);
             // Disconnect before filtering from state. Only connected
             // servers need cleanup — clearServerCache on a never-connected
             // server triggers a real connect just to kill it (memoize
@@ -2826,27 +2827,27 @@ async function run(): Promise<CommanderCommand> {
             });
           }
         }
-        // Suppress claude.ai connectors that duplicate an enabled
+        // Suppress dxa.dev/deimos connectors that duplicate an enabled
         // manual server (URL-signature match). Plugin dedup above only
         // handles `plugin:*` keys; this catches manual `.mcp.json` entries.
         // plugin:* must be excluded here — step 1 already suppressed
-        // those (claude.ai wins); leaving them in suppresses the
+        // those (dxa.dev/deimos wins); leaving them in suppresses the
         // connector too, and neither survives (gh-39974).
         const nonPluginConfigs = pickBy(regularMcpConfigs, (_, n) => !n.startsWith('plugin:'));
         const {
           servers: dedupedDeimosCloudMcp
-        } = dedupDeimosCloudMcpServers(claudeaiConfigs, nonPluginConfigs);
-        return connectMcpBatch(dedupedDeimosCloudMcp, 'claudeai');
+        } = dedupDeimosCloudMcpServers(deimoscloudConfigs, nonPluginConfigs);
+        return connectMcpBatch(dedupedDeimosCloudMcp, 'deimos');
       });
-      let claudeaiTimer: ReturnType<typeof setTimeout> | undefined;
-      const claudeaiTimedOut = await Promise.race([claudeaiConnect.then(() => false), new Promise<boolean>(resolve => {
-        claudeaiTimer = setTimeout(r => r(true), DEIMOS_CLOUD_MCP_TIMEOUT_MS, resolve);
+      let deimoscloudTimer: ReturnType<typeof setTimeout> | undefined;
+      const deimoscloudTimedOut = await Promise.race([deimoscloudConnect.then(() => false), new Promise<boolean>(resolve => {
+        deimoscloudTimer = setTimeout(r => r(true), DEIMOS_CLOUD_MCP_TIMEOUT_MS, resolve);
       })]);
-      if (claudeaiTimer) clearTimeout(claudeaiTimer);
-      if (claudeaiTimedOut) {
-        logForDebugging(`[MCP] claude.ai connectors not ready after ${DEIMOS_CLOUD_MCP_TIMEOUT_MS}ms — proceeding; background connection continues`);
+      if (deimoscloudTimer) clearTimeout(deimoscloudTimer);
+      if (deimoscloudTimedOut) {
+        logForDebugging(`[MCP] dxa.dev/deimos connectors not ready after ${DEIMOS_CLOUD_MCP_TIMEOUT_MS}ms — proceeding; background connection continues`);
       }
-      profileCheckpoint('after_connectMcp_claudeai');
+      profileCheckpoint('after_connectMcp_deimoscloud');
 
       // In headless mode, start deferred prefetches immediately (no user typing delay)
       // --bare / SIMPLE: startDeferredPrefetches early-returns internally.
@@ -3100,7 +3101,7 @@ async function run(): Promise<CommanderCommand> {
     // environments can be recreated at any user message index. Gating:
     //   - Build-time: this import is stubbed in external builds.
     //   - Runtime: uploader checks github.com/anthropics/* remote + gcloud auth.
-    //   - Safety: CLAUDE_CODE_DISABLE_SESSION_DATA_UPLOAD=1 bypasses (tests set this).
+    //   - Safety: DEIMOS_DISABLE_SESSION_DATA_UPLOAD=1 bypasses (tests set this).
     // Import is dynamic + async to avoid adding startup latency.
     const sessionUploaderPromise = IS_ANT_BUILD ? import('./utils/sessionDataUploader.js') : null;
 
@@ -3894,7 +3895,7 @@ async function run(): Promise<CommanderCommand> {
       permissionMode: 'auto'
     }));
     program.addOption(new Option('--tasks [id]', '[internal-only] Tasks mode: watch for tasks and auto-process them. Optional id is used as both the task list ID and agent ID (defaults to "tasklist").').argParser(String).hideHelp());
-    program.option('--agent-teams', '[internal-only] Force Claude to use multi-agent mode for solving problems', () => true);
+    program.option('--agent-teams', '[internal-only] Force Deimos to use multi-agent mode for solving problems', () => true);
   }
   if (feature('TRANSCRIPT_CLASSIFIER')) {
     program.addOption(new Option('--enable-auto-mode', 'Opt in to auto mode').hideHelp());
@@ -3917,7 +3918,7 @@ async function run(): Promise<CommanderCommand> {
   }
 
   // Teammate identity options (set by leader when spawning tmux teammates)
-  // These replace the CLAUDE_CODE_* environment variables
+  // These replace the DEIMOS_* environment variables
   program.addOption(new Option('--agent-id <id>', 'Teammate agent ID').hideHelp());
   program.addOption(new Option('--agent-name <name>', 'Teammate display name').hideHelp());
   program.addOption(new Option('--team-name <name>', 'Team name for swarm coordination').hideHelp());
@@ -4013,7 +4014,7 @@ async function run(): Promise<CommanderCommand> {
     } = await import('./cli/handlers/mcp.js');
     await mcpAddJsonHandler(name, json, options);
   });
-  mcp.command('add-from-claude-desktop').description('Import MCP servers from Claude Desktop (Mac and WSL only)').option('-s, --scope <scope>', 'Configuration scope (local, user, or project)', 'local').action(async (options: {
+  mcp.command('add-from-claude-desktop').description('Import MCP servers from Deimos Desktop (Mac and WSL only)').option('-s, --scope <scope>', 'Configuration scope (local, user, or project)', 'local').action(async (options: {
     scope?: string;
   }) => {
     const {
@@ -4221,16 +4222,16 @@ async function run(): Promise<CommanderCommand> {
   // claude auth
 
   const auth = program.command('auth').description('Manage authentication').configureHelp(createSortedHelpConfig());
-  auth.command('login').description('Sign in to your Anthropic account').option('--email <email>', 'Pre-populate email address on the login page').option('--sso', 'Force SSO login flow').option('--console', 'Use Anthropic Console (API usage billing) instead of Claude subscription').option('--claudeai', 'Use Claude subscription (default)').action(async ({
+  auth.command('login').description('Sign in to your Anthropic account').option('--email <email>', 'Pre-populate email address on the login page').option('--sso', 'Force SSO login flow').option('--console', 'Use Anthropic Console (API usage billing) instead of Deimos subscription').option('--deimos', 'Use Deimos subscription (default)').action(async ({
     email,
     sso,
     console: useConsole,
-    claudeai
+    deimos
   }: {
     email?: string;
     sso?: boolean;
     console?: boolean;
-    claudeai?: boolean;
+    deimos?: boolean;
   }) => {
     const {
       authLogin
@@ -4239,7 +4240,7 @@ async function run(): Promise<CommanderCommand> {
       email,
       sso,
       console: useConsole,
-      claudeai
+      deimos
     });
   });
   auth.command('status').description('Show authentication status').option('--json', 'Output as JSON (default)').option('--text', 'Output as human-readable text').action(async (opts: {
@@ -4387,7 +4388,7 @@ async function run(): Promise<CommanderCommand> {
   // END internal-only
 
   // Setup token command
-  program.command('setup-token').description('Set up a long-lived authentication token (requires Claude subscription)').action(async () => {
+  program.command('setup-token').description('Set up a long-lived authentication token (requires Deimos subscription)').action(async () => {
     const [{
       setupTokenHandler
     }, {
@@ -4434,7 +4435,7 @@ async function run(): Promise<CommanderCommand> {
     }
   }
 
-  // Remote Control command — connect local environment to claude.ai/code.
+  // Remote Control command — connect local environment to dxa.dev/deimos/code.
   // The actual command is intercepted by the fast-path in cli.tsx before
   // Commander.js runs, so this registration exists only for help output.
   // Always hidden: isBridgeEnabled() at this point (before enableConfigs)
@@ -4445,7 +4446,7 @@ async function run(): Promise<CommanderCommand> {
   if (feature('BRIDGE_MODE')) {
     program.command('remote-control', {
       hidden: true
-    }).alias('rc').description('Connect your local environment for remote-control sessions via claude.ai/code').action(async () => {
+    }).alias('rc').description('Connect your local environment for remote-control sessions via dxa.dev/deimos/code').action(async () => {
       // Unreachable — cli.tsx fast-path handles this command before main.tsx loads.
       // If somehow reached, delegate to bridgeMain.
       const {
@@ -4740,7 +4741,7 @@ async function logTenguInit({
 function maybeActivateProactive(options: unknown): void {
   if ((feature('PROACTIVE') || feature('KAIROS')) && ((options as {
     proactive?: boolean;
-  }).proactive || isEnvTruthy(process.env.CLAUDE_CODE_PROACTIVE))) {
+  }).proactive || isEnvTruthy(process.env.DEIMOS_PROACTIVE))) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const proactiveModule = require('./proactive/index.js');
     if (!proactiveModule.isProactiveActive()) {
@@ -4753,12 +4754,12 @@ function maybeActivateBrief(options: unknown): void {
   const briefFlag = (options as {
     brief?: boolean;
   }).brief;
-  const briefEnv = isEnvTruthy(process.env.CLAUDE_CODE_BRIEF);
+  const briefEnv = isEnvTruthy(process.env.DEIMOS_BRIEF);
   if (!briefFlag && !briefEnv) return;
-  // --brief / CLAUDE_CODE_BRIEF are explicit opt-ins: check entitlement,
+  // --brief / DEIMOS_BRIEF are explicit opt-ins: check entitlement,
   // then set userMsgOptIn to activate the tool + prompt section. The env
   // var also grants entitlement (isBriefEntitled() reads it), so setting
-  // CLAUDE_CODE_BRIEF=1 alone force-enables for dev/testing — no GB gate
+  // DEIMOS_BRIEF=1 alone force-enables for dev/testing — no GB gate
   // needed. initialIsBriefOnly reads getUserMsgOptIn() directly.
   // Conditional require: static import would leak the tool name string
   // into external builds via BriefTool.ts → prompt.ts.

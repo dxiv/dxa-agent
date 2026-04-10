@@ -61,6 +61,9 @@ import { logForDebugging } from '../utils/debug.js'
 import { loadMemoryPrompt } from '../memdir/memdir.js'
 import { isUndercover } from '../utils/undercover.js'
 import { isMcpInstructionsDeltaEnabled } from '../utils/mcpInstructionsDelta.js'
+import { isLocalProviderUrl } from '../services/api/providerConfig.js'
+import { getAPIProvider } from '../utils/model/providers.js'
+import { WEB_SEARCH_TOOL_NAME } from '../tools/WebSearchTool/prompt.js'
 
 // Dead code elimination: conditional imports for feature-gated modules
 /* eslint-disable @typescript-eslint/no-require-imports */
@@ -111,8 +114,8 @@ const skillSearchFeatureCheck = feature('EXPERIMENTAL_SKILL_SEARCH')
 import type { OutputStyleConfig } from './outputStyles.js'
 import { CYBER_RISK_INSTRUCTION } from './cyberRiskInstruction.js'
 
-export const CLAUDE_CODE_DOCS_MAP_URL =
-  'https://code.claude.com/docs/en/claude_code_docs_map.md'
+export const DEIMOS_DOCS_MAP_URL =
+  'https://dxa.dev/deimos/docs/en/deimos_docs_map.md'
 
 /**
  * Boundary marker separating static (cross-org cacheable) content from dynamic content.
@@ -127,7 +130,7 @@ export const SYSTEM_PROMPT_DYNAMIC_BOUNDARY =
   '__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__'
 
 // @[MODEL LAUNCH]: Update the latest frontier model.
-const FRONTIER_MODEL_NAME = 'Claude Opus 4.6'
+const FRONTIER_MODEL_NAME = 'Anthropic Claude Opus 4.6'
 
 // @[MODEL LAUNCH]: Update the model family IDs below to the latest in each tier.
 const CLAUDE_4_5_OR_4_6_MODEL_IDS = {
@@ -446,11 +449,47 @@ function getSimpleToneAndStyleSection(): string {
       ? null
       : `Your responses should be short and concise.`,
     `When referencing specific functions or pieces of code include the pattern file_path:line_number to allow the user to easily navigate to the source code location.`,
-    `When referencing GitHub issues or pull requests, use the owner/repo#123 format (e.g. anthropics/claude-code#100) so they render as clickable links.`,
+    `When referencing GitHub issues or pull requests, use the owner/repo#123 format (e.g. anthropics/deimos#100) so they render as clickable links.`,
     `Do not use a colon before tool calls. Your tool calls may not be shown directly in the output, so text like "Let me read the file:" followed by a read tool call should just be "Let me read the file." with a period.`,
   ].filter(item => item !== null)
 
   return [`# Tone and style`, ...prependBullets(items)].join(`\n`)
+}
+
+/**
+ * When using OpenAI-compatible chat completions against a local base URL
+ * (Ollama, LM Studio, LiteLLM on localhost, etc.), smaller models often call
+ * Read/WebSearch for "list directory" instead of Bash — reinforce the contract.
+ */
+function getLocalOpenAICompatToolDisciplineSection(
+  enabledTools: Set<string>,
+): string | null {
+  if (getAPIProvider() !== 'openai') return null
+  if (!isLocalProviderUrl(process.env.OPENAI_BASE_URL)) return null
+
+  const lines: string[] = [
+    'Use only tool names from the provided tools list (do not invent tools).',
+  ]
+
+  if (enabledTools.has(BASH_TOOL_NAME)) {
+    lines.push(
+      `To list the current directory or any folder, use ${BASH_TOOL_NAME} (e.g. \`ls\`, \`ls -la\`, \`pwd\`) — not ${FILE_READ_TOOL_NAME} with a directory path.`,
+    )
+  } else if (enabledTools.has(FILE_READ_TOOL_NAME)) {
+    lines.push(
+      `${FILE_READ_TOOL_NAME} reads files only; it cannot list directory contents.`,
+    )
+  }
+
+  if (enabledTools.has(WEB_SEARCH_TOOL_NAME)) {
+    lines.push(
+      enabledTools.has(BASH_TOOL_NAME)
+        ? `Do not use ${WEB_SEARCH_TOOL_NAME} for local files, the project tree, or directory listings — use ${BASH_TOOL_NAME} or ${FILE_READ_TOOL_NAME} as appropriate.`
+        : `Do not use ${WEB_SEARCH_TOOL_NAME} for local files or the project tree.`,
+    )
+  }
+
+  return `# Local inference (local OpenAI-compatible API)\n${lines.map(l => `- ${l}`).join('\n')}`
 }
 
 export async function getSystemPrompt(
@@ -459,9 +498,14 @@ export async function getSystemPrompt(
   additionalWorkingDirectories?: string[],
   mcpClients?: MCPServerConnection[],
 ): Promise<string[]> {
-  if (isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE)) {
+  if (isEnvTruthy(process.env.DEIMOS_SIMPLE)) {
+    const enabledTools = new Set(tools.map(t => t.name))
+    const localDiscipline = getLocalOpenAICompatToolDisciplineSection(
+      enabledTools,
+    )
     return [
       `You are Deimos, an open-source fork of Deimos.\n\nCWD: ${getCwd()}\nDate: ${getSessionStartDate()}`,
+      ...(localDiscipline ? [localDiscipline] : []),
     ]
   }
 
@@ -474,6 +518,8 @@ export async function getSystemPrompt(
 
   const settings = getInitialSettings()
   const enabledTools = new Set(tools.map(_ => _.name))
+  const localOpenAIToolDiscipline =
+    getLocalOpenAICompatToolDisciplineSection(enabledTools)
 
   if (
     (feature('PROACTIVE') || feature('KAIROS')) &&
@@ -497,10 +543,14 @@ ${CYBER_RISK_INSTRUCTION}`,
       getFunctionResultClearingSection(model),
       SUMMARIZE_TOOL_RESULTS_SECTION,
       getProactiveSection(),
+      localOpenAIToolDiscipline,
     ].filter(s => s !== null)
   }
 
   const dynamicSections = [
+    systemPromptSection('local_openai_tool_discipline', () =>
+      localOpenAIToolDiscipline,
+    ),
     systemPromptSection('session_guidance', () =>
       getSessionSpecificGuidanceSection(enabledTools, skillToolCommands),
     ),
@@ -713,10 +763,10 @@ export async function computeSimpleEnvInfo(
     knowledgeCutoffMessage,
     process.env.USER_TYPE === 'ant' && isUndercover()
       ? null
-      : `The most recent Claude model family is Claude 4.5/4.6. Model IDs — Opus 4.6: '${CLAUDE_4_5_OR_4_6_MODEL_IDS.opus}', Sonnet 4.6: '${CLAUDE_4_5_OR_4_6_MODEL_IDS.sonnet}', Haiku 4.5: '${CLAUDE_4_5_OR_4_6_MODEL_IDS.haiku}'. When building AI applications, default to the latest and most capable Claude models.`,
+      : `The most recent Deimos model family is Deimos 4.5/4.6. Model IDs — Opus 4.6: '${CLAUDE_4_5_OR_4_6_MODEL_IDS.opus}', Sonnet 4.6: '${CLAUDE_4_5_OR_4_6_MODEL_IDS.sonnet}', Haiku 4.5: '${CLAUDE_4_5_OR_4_6_MODEL_IDS.haiku}'. When building AI applications, default to the latest and most capable Deimos models.`,
     process.env.USER_TYPE === 'ant' && isUndercover()
       ? null
-      : `Deimos is available as a CLI in the terminal, desktop app (Mac/Windows), web app (claude.ai/code), and IDE extensions (VS Code, JetBrains).`,
+      : `Deimos is available as a CLI in the terminal, desktop app (Mac/Windows), web app (dxa.dev/deimos/code), and IDE extensions (VS Code, JetBrains).`,
     process.env.USER_TYPE === 'ant' && isUndercover()
       ? null
       : `Fast mode for Deimos uses the same ${FRONTIER_MODEL_NAME} model with faster output. It does NOT switch to a different model. It can be toggled with /fast.`,
@@ -812,7 +862,7 @@ export async function enhanceSystemPromptWithEnvDetails(
 
 /**
  * Returns instructions for using the scratchpad directory if enabled.
- * The scratchpad is a per-session directory where Claude can write temporary files.
+ * The scratchpad is a per-session directory where Deimos can write temporary files.
  */
 export function getScratchpadInstructions(): string | null {
   if (!isScratchpadEnabled()) {

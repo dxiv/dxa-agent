@@ -163,7 +163,7 @@ test('describeProviderState does not treat substring-matched OpenAI hosts as Ope
     describeProviderState({
       shimEnabled: false,
       env: {
-        CLAUDE_CODE_USE_OPENAI: '1',
+        DEIMOS_USE_OPENAI: '1',
         OPENAI_BASE_URL: 'https://evil.example/path/api.openai.com/v1',
         OPENAI_MODEL: 'gpt-4o',
       },
@@ -182,7 +182,7 @@ test('describeProviderState reports OpenAI when the parsed host is api.openai.co
     describeProviderState({
       shimEnabled: false,
       env: {
-        CLAUDE_CODE_USE_OPENAI: '1',
+        DEIMOS_USE_OPENAI: '1',
         OPENAI_BASE_URL: 'https://api.openai.com/v1',
         OPENAI_MODEL: 'gpt-4o',
       },
@@ -201,7 +201,7 @@ test('describeProviderState reports environment-backed provider details', () => 
     describeProviderState({
       shimEnabled: false,
       env: {
-        CLAUDE_CODE_USE_OPENAI: '1',
+        DEIMOS_USE_OPENAI: '1',
         OPENAI_BASE_URL: 'http://localhost:11434/v1',
         OPENAI_MODEL: 'llama3.2:3b',
       },
@@ -215,7 +215,7 @@ test('describeProviderState reports environment-backed provider details', () => 
   );
 });
 
-test('describeProviderState treats DEIMOS_USE_OPENAI like CLAUDE_CODE_USE_OPENAI', () => {
+test('describeProviderState treats DEIMOS_USE_OPENAI like DEIMOS_USE_OPENAI', () => {
   assert.deepEqual(
     describeProviderState({
       shimEnabled: false,

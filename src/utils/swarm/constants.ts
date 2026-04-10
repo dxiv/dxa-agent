@@ -7,7 +7,7 @@ export const HIDDEN_SESSION_NAME = 'claude-hidden'
 /**
  * Gets the socket name for external swarm sessions (when user is not in tmux).
  * Uses a separate socket to isolate swarm operations from user's tmux sessions.
- * Includes PID to ensure multiple Claude instances don't conflict.
+ * Includes PID to ensure multiple Deimos instances don't conflict.
  */
 export function getSwarmSocketName(): string {
   return `claude-swarm-${process.pid}`
@@ -15,19 +15,19 @@ export function getSwarmSocketName(): string {
 
 /**
  * Environment variable to override the command used to spawn teammate instances.
- * If not set, defaults to process.execPath (the current Claude binary).
+ * If not set, defaults to process.execPath (the current Deimos binary).
  * This allows customization for different environments or testing.
  */
-export const TEAMMATE_COMMAND_ENV_VAR = 'CLAUDE_CODE_TEAMMATE_COMMAND'
+export const TEAMMATE_COMMAND_ENV_VAR = 'DEIMOS_TEAMMATE_COMMAND'
 
 /**
  * Environment variable set on spawned teammates to indicate their assigned color.
  * Used for colored output and pane identification.
  */
-export const TEAMMATE_COLOR_ENV_VAR = 'CLAUDE_CODE_AGENT_COLOR'
+export const TEAMMATE_COLOR_ENV_VAR = 'DEIMOS_AGENT_COLOR'
 
 /**
  * Environment variable set on spawned teammates to require plan mode before implementation.
  * When set to 'true', teammates must enter plan mode and get approval before writing code.
  */
-export const PLAN_MODE_REQUIRED_ENV_VAR = 'CLAUDE_CODE_PLAN_MODE_REQUIRED'
+export const PLAN_MODE_REQUIRED_ENV_VAR = 'DEIMOS_PLAN_MODE_REQUIRED'

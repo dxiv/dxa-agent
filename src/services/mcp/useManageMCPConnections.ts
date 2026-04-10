@@ -185,7 +185,7 @@ export function useManageMCPConnections(
       // ship without this. Checked at mount; mid-session flips need restart.
       // If off, callbacks never go into AppState → interactiveHandler sees
       // undefined → never sends → intercept has nothing pending → "yes tbxkq"
-      // flows to Claude as normal chat. One gate, full disable.
+      // flows to Deimos as normal chat. One gate, full disable.
       if (!isChannelPermissionRelayEnabled()) return
       setAppState(prev => {
         if (prev.channelPermissionCallbacks === callbacks) return prev
@@ -598,7 +598,7 @@ export function useManageMCPConnections(
                     gate.kind === 'disabled'
                       ? 'Channels are not currently available'
                       : gate.kind === 'auth'
-                        ? 'Channels require claude.ai authentication · run /login'
+                        ? 'Channels require dxa.dev/deimos authentication · run /login'
                         : gate.kind === 'policy'
                           ? 'Channels are not enabled for your org · have an administrator set channelsEnabled: true in managed settings'
                           : gate.reason
@@ -767,7 +767,7 @@ export function useManageMCPConnections(
   // Re-runs on session change (/clear) and on /reload-plugins (pluginReconnectKey).
   // On plugin reload, also disconnects stale plugin MCP servers (scope 'dynamic')
   // that no longer appear in configs — prevents ghost tools from disabled plugins.
-  // Skip claude.ai dedup here to avoid blocking on the network fetch; the connect
+  // Skip dxa.dev/deimos dedup here to avoid blocking on the network fetch; the connect
   // useEffect below runs immediately after and dedups before connecting.
   const sessionId = getSessionId()
   useEffect(() => {
@@ -855,12 +855,12 @@ export function useManageMCPConnections(
   ])
 
   // Load MCP configs and connect to servers
-  // Two-phase loading: Deimos configs first (fast), then claude.ai configs (may be slow)
+  // Two-phase loading: Deimos configs first (fast), then dxa.dev/deimos configs (may be slow)
   useEffect(() => {
     let cancelled = false
 
     async function loadAndConnectMcpConfigs() {
-      // Clear claude.ai MCP cache so we fetch fresh configs with current auth
+      // Clear dxa.dev/deimos MCP cache so we fetch fresh configs with current auth
       // state. This is important when authVersion changes (e.g., after login/
       // logout). Kick off the fetch now so it overlaps with loadAllPlugins()
       // inside getDeimosMcpConfigs; it's awaited only at the dedup step.
@@ -874,7 +874,7 @@ export function useManageMCPConnections(
       }
 
       // Phase 1: Load Deimos configs. Plugin MCP servers that duplicate a
-      // --mcp-config entry or a claude.ai connector are suppressed here so they
+      // --mcp-config entry or a dxa.dev/deimos connector are suppressed here so they
       // don't connect alongside the connector in Phase 2.
       const { servers: claudeCodeConfigs, errors: mcpErrors } =
         isStrictMcpConfig
@@ -902,32 +902,32 @@ export function useManageMCPConnections(
         )
       })
 
-      // Phase 2: Await claude.ai configs (started above; memoized — no second fetch)
-      let claudeaiConfigs: Record<string, ScopedMcpServerConfig> = {}
+      // Phase 2: Await dxa.dev/deimos configs (started above; memoized — no second fetch)
+      let deimoscloudConfigs: Record<string, ScopedMcpServerConfig> = {}
       if (!isStrictMcpConfig) {
-        claudeaiConfigs = filterMcpServersByPolicy(
+        deimoscloudConfigs = filterMcpServersByPolicy(
           await deimosCloudMcpPromise,
         ).allowed
         if (cancelled) return
 
-        // Suppress claude.ai connectors that duplicate an enabled manual server.
-        // Keys never collide (`slack` vs `claude.ai Slack`) so the merge below
+        // Suppress dxa.dev/deimos connectors that duplicate an enabled manual server.
+        // Keys never collide (`slack` vs `dxa.dev/deimos Slack`) so the merge below
         // won't catch this — need content-based dedup by URL signature.
-        if (Object.keys(claudeaiConfigs).length > 0) {
+        if (Object.keys(deimoscloudConfigs).length > 0) {
           const { servers: dedupedDeimosCloudMcp } = dedupDeimosCloudMcpServers(
-            claudeaiConfigs,
+            deimoscloudConfigs,
             configs,
           )
-          claudeaiConfigs = dedupedDeimosCloudMcp
+          deimoscloudConfigs = dedupedDeimosCloudMcp
         }
 
-        if (Object.keys(claudeaiConfigs).length > 0) {
-          // Add claude.ai servers as pending immediately so they show up in UI
+        if (Object.keys(deimoscloudConfigs).length > 0) {
+          // Add dxa.dev/deimos servers as pending immediately so they show up in UI
           setAppState(prevState => {
             const existingServerNames = new Set(
               prevState.mcp.clients.map(c => c.name),
             )
-            const newClients = Object.entries(claudeaiConfigs)
+            const newClients = Object.entries(deimoscloudConfigs)
               .filter(([name]) => !existingServerNames.has(name))
               .map(([name, config]) => ({
                 name,
@@ -947,32 +947,32 @@ export function useManageMCPConnections(
           })
 
           // Now start connecting (only enabled servers)
-          const enabledClaudeaiConfigs = Object.fromEntries(
-            Object.entries(claudeaiConfigs).filter(
+          const enabledDeimoscloudConfigs = Object.fromEntries(
+            Object.entries(deimoscloudConfigs).filter(
               ([name]) => !isMcpServerDisabled(name),
             ),
           )
           getMcpToolsCommandsAndResources(
             onConnectionAttempt,
-            enabledClaudeaiConfigs,
+            enabledDeimoscloudConfigs,
           ).catch(error => {
             logMCPError(
               'useManageMcpConnections',
-              `Failed to get claude.ai MCP resources: ${errorMessage(error)}`,
+              `Failed to get dxa.dev/deimos MCP resources: ${errorMessage(error)}`,
             )
           })
         }
       }
 
       // Log server counts after both phases complete
-      const allConfigs = { ...configs, ...claudeaiConfigs }
+      const allConfigs = { ...configs, ...deimoscloudConfigs }
       const counts = {
         enterprise: 0,
         global: 0,
         project: 0,
         user: 0,
         plugin: 0,
-        claudeai: 0,
+        deimos: 0,
       }
       // Ant-only: collect stdio command basenames to correlate with RSS/FPS
       // metrics. Stdio servers like rust-analyzer can be heavy and we want to
@@ -984,7 +984,7 @@ export function useManageMCPConnections(
         else if (serverConfig.scope === 'project') counts.project++
         else if (serverConfig.scope === 'local') counts.user++
         else if (serverConfig.scope === 'dynamic') counts.plugin++
-        else if (serverConfig.scope === 'claudeai') counts.claudeai++
+        else if (serverConfig.scope === 'deimos') counts.deimos++
 
         if (
           process.env.USER_TYPE === 'ant' &&

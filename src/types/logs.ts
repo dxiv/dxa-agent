@@ -15,7 +15,7 @@ export type QueueOperationMessage = {
 export type SerializedMessage = Message & {
   cwd: string
   userType: string
-  entrypoint?: string // CLAUDE_CODE_ENTRYPOINT — distinguishes cli/sdk-ts/sdk-py/etc.
+  entrypoint?: string // DEIMOS_ENTRYPOINT — distinguishes cli/sdk-ts/sdk-py/etc.
   sessionId: string
   timestamp: string
   version: string
@@ -200,17 +200,17 @@ export type FileHistorySnapshotMessage = {
 }
 
 /**
- * Per-file attribution state tracking Claude's character contributions.
+ * Per-file attribution state tracking Deimos's character contributions.
  */
 export type FileAttributionState = {
   contentHash: string // SHA-256 hash of file content
-  claudeContribution: number // Characters written by Claude
+  claudeContribution: number // Characters written by Deimos
   mtime: number // File modification time
 }
 
 /**
  * Attribution snapshot message stored in session transcript.
- * Tracks character-level contributions by Claude for commit attribution.
+ * Tracks character-level contributions by Deimos for commit attribution.
  */
 export type AttributionSnapshotMessage = {
   type: 'attribution-snapshot'

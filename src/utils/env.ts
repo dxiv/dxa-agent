@@ -324,12 +324,12 @@ export const env = {
 
 /**
  * Returns the host platform for analytics reporting.
- * If CLAUDE_CODE_HOST_PLATFORM is set to a valid platform value, that overrides
+ * If DEIMOS_HOST_PLATFORM is set to a valid platform value, that overrides
  * the detected platform. This is useful for container/remote environments where
  * process.platform reports the container OS but the actual host platform differs.
  */
 export function getHostPlatformForAnalytics(): Platform {
-  const override = process.env.CLAUDE_CODE_HOST_PLATFORM
+  const override = process.env.DEIMOS_HOST_PLATFORM
   if (override === 'win32' || override === 'darwin' || override === 'linux') {
     return override
   }

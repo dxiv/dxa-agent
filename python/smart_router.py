@@ -235,7 +235,7 @@ class SmartRouter:
         claude_model: str,
         is_large_request: bool = False,
     ) -> str:
-        """Map a Claude model name to the provider's actual model."""
+        """Map a Deimos model name to the provider's actual model."""
         if is_large_request:
             return provider.big_model
         is_large = any(
