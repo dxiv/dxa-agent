@@ -1,6 +1,6 @@
 {
   "name": "@dxa-deimos/cli",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "author": "dxiv",
   "description": "Deimos — terminal-native coding agent: multi-model routing, tools, MCP, slash commands, VS Code integration.",
   "homepage": "https://github.com/dxiv/dxa-deimos",
