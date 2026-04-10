@@ -2,6 +2,7 @@ import { afterEach, expect, test } from 'bun:test'
 
 import { getMaxOutputTokensForModel } from '../services/api/anthropicMessages.js'
 import {
+  DEIMOS_MAX_CONTEXT_TOKENS_CEILING,
   getContextWindowForModel,
   getModelMaxOutputTokens,
 } from './context.js'
@@ -9,6 +10,8 @@ import {
 const originalEnv = {
   DEIMOS_USE_OPENAI: process.env.DEIMOS_USE_OPENAI,
   DEIMOS_MAX_OUTPUT_TOKENS: process.env.DEIMOS_MAX_OUTPUT_TOKENS,
+  DEIMOS_MAX_CONTEXT_TOKENS: process.env.DEIMOS_MAX_CONTEXT_TOKENS,
+  USER_TYPE: process.env.USER_TYPE,
 }
 
 afterEach(() => {
@@ -22,6 +25,17 @@ afterEach(() => {
   } else {
     process.env.DEIMOS_MAX_OUTPUT_TOKENS =
       originalEnv.DEIMOS_MAX_OUTPUT_TOKENS
+  }
+  if (originalEnv.DEIMOS_MAX_CONTEXT_TOKENS === undefined) {
+    delete process.env.DEIMOS_MAX_CONTEXT_TOKENS
+  } else {
+    process.env.DEIMOS_MAX_CONTEXT_TOKENS =
+      originalEnv.DEIMOS_MAX_CONTEXT_TOKENS
+  }
+  if (originalEnv.USER_TYPE === undefined) {
+    delete process.env.USER_TYPE
+  } else {
+    process.env.USER_TYPE = originalEnv.USER_TYPE
   }
 })
 
@@ -122,4 +136,26 @@ test('unknown OpenAI-shim model caps max output vs 8k window (avoids negative ef
   } finally {
     console.error = err
   }
+})
+
+test('DEIMOS_MAX_CONTEXT_TOKENS applies for any user (not ant-only)', () => {
+  process.env.DEIMOS_USE_OPENAI = '1'
+  delete process.env.USER_TYPE
+  process.env.DEIMOS_MAX_CONTEXT_TOKENS = '500000'
+  expect(getContextWindowForModel('gpt-4o')).toBe(500_000)
+})
+
+test('DEIMOS_MAX_CONTEXT_TOKENS below floor is ignored', () => {
+  process.env.DEIMOS_USE_OPENAI = '1'
+  process.env.DEIMOS_MAX_CONTEXT_TOKENS = '100'
+  expect(getContextWindowForModel('gpt-4o')).toBe(128_000)
+})
+
+test('DEIMOS_MAX_CONTEXT_TOKENS is clamped to ceiling', () => {
+  delete process.env.DEIMOS_USE_OPENAI
+  delete process.env.USER_TYPE
+  process.env.DEIMOS_MAX_CONTEXT_TOKENS = '999999999'
+  expect(getContextWindowForModel('claude-sonnet-4-5')).toBe(
+    DEIMOS_MAX_CONTEXT_TOKENS_CEILING,
+  )
 })

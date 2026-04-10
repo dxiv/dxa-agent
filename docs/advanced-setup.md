@@ -329,6 +329,26 @@ For `dev:ollama`, make sure Ollama is running locally before launch.
 
 For `dev:atomic-chat`, make sure Atomic Chat is running with a model loaded before launch.
 
+## Long sessions, context, and token limits
+
+Models enforce a **maximum input size** (context window). Deimos estimates tokens to drive **warnings**, **auto-compact**, and **blocking** before you hit a hard API error. Those estimates are approximate; the provider response is authoritative.
+
+**You cannot raise the real context above what the model supports.** Settings below only change how Deimos plans compaction and surfaces limits. If you set a window **larger** than the model allows, you will still get `prompt is too long` (or similar) from the API.
+
+| Variable | Role |
+| --- | --- |
+| `DEIMOS_MAX_CONTEXT_TOKENS` | Effective context for Deimos-only math (warnings, blocking, compact thresholds). Integer, clamped between **4096** and **2_000_000**. Overrides `[1m]` suffix and built-in tables when set. Must be ≤ your model’s actual window. |
+| `DEIMOS_AUTO_COMPACT_WINDOW` | Caps the window used for auto-compact (compact **earlier** when lower than the resolved window). |
+| `DEIMOS_BLOCKING_LIMIT_OVERRIDE` | Token usage at which the app blocks sending until `/compact` (default derives from effective window). |
+| `DEIMOS_MAX_OUTPUT_TOKENS` | Upper bound on **assistant output** per turn; still clamped to provider limits. |
+| `DEIMOS_FILE_READ_MAX_OUTPUT_TOKENS` | Max tokens injected from a single **file read** (truncation beyond this). |
+| `MAX_MCP_OUTPUT_TOKENS` | Max tokens from a single **MCP tool** result. |
+| `DEIMOS_DISABLE_1M_CONTEXT` | When truthy, Deimos does not treat models as 1M-capable for budgeting (stricter, compliance-friendly). |
+
+**Continuous work** in long threads: keep **auto-compact** on (default), run **`/compact`** when warned, or start a new session for a clean slate. For OpenAI-shim models missing from `src/utils/model/openaiContextWindows.ts`, Deimos uses a **conservative 8k** window until you add the model — that triggers compact very early; extend the table or set `DEIMOS_MAX_CONTEXT_TOKENS` to match the vendor doc.
+
+Copy-paste names and short comments also live under **OPTIONAL TUNING** in [`.env.example`](../.env.example).
+
 ## Optional Python utilities (`python/`)
 
 The [`python/`](../python/) directory contains **optional** Python modules for provider-side experiments (for example local OpenAI-compatible endpoints). They are **not** imported by the main TypeScript CLI build.
