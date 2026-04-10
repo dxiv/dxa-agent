@@ -49,6 +49,8 @@ Use **`/permissions`** when you need stricter or looser tool access, or when the
 
 Use **`/mcp`** to connect external tools and data sources. Configure servers through the guided UI; keep credentials in environment variables or your OS secret store, not in chat logs.
 
+**XAA IdP (SEP-990):** CLI `deimos mcp xaa login --stdin` reads a JWT from **stdin** (pipe), avoiding `--id-token` in shell history. Setup: `deimos mcp xaa setup --issuer … --client-id …`.
+
 ---
 
 ## Updating

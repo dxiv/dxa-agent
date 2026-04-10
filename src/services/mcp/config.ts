@@ -1381,6 +1381,26 @@ export function parseMcpConfig(params: {
   }
 }
 
+const MCP_PARSE_FILE_CACHE_LIMIT = 128
+const parseMcpConfigFileCache = new Map<
+  string,
+  {
+    mtimeMs: number
+    result: { config: McpJsonConfig | null; errors: ValidationError[] }
+  }
+>()
+
+function rememberParsedMcpFile(
+  key: string,
+  mtimeMs: number,
+  result: { config: McpJsonConfig | null; errors: ValidationError[] },
+): void {
+  if (parseMcpConfigFileCache.size >= MCP_PARSE_FILE_CACHE_LIMIT) {
+    parseMcpConfigFileCache.clear()
+  }
+  parseMcpConfigFileCache.set(key, { mtimeMs, result })
+}
+
 /**
  * Parse and validate an MCP configuration from a file path
  * @param params Parsing parameters
@@ -1396,6 +1416,73 @@ export function parseMcpConfigFromFilePath(params: {
 } {
   const { filePath, expandVars, scope } = params
   const fs = getFsImplementation()
+
+  let mtimeMs: number
+  try {
+    const st = fs.statSync(filePath)
+    if (!st.isFile()) {
+      return {
+        config: null,
+        errors: [
+          {
+            file: filePath,
+            path: '',
+            message: `MCP config path is not a regular file: ${filePath}`,
+            suggestion: 'Use a path to a .mcp.json file',
+            mcpErrorMetadata: {
+              scope,
+              severity: 'fatal',
+            },
+          },
+        ],
+      }
+    }
+    mtimeMs = Math.floor(st.mtimeMs)
+  } catch (error: unknown) {
+    const code = getErrnoCode(error)
+    if (code === 'ENOENT') {
+      return {
+        config: null,
+        errors: [
+          {
+            file: filePath,
+            path: '',
+            message: `MCP config file not found: ${filePath}`,
+            suggestion: 'Check that the file path is correct',
+            mcpErrorMetadata: {
+              scope,
+              severity: 'fatal',
+            },
+          },
+        ],
+      }
+    }
+    logForDebugging(
+      `MCP config stat error for ${filePath} (scope=${scope}): ${error}`,
+      { level: 'error' },
+    )
+    return {
+      config: null,
+      errors: [
+        {
+          file: filePath,
+          path: '',
+          message: `Failed to access file: ${error}`,
+          suggestion: 'Check file permissions and ensure the path is valid',
+          mcpErrorMetadata: {
+            scope,
+            severity: 'fatal',
+          },
+        },
+      ],
+    }
+  }
+
+  const cacheKey = `${filePath}\0${expandVars}\0${scope}`
+  const cached = parseMcpConfigFileCache.get(cacheKey)
+  if (cached && cached.mtimeMs === mtimeMs) {
+    return cached.result
+  }
 
   let configContent: string
   try {
@@ -1464,12 +1551,14 @@ export function parseMcpConfigFromFilePath(params: {
     }
   }
 
-  return parseMcpConfig({
+  const result = parseMcpConfig({
     configObject: parsedJson,
     expandVars,
     scope,
     filePath,
   })
+  rememberParsedMcpFile(cacheKey, mtimeMs, result)
+  return result
 }
 
 export const doesEnterpriseMcpConfigExist = memoize((): boolean => {

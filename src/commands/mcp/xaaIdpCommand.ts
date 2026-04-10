@@ -21,6 +21,19 @@ import {
 import { errorMessage } from '../../utils/errors.js'
 import { updateSettingsForSource } from '../../utils/settings/settings.js'
 
+function readStdinUtf8Trimmed(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = []
+    process.stdin.on('data', (d: Buffer | string) => {
+      chunks.push(typeof d === 'string' ? Buffer.from(d, 'utf8') : d)
+    })
+    process.stdin.on('end', () => {
+      resolve(Buffer.concat(chunks).toString('utf8').trim())
+    })
+    process.stdin.on('error', reject)
+  })
+}
+
 export function registerMcpXaaIdpCommand(mcp: Command): void {
   const xaaIdp = mcp
     .command('xaa')
@@ -151,17 +164,17 @@ export function registerMcpXaaIdpCommand(mcp: Command): void {
     .command('login')
     .description(
       'Cache an IdP id_token so XAA-enabled MCP servers authenticate ' +
-        'silently. Default: run the OIDC browser login. With --id-token: ' +
-        'write a pre-obtained JWT directly (used by conformance/e2e tests ' +
-        'where the mock IdP does not serve /authorize).',
+        'silently. Default: run the OIDC browser login. With --stdin or ' +
+        '--id-token: write a pre-obtained JWT (prefer --stdin to avoid shell history).',
     )
     .option(
       '--force',
       'Ignore any cached id_token and re-login (useful after IdP-side revocation)',
     )
-    // TODO(paulc): read the JWT from stdin instead of argv to keep it out of
-    // shell history. Fine for conformance (docker exec uses argv directly,
-    // no shell parser), but a real user would want `echo $TOKEN | ... --stdin`.
+    .option(
+      '--stdin',
+      'Read id_token from stdin (pipe); safer than --id-token in shell history',
+    )
     .option(
       '--id-token <jwt>',
       'Write this pre-obtained id_token directly to cache, skipping the OIDC browser login',
@@ -174,11 +187,28 @@ export function registerMcpXaaIdpCommand(mcp: Command): void {
         )
       }
 
+      if (options.stdin && options.idToken) {
+        return cliError('Error: use either --stdin or --id-token, not both')
+      }
+
+      let directToken = options.idToken
+      if (options.stdin) {
+        if (process.stdin.isTTY) {
+          return cliError(
+            'Error: --stdin requires piped input (example: `Get-Content token.txt | deimos mcp xaa login --stdin`)',
+          )
+        }
+        directToken = await readStdinUtf8Trimmed()
+        if (!directToken) {
+          return cliError('Error: empty stdin; pipe the id_token JWT')
+        }
+      }
+
       // Direct-inject path: skip cache check, skip OIDC. Writing IS the
       // operation. Issuer comes from settings (single source of truth), not
       // a separate flag — one less thing to desync.
-      if (options.idToken) {
-        const expiresAt = saveIdpIdTokenFromJwt(idp.issuer, options.idToken)
+      if (directToken) {
+        const expiresAt = saveIdpIdTokenFromJwt(idp.issuer, directToken)
         return cliOk(
           `id_token cached for ${idp.issuer} (expires ${new Date(expiresAt).toISOString()})`,
         )
