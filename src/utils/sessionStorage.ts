@@ -773,8 +773,9 @@ class Project {
     // lastPrompt is re-appended so readLiteMetadata can show what the
     // user was most recently doing. Written first so customTitle/tag/etc
     // land closer to EOF (they're the more critical fields for tail reads).
+    const metaLines: Record<string, unknown>[] = []
     if (this.currentSessionLastPrompt) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'last-prompt',
         lastPrompt: this.currentSessionLastPrompt,
         sessionId,
@@ -783,49 +784,49 @@ class Project {
     // Unconditional: cache was refreshed from tail above; re-append keeps
     // the entry at EOF so compaction-pushed content doesn't evict it.
     if (this.currentSessionTitle) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'custom-title',
         customTitle: this.currentSessionTitle,
         sessionId,
       })
     }
     if (this.currentSessionTag) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'tag',
         tag: this.currentSessionTag,
         sessionId,
       })
     }
     if (this.currentSessionAgentName) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'agent-name',
         agentName: this.currentSessionAgentName,
         sessionId,
       })
     }
     if (this.currentSessionAgentColor) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'agent-color',
         agentColor: this.currentSessionAgentColor,
         sessionId,
       })
     }
     if (this.currentSessionAgentSetting) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'agent-setting',
         agentSetting: this.currentSessionAgentSetting,
         sessionId,
       })
     }
     if (this.currentSessionMode) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'mode',
         mode: this.currentSessionMode,
         sessionId,
       })
     }
     if (this.currentSessionWorktree !== undefined) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'worktree-state',
         worktreeSession: this.currentSessionWorktree,
         sessionId,
@@ -836,7 +837,7 @@ class Project {
       this.currentSessionPrUrl &&
       this.currentSessionPrRepository
     ) {
-      appendEntryToFile(this.sessionFile, {
+      metaLines.push({
         type: 'pr-link',
         sessionId,
         prNumber: this.currentSessionPrNumber,
@@ -845,6 +846,7 @@ class Project {
         timestamp: new Date().toISOString(),
       })
     }
+    appendEntriesToFile(this.sessionFile, metaLines)
   }
 
   async flush(): Promise<void> {
@@ -2846,13 +2848,25 @@ function appendEntryToFile(
   fullPath: string,
   entry: Record<string, unknown>,
 ): void {
+  appendEntriesToFile(fullPath, [entry])
+}
+
+/** One fs append for many JSONL lines (fewer sync syscalls than repeated appendEntryToFile). */
+function appendEntriesToFile(
+  fullPath: string,
+  entries: Record<string, unknown>[],
+): void {
+  if (entries.length === 0) return
   const fs = getFsImplementation()
-  const line = jsonStringify(entry) + '\n'
+  let body = ''
+  for (const entry of entries) {
+    body += jsonStringify(entry) + '\n'
+  }
   try {
-    fs.appendFileSync(fullPath, line, { mode: 0o600 })
+    fs.appendFileSync(fullPath, body, { mode: 0o600 })
   } catch {
     fs.mkdirSync(dirname(fullPath), { mode: 0o700 })
-    fs.appendFileSync(fullPath, line, { mode: 0o600 })
+    fs.appendFileSync(fullPath, body, { mode: 0o600 })
   }
 }
 

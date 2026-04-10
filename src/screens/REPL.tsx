@@ -1021,9 +1021,18 @@ export function REPL({
 
   // How long after the last keystroke before deferred dialogs are shown
   const PROMPT_SUPPRESSION_MS = 1500;
+  const promptSuppressionTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   // True when user is actively typing — defers interrupt dialogs so keystrokes
   // don't accidentally dismiss or answer a permission prompt the user hasn't read yet.
   const [isPromptInputActive, setIsPromptInputActive] = React.useState(false);
+  useEffect(() => {
+    return () => {
+      if (promptSuppressionTimerRef.current) {
+        clearTimeout(promptSuppressionTimerRef.current);
+        promptSuppressionTimerRef.current = null;
+      }
+    };
+  }, []);
   const [autoUpdaterResult, setAutoUpdaterResult] = useState<AutoUpdaterResult | null>(null);
   useEffect(() => {
     if (autoUpdaterResult?.notifications) {
@@ -1411,16 +1420,19 @@ export function REPL({
     // block's `=== ''` guard — see the fresh value, not the stale render.
     inputValueRef.current = value;
     setInputValueRaw(value);
-    setIsPromptInputActive(value.trim().length > 0);
+    const nonEmpty = value.trim().length > 0;
+    setIsPromptInputActive(nonEmpty);
+    if (promptSuppressionTimerRef.current) {
+      clearTimeout(promptSuppressionTimerRef.current);
+      promptSuppressionTimerRef.current = null;
+    }
+    if (nonEmpty) {
+      promptSuppressionTimerRef.current = setTimeout(() => {
+        promptSuppressionTimerRef.current = null;
+        setIsPromptInputActive(false);
+      }, PROMPT_SUPPRESSION_MS);
+    }
   }, [setIsPromptInputActive, repinScroll, trySuggestBgPRIntercept]);
-
-  // Schedule a timeout to stop suppressing dialogs after the user stops typing.
-  // Only manages the timeout — the immediate activation is handled by setInputValue above.
-  useEffect(() => {
-    if (inputValue.trim().length === 0) return;
-    const timer = setTimeout(setIsPromptInputActive, PROMPT_SUPPRESSION_MS, false);
-    return () => clearTimeout(timer);
-  }, [inputValue]);
   const [inputMode, setInputMode] = useState<PromptInputMode>('prompt');
   const [stashedPrompt, setStashedPrompt] = useState<{
     text: string;

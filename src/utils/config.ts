@@ -1210,6 +1210,26 @@ export function getCustomApiKeyStatus(
   return 'new'
 }
 
+/** Compare merged config to defaults without re-stringifying default values on every key. */
+function pickConfigDiffersFromDefaults<A extends object>(
+  config: A,
+  defaultConfig: A,
+): Partial<A> {
+  const defaultJsonCache = new Map<string, string>()
+  for (const k of Object.keys(defaultConfig)) {
+    defaultJsonCache.set(k, jsonStringify(defaultConfig[k as keyof A]))
+  }
+  return pickBy(config, (value, key) => {
+    if (Object.prototype.hasOwnProperty.call(defaultConfig, key)) {
+      return jsonStringify(value) !== defaultJsonCache.get(key)
+    }
+    return (
+      jsonStringify(value) !==
+      jsonStringify((defaultConfig as Record<string, unknown>)[key])
+    )
+  }) as Partial<A>
+}
+
 function saveConfig<A extends object>(
   file: string,
   config: A,
@@ -1222,11 +1242,7 @@ function saveConfig<A extends object>(
   fs.mkdirSync(dir)
 
   // Filter out any values that match the defaults
-  const filteredConfig = pickBy(
-    config,
-    (value, key) =>
-      jsonStringify(value) !== jsonStringify(defaultConfig[key as keyof A]),
-  )
+  const filteredConfig = pickConfigDiffersFromDefaults(config, defaultConfig)
   // Write config file with secure permissions - mode only applies to new files
   writeFileSyncAndFlush_DEPRECATED(
     file,
@@ -1329,10 +1345,9 @@ function saveConfigWithLock<A extends object>(
     }
 
     // Filter out any values that match the defaults
-    const filteredConfig = pickBy(
+    const filteredConfig = pickConfigDiffersFromDefaults(
       mergedConfig,
-      (value, key) =>
-        jsonStringify(value) !== jsonStringify(defaultConfig[key as keyof A]),
+      defaultConfig,
     )
 
     // Create timestamped backup of existing config before writing

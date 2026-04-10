@@ -20,13 +20,15 @@ if (existsSync(distPath)) {
   console.error(`
   deimos: dist/cli.mjs not found.
 
-  Build first:
+  From a clone of this repo, in the project root:
+    bun install
     bun run build
 
-  Or run directly with Bun:
+  Or without a separate build step:
     bun run dev
 
-  See README.md and docs/setup-checklist.md for setup instructions.
+  Published installs (npm i -g @dxa-deimos/cli) already include dist/.
+  See README.md and docs/setup-checklist.md.
 `)
   process.exit(1)
 }
