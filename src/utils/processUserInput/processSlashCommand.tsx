@@ -344,7 +344,7 @@ export async function processSlashCommand(inputString: string, precedingInputBlo
       logEvent('tengu_input_slash_invalid', {
         input: commandName as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
-      const unknownMessage = `Unknown command: ${commandName}. Run /help to see available commands.`;
+      const unknownMessage = `Unknown command: ${commandName}. Run /help to see available commands. If a command you expect is missing, try /reload-plugins or /doctor.`;
       return {
         messages: [createSyntheticUserCaveatMessage(), ...attachmentMessages, createUserMessage({
           content: prepareUserContent({

@@ -684,26 +684,43 @@ export function REPL({
   useEffect(() => {
     if (!viewingAgentTaskId || !needsBootstrap) return;
     const taskId = viewingAgentTaskId;
-    void getAgentTranscript(asAgentId(taskId)).then(result => {
-      setAppState(prev => {
-        const t = prev.tasks[taskId];
-        if (!isLocalAgentTask(t) || t.diskLoaded || !t.retain) return prev;
-        const live = t.messages ?? [];
-        const liveUuids = new Set(live.map(m => m.uuid));
-        const diskOnly = result ? result.messages.filter(m => !liveUuids.has(m.uuid)) : [];
-        return {
-          ...prev,
-          tasks: {
-            ...prev.tasks,
-            [taskId]: {
-              ...t,
-              messages: [...diskOnly, ...live],
-              diskLoaded: true
-            }
-          }
-        };
+    void getAgentTranscript(asAgentId(taskId))
+      .then(result => {
+        setAppState(prev => {
+          const t = prev.tasks[taskId];
+          if (!isLocalAgentTask(t) || t.diskLoaded || !t.retain) return prev;
+          const live = t.messages ?? [];
+          const liveUuids = new Set(live.map(m => m.uuid));
+          const diskOnly = result
+            ? result.messages.filter(m => !liveUuids.has(m.uuid))
+            : [];
+          return {
+            ...prev,
+            tasks: {
+              ...prev.tasks,
+              [taskId]: {
+                ...t,
+                messages: [...diskOnly, ...live],
+                diskLoaded: true,
+              },
+            },
+          };
+        });
+      })
+      .catch(err => {
+        logError(err);
+        setAppState(prev => {
+          const t = prev.tasks[taskId];
+          if (!isLocalAgentTask(t) || t.diskLoaded || !t.retain) return prev;
+          return {
+            ...prev,
+            tasks: {
+              ...prev.tasks,
+              [taskId]: { ...t, diskLoaded: true },
+            },
+          };
+        });
       });
-    });
   }, [viewingAgentTaskId, needsBootstrap, setAppState]);
   const store = useAppStateStore();
   const terminal = useTerminalNotification();
@@ -3671,11 +3688,20 @@ export function REPL({
     onSubmit(command, {
       setCursorOffset: () => { },
       clearBuffer: () => { },
-      resetHistory: () => { }
+      resetHistory: () => { },
     }).catch(err => {
       logForDebugging(`Auto-run ${command} failed: ${errorMessage(err)}`);
+      addNotification({
+        key: `auto-run-${command}-failed`,
+        jsx: (
+          <Text color="error">
+            Could not run {command}: {errorMessage(err)}
+          </Text>
+        ),
+        priority: 'low',
+      });
     });
-  }, [onSubmit, autoRunIssueReason]);
+  }, [onSubmit, autoRunIssueReason, addNotification]);
   const handleCancelAutoRunIssue = useCallback(() => {
     setAutoRunIssueReason(null);
   }, []);
@@ -3686,11 +3712,22 @@ export function REPL({
     onSubmit(command, {
       setCursorOffset: () => { },
       clearBuffer: () => { },
-      resetHistory: () => { }
+      resetHistory: () => { },
     }).catch(err => {
-      logForDebugging(`Survey feedback request failed: ${err instanceof Error ? err.message : String(err)}`);
+      logForDebugging(
+        `Survey feedback request failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      addNotification({
+        key: 'survey-feedback-failed',
+        jsx: (
+          <Text color="error">
+            Could not open feedback: {errorMessage(err)}
+          </Text>
+        ),
+        priority: 'low',
+      });
     });
-  }, [onSubmit]);
+  }, [onSubmit, addNotification]);
 
   // onSubmit is unstable (deps include `messages` which changes every turn).
   // `handleOpenRateLimitOptions` is prop-drilled to every MessageRow, and each

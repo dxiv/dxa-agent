@@ -266,7 +266,7 @@ export async function update() {
     } catch (error) {
       process.stderr.write('Error: Failed to install native update\n')
       process.stderr.write(String(error) + '\n')
-      process.stderr.write('Try running "claude doctor" for diagnostics\n')
+      process.stderr.write('Try running "deimos doctor" or /doctor in the REPL for diagnostics\n')
       await gracefulShutdown(1)
     }
   }

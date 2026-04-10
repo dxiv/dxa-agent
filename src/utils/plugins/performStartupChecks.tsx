@@ -69,7 +69,7 @@ export async function performStartupChecks(setAppState: SetAppState): Promise<vo
     logForDebugging(`Error initiating background plugin installations: ${error}`);
     enqueuePendingNotification({
       value: wrapInSystemReminder(
-        'Plugin marketplace startup hit an error — background installs may be incomplete. Try /reload-plugins or check debug logs.',
+        'Plugin marketplace startup hit an error — background installs may be incomplete. Try /reload-plugins, /doctor, or deimos doctor; use --debug or DEIMOS_DEBUG=1 for logs.',
       ),
       mode: 'task-notification',
       priority: 'next',

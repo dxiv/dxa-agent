@@ -74,6 +74,7 @@ Anything **without** a leading `/` is sent to the model as a normal request, for
 - **Connection / API errors:** see [Troubleshooting](troubleshooting.md) and double-check `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPENAI_MODEL`.
 - **Ripgrep / bash errors:** same guide — install `rg` and Git Bash on Windows if asked.
 - **Building from source:** run `bun run doctor:runtime` after setting env vars ([Advanced setup](advanced-setup.md)).
+- **Odd errors or missing commands:** run **`/doctor`** in the REPL or **`deimos doctor`** in a terminal; optional env names and comments live in [`.env.example`](../.env.example).
 
 ---
 

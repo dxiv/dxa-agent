@@ -31,4 +31,4 @@ Pick a path by **experience** and **goal**:
 
 ---
 
-**DXA / Deimos:** [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) · **Project README:** [README.md](../README.md) · **npm:** [@dxa-deimos/cli](https://www.npmjs.com/package/@dxa-deimos/cli) · **GitHub Packages:** [dxa-dev/cli](https://github.com/orgs/dxa-dev/packages/npm/package/cli) · **Contribute:** [CONTRIBUTING.md](../CONTRIBUTING.md) · **Maintainers:** [maintainers.md](maintainers.md) · **Legal:** [LEGAL.md](../LEGAL.md) · **Security:** [SECURITY.md](../SECURITY.md)
+**DXA / Deimos:** [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) · **Project README:** [README.md](../README.md) · **Env reference:** [`.env.example`](../.env.example) · **npm:** [@dxa-deimos/cli](https://www.npmjs.com/package/@dxa-deimos/cli) · **GitHub Packages:** [dxa-dev/cli](https://github.com/orgs/dxa-dev/packages/npm/package/cli) · **Contribute:** [CONTRIBUTING.md](../CONTRIBUTING.md) · **Maintainers:** [maintainers.md](maintainers.md) · **Legal:** [LEGAL.md](../LEGAL.md) · **Security:** [SECURITY.md](../SECURITY.md)

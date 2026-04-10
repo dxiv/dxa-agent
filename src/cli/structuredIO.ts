@@ -22,6 +22,7 @@ import type {
 import type { CanUseToolFn } from 'src/hooks/useCanUseTool.js'
 import type { Tool, ToolUseContext } from 'src/Tool.js'
 import { type HookCallback, hookJSONOutputSchema } from 'src/types/hooks.js'
+import { capUserFacingDetail } from 'src/services/api/errorUtils.js'
 import { logForDebugging } from 'src/utils/debug.js'
 import { logForDiagnosticsNoPII } from 'src/utils/diagLogs.js'
 import { AbortError } from 'src/utils/errors.js'
@@ -464,8 +465,16 @@ export class StructuredIO {
       }
       return message
     } catch (error) {
+      const linePreview =
+        line.length > 120 ? `${line.slice(0, 120)}…` : line
+      const errDetail = capUserFacingDetail(
+        error instanceof Error ? error.message : String(error),
+        200,
+      )
       // biome-ignore lint/suspicious/noConsole:: intentional console output
-      console.error(`Error parsing streaming input line: ${line}: ${error}`)
+      console.error(
+        `Error parsing streaming stdin (expected one NDJSON object per line: user, assistant, system, control_request). ${errDetail} · Line preview: ${linePreview} · Run with --debug for more detail.`,
+      )
       // eslint-disable-next-line custom-rules/no-process-exit
       process.exit(1)
     }
