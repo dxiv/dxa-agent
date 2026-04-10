@@ -6,7 +6,7 @@
 
 **If you only want the published CLI:** follow [Non-technical setup](non-technical-setup.md) or the OS guides — [Windows](quick-start-windows.md) · [macOS / Linux](quick-start-mac-linux.md). **When something breaks:** [Troubleshooting](troubleshooting.md). **After the REPL starts:** [First run](first-run.md).
 
-**Environment variable names:** Use the **`DEIMOS_*`** prefix in examples (for example `DEIMOS_USE_OPENAI=1`).
+**Environment variables:** Mode switches often use the **`DEIMOS_*`** prefix (for example `DEIMOS_USE_OPENAI=1`, `DEIMOS_USE_GEMINI=1`). Provider endpoints and keys usually follow each vendor’s names (`OPENAI_*`, `GEMINI_*`, `CODEX_*`, `ANTHROPIC_*`, AWS/GCP vars, etc.). **`.env.example`** in the repo lists every supported path.
 
 ---
 
@@ -53,6 +53,60 @@ export OPENAI_API_KEY=sk-...
 export OPENAI_MODEL=gpt-4o
 ```
 
+### Google Gemini (native SDK)
+
+This is **not** the OpenRouter/OpenAI-compat route below. Uses the Gemini client in-tree.
+
+```bash
+export DEIMOS_USE_GEMINI=1
+export GEMINI_API_KEY=your-key
+export GEMINI_MODEL=gemini-2.0-flash
+```
+
+Optional: `GEMINI_BASE_URL` if you use a custom endpoint (see `.env.example`).
+
+### GitHub Models
+
+```bash
+export DEIMOS_USE_GITHUB=1
+export GITHUB_TOKEN=ghp_...
+# Or GH_TOKEN. Default model if unset is often openai/gpt-4.1 — override if needed:
+export OPENAI_MODEL=openai/gpt-4.1
+```
+
+Use **`/onboard-github`** in `deimos` when you want the guided flow.
+
+### AWS Bedrock
+
+```bash
+export DEIMOS_USE_BEDROCK=1
+export AWS_REGION=us-east-1
+export AWS_BEARER_TOKEN_BEDROCK=...
+# Optional: ANTHROPIC_BEDROCK_BASE_URL=...
+export ANTHROPIC_MODEL=claude-sonnet-4-20250514
+```
+
+### Google Vertex AI
+
+```bash
+export DEIMOS_USE_VERTEX=1
+export ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project
+export GOOGLE_CLOUD_PROJECT=your-gcp-project
+export CLOUD_ML_REGION=us-east5
+export ANTHROPIC_MODEL=claude-sonnet-4-20250514
+```
+
+### Microsoft Foundry (Azure AI)
+
+```bash
+export DEIMOS_USE_FOUNDRY=1
+export ANTHROPIC_FOUNDRY_RESOURCE=your-azure-resource-name
+export ANTHROPIC_FOUNDRY_API_KEY=your-key
+export ANTHROPIC_MODEL=claude-sonnet-4-20250514
+```
+
+See **`src/services/api/client.ts`** for `ANTHROPIC_FOUNDRY_BASE_URL` and auth edge cases.
+
 ### Codex via ChatGPT auth
 
 `codexplan` maps to GPT-5.4 on the Codex backend with high reasoning.
@@ -79,7 +133,9 @@ export OPENAI_BASE_URL=https://api.deepseek.com/v1
 export OPENAI_MODEL=deepseek-chat
 ```
 
-### Google Gemini via OpenRouter
+### Google Gemini via OpenRouter (OpenAI-compatible)
+
+Uses **`DEIMOS_USE_OPENAI=1`**, not `DEIMOS_USE_GEMINI`.
 
 ```bash
 export DEIMOS_USE_OPENAI=1
@@ -101,6 +157,8 @@ export OPENAI_MODEL=llama3.3:70b
 ```
 
 ### Atomic Chat (local, Apple Silicon)
+
+Atomic Chat is aimed at **macOS on Apple Silicon**. On **Windows or Linux**, use **Ollama** or **LM Studio** (OpenAI-compatible sections above) for local models.
 
 ```bash
 export DEIMOS_USE_OPENAI=1

@@ -6,7 +6,7 @@
 
 | Workflow | Purpose |
 | --- | --- |
-| [pr-checks.yml](../.github/workflows/pr-checks.yml) | **Typecheck** (blocking), **smoke** (`build` + CLI `--version` / `--help`), **`verify:privacy`**, Bun tests (`--max-concurrency=1`), provider tests, PR intent scan, **Python** `pytest` on `python/tests`, **coverage** + **Codecov** (OIDC), **typecheck log** artifact on failure |
+| [pr-checks.yml](../.github/workflows/pr-checks.yml) | **Typecheck** (blocking), **smoke**, **`verify:privacy`**, full Bun tests on **Ubuntu** and **Windows**, provider tests, PR intent scan, **Python** `pytest` on `python/tests`, **coverage** + **Codecov** (OIDC), **typecheck log** artifact on failure |
 | [codeql.yml](../.github/workflows/codeql.yml) | **CodeQL Advanced** — Actions, JavaScript/TypeScript, Python on `main`, PRs, and weekly schedule |
 | [dependabot-bun-lock.yml](../.github/workflows/dependabot-bun-lock.yml) | Refreshes `bun.lock` on Dependabot PRs when needed |
 | [release-artifacts.yml](../.github/workflows/release-artifacts.yml) | Tagged release artifacts |

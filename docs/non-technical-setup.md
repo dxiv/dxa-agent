@@ -75,6 +75,8 @@ Deimos needs three pieces of information for the common **OpenAI-compatible** pa
 | `OPENAI_API_KEY` | Your **secret key** from the provider (or leave unset for some local setups). |
 | `OPENAI_MODEL` | Which model name to request (for example `gpt-4o` or an Ollama model name). |
 
+**Other AI backends:** Default Anthropic, native **Gemini**, **GitHub Models**, **AWS Bedrock**, **Vertex**, or **Microsoft Foundry** use different variables. After `deimos` starts, run **`/provider`** for guided setup, or copy the matching block from **`.env.example`** in the [GitHub repo](https://github.com/dxiv/dxa-deimos).
+
 **Important:** In the guides below, settings you type with `export` (Mac/Linux) or `$env:...=` (Windows) usually last **only until you close that terminal**. That is normal. The OS quick starts include an optional **“keep these for every session”** section if you want them saved.
 
 ---

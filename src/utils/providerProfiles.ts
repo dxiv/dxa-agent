@@ -277,7 +277,7 @@ function hasProviderSelectionFlags(
 ): boolean {
   return (
     processEnv.DEIMOS_USE_OPENAI !== undefined ||
-    processEnv.DEIMOS_USE_OPENAI !== undefined ||
+    processEnv.CLAUDE_CODE_USE_OPENAI !== undefined ||
     processEnv.DEIMOS_USE_GEMINI !== undefined ||
     processEnv.DEIMOS_USE_GITHUB !== undefined ||
     processEnv.DEIMOS_USE_BEDROCK !== undefined ||

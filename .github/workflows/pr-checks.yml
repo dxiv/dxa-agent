@@ -147,3 +147,6 @@ jobs:
 
       - name: Privacy bundle check
         run: bun run verify:privacy
+
+      - name: Full unit test suite (Windows)
+        run: bun test --preload ./scripts/test-macro-shim.ts --max-concurrency=1

@@ -29,7 +29,7 @@ Deimos expects **`rg`** on your `PATH`. Install [ripgrep](https://github.com/Bur
 
 ## Windows: Git Bash (`bash.exe`)
 
-If the CLI says it cannot find bash, install [Git for Windows](https://git-scm.com/downloads/win) and ensure `bash.exe` is available. If Git is installed but not on `PATH`, set:
+If the CLI says it cannot find bash, install [Git for Windows](https://git-scm.com/download/win) and ensure `bash.exe` is available. If Git is installed but not on `PATH`, set:
 
 `DEIMOS_GIT_BASH_PATH` → full path to `bash.exe` (for example `C:\Program Files\Git\bin\bash.exe`).
 
@@ -70,6 +70,10 @@ Run `bun run build` from the repository root, or use `bun run dev` for developme
 ## VS Code extension shows “command not found”
 
 Install the CLI globally (`npm install -g @dxa-deimos/cli` — [npm package](https://www.npmjs.com/package/@dxa-deimos/cli)) **or** ensure the `deimos` you built is on the **same PATH** VS Code’s integrated terminal uses. See [extension README](../vscode-extension/deimos-vscode/README.md).
+
+## Clone + local models + profiles
+
+If you are developing from a clone, see **[PLAYBOOK.md](../PLAYBOOK.md)** for Ollama, saved profiles, and Bun workflows.
 
 ## Still stuck?
 

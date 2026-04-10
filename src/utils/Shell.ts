@@ -127,8 +127,10 @@ export async function findSuitableShell(): Promise<string> {
   // If no valid shell found, throw a helpful error
   if (!shellPath) {
     const errorMsg =
-      'No suitable shell found. Deimos CLI requires a Posix shell environment. ' +
-      'Please ensure you have a valid shell installed and the SHELL environment variable set.'
+      process.platform === 'win32'
+        ? 'No bash/zsh found for the Bash tool. Install Git for Windows (adds bash to PATH), or set DEIMOS_SHELL or DEIMOS_GIT_BASH_PATH to your bash.exe. See docs/troubleshooting.md.'
+        : 'No suitable shell found. Deimos CLI requires a Posix shell environment. ' +
+          'Please ensure you have a valid shell installed and the SHELL environment variable set.'
     logError(new Error(errorMsg))
     throw new Error(errorMsg)
   }

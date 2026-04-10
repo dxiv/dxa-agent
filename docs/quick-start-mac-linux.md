@@ -41,7 +41,7 @@ If you see `EACCES` / permission errors, either:
 - use a Node version manager ([nvm](https://github.com/nvm-sh/nvm), [fnm](https://github.com/Schniz/fnm), etc.), **or**
 - run with `sudo npm install -g @dxa-deimos/cli` (less ideal but common on first setup).
 
-If `deimos` is not found, close the terminal, open a new one, and try again. Check `npm bin -g` is on your `PATH` (`echo $PATH`).
+If `deimos` is not found, close the terminal, open a new one, and try again. Ensure the global npm bin directory is on your `PATH` (run `npm prefix -g`, then add `$(npm prefix -g)/bin` on macOS/Linux, or see [Troubleshooting](troubleshooting.md)).
 
 ---
 
@@ -101,7 +101,7 @@ deimos
    export OPENAI_BASE_URL=http://localhost:11434/v1
    export OPENAI_MODEL=llama3.2:3b
 
-   Deimos
+   deimos
    ```
 
 Match `OPENAI_MODEL` to a name from `ollama list`.

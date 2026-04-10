@@ -171,11 +171,13 @@ export function endHookSpan() {}
 	// ─── Auto-updater (phones home to GCS + npm) ──────────────────
 
 	'utils/autoUpdater': `
+import { join } from 'node:path'
+import { tmpdir } from 'node:os'
 export async function assertMinVersion() {}
 export async function getMaxVersion() { return undefined; }
 export async function getMaxVersionMessage() { return undefined; }
 export function shouldSkipVersion() { return true; }
-export function getLockFilePath() { return '/tmp/deimos-update.lock'; }
+export function getLockFilePath() { return join(tmpdir(), 'deimos-update.lock'); }
 export async function checkGlobalInstallPermissions() { return { hasPermissions: false, npmPrefix: null }; }
 export async function getLatestVersion() { return null; }
 export async function getNpmDistTags() { return { latest: null, stable: null }; }

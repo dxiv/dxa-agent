@@ -2,7 +2,7 @@
 
 **[Deimos](https://github.com/dxiv/dxa-deimos/)** · terminal-native agent
 
-Quick reference for the interactive `deimos` CLI. Install and first-run: **[README.md](../README.md)** (Quick start → Install).
+Quick reference for the interactive `deimos` CLI. **Install:** [README.md](../README.md) (Quick start). **First session:** [first-run.md](first-run.md). **Doc index:** [docs/README.md](README.md). **When something breaks:** [troubleshooting.md](troubleshooting.md).
 
 ---
 

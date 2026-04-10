@@ -2,7 +2,7 @@ import { feature } from 'bun:bundle'
 import { chmod, open, rename, stat, unlink } from 'fs/promises'
 import mapValues from 'lodash-es/mapValues.js'
 import memoize from 'lodash-es/memoize.js'
-import { dirname, join, parse } from 'path'
+import { basename, dirname, join, parse } from 'path'
 import { getPlatform } from 'src/utils/platform.js'
 import type { PluginError } from '../../types/plugin.js'
 import { getPluginErrorMessage } from '../../types/plugin.js'
@@ -61,6 +61,12 @@ import { getProjectMcpServerStatus } from './utils.js'
  */
 export function getEnterpriseMcpFilePath(): string {
   return join(getManagedFilePath(), 'managed-mcp.json')
+}
+
+/** Windows stdio MCP: command may be `npx`, `npx.cmd`, `npx.exe`, or a full path to any of those. */
+function isBareNpxInvocation(command: string): boolean {
+  const base = basename(command).toLowerCase()
+  return base === 'npx' || base === 'npx.cmd' || base === 'npx.exe'
 }
 
 /**
@@ -1352,9 +1358,7 @@ export function parseMcpConfig(params: {
     if (
       getPlatform() === 'windows' &&
       (!configToCheck.type || configToCheck.type === 'stdio') &&
-      (configToCheck.command === 'npx' ||
-        configToCheck.command.endsWith('\\npx') ||
-        configToCheck.command.endsWith('/npx'))
+      isBareNpxInvocation(configToCheck.command)
     ) {
       errors.push({
         ...(filePath && { file: filePath }),

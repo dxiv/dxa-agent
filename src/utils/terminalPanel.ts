@@ -22,6 +22,28 @@ import { registerCleanup } from './cleanupRegistry.js'
 import { pwd } from './cwd.js'
 import { logForDebugging } from './debug.js'
 
+/**
+ * Shell + args for the Meta+J terminal panel (tmux session or direct fallback).
+ * On Windows, POSIX `-l` is only valid for bash/sh; otherwise use cmd.exe /k.
+ */
+function resolveTerminalPanelShell(): { exe: string; args: string[] } {
+  if (process.platform === 'win32') {
+    const shell = process.env.SHELL
+    if (shell && /[/\\](bash|sh)(\.exe)?$/i.test(shell)) {
+      return { exe: shell, args: ['-l'] }
+    }
+    if (process.env.DEIMOS_GIT_BASH_PATH) {
+      return { exe: process.env.DEIMOS_GIT_BASH_PATH, args: ['-l'] }
+    }
+    const comspec =
+      process.env.ComSpec ||
+      `${process.env.SystemRoot ?? 'C:\\Windows'}\\System32\\cmd.exe`
+    return { exe: comspec, args: ['/k'] }
+  }
+  const exe = process.env.SHELL || '/bin/bash'
+  return { exe, args: ['-l'] }
+}
+
 const TMUX_SESSION = 'panel'
 
 /**
@@ -81,7 +103,7 @@ class TerminalPanel {
   }
 
   private createSession(): boolean {
-    const shell = process.env.SHELL || '/bin/bash'
+    const { exe, args } = resolveTerminalPanelShell()
     const cwd = pwd()
     const socket = getTerminalPanelSocket()
 
@@ -96,8 +118,8 @@ class TerminalPanel {
         TMUX_SESSION,
         '-c',
         cwd,
-        shell,
-        '-l',
+        exe,
+        ...args,
       ],
       { encoding: 'utf-8' },
     )
@@ -180,9 +202,14 @@ class TerminalPanel {
 
   /** Fallback when tmux is not available — runs a non-persistent shell. */
   private runShellDirect(): void {
-    const shell = process.env.SHELL || '/bin/bash'
+    const { exe, args } = resolveTerminalPanelShell()
     const cwd = pwd()
-    spawnSync(shell, ['-i', '-l'], {
+    const isWindowsCmdPanel =
+      process.platform === 'win32' &&
+      args.length === 1 &&
+      args[0] === '/k'
+    const spawnArgs = isWindowsCmdPanel ? args : ['-i', ...args]
+    spawnSync(exe, spawnArgs, {
       stdio: 'inherit',
       cwd,
       env: process.env,
