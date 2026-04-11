@@ -23,7 +23,7 @@
 [![License](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
 [![npm](https://img.shields.io/npm/v/@dxa-deimos/cli?label=npm&color=cb3837)](https://www.npmjs.com/package/@dxa-deimos/cli)
 [![GitHub Packages](https://img.shields.io/badge/GitHub%20Packages-dxa--dev-24292f?logo=github)](https://github.com/orgs/dxa-dev/packages/npm/package/cli)
-[![Socket Badge](https://badge.socket.dev/npm/package/@dxa-deimos/cli/0.2.16)](https://badge.socket.dev/npm/package/@dxa-deimos/cli/0.2.16)
+[![Socket Badge](https://badge.socket.dev/npm/package/@dxa-deimos/cli/0.2.16)](https://badge.socket.dev/npm/package/@dxa-deimos/cli)
 
 [Quick start](#quick-start) · [How Deimos fits in](#how-deimos-fits-in) · [Setup](#setup-guides) · [Playbook](#local-agent-playbook-clone-developers) · [Providers](#supported-providers) · [Source build](#source-build-and-local-development) · [Repo layout](#repository-structure) · [VS Code](#vs-code-extension) · [Cheatsheet](docs/CHEATSHEET.md) · [Demo script](docs/DEMO.md) · [Contributing](#contributing) · [Security](#security) · [Privacy](#privacy--local-first) · [Community](#community)
 
