@@ -63,8 +63,6 @@ You need **Node.js 22+** (see `engines` in `package.json`) and a terminal. If th
 
 **npm:** [@dxa-deimos/cli](https://www.npmjs.com/package/@dxa-deimos/cli)
 
-**GitHub Packages (GitHub org `dxa-dev`):** [dxa-dev / cli](https://github.com/orgs/dxa-dev/packages/npm/package/cli).
-
 Use **npm** to install the published CLI. **[GitHub](https://github.com/dxiv/dxa-deimos)** is for source code, issues, and discussions—not a separate “installer” download.
 
 ```bash
@@ -490,7 +488,6 @@ Telemetry-related environment variables include `DISABLE_TELEMETRY` and `DEIMOS_
 | --- | --- |
 | **Product page (link hub)** | [github.com/dxiv/dxa-deimos/](https://github.com/dxiv/dxa-deimos/) |
 | **This package (npm)** | [`@dxa-deimos/cli`](https://www.npmjs.com/package/@dxa-deimos/cli) |
-| **This package (GitHub Packages)** | [dxa-dev / cli](https://github.com/orgs/dxa-dev/packages/npm/package/cli) |
 | **This repository** | [github.com/dxiv/dxa-deimos](https://github.com/dxiv/dxa-deimos) |
 | **Discussions** | [GitHub Discussions](https://github.com/dxiv/dxa-deimos/discussions) |
 | **Issues** | [GitHub Issues](https://github.com/dxiv/dxa-deimos/issues) |
